@@ -1,0 +1,19 @@
+/**
+ * Site-level switches. These were editor props on the Claude Design canvas
+ * (`showSaleBadges`, `showTestimonials`, `colourPhotos`) — here they are plain
+ * constants you can flip without touching a component.
+ */
+export const siteConfig = {
+  name: 'Saanshika Ethnics',
+  tagline: 'Every thread, a celebration.',
+  description:
+    'Kurtis, co-ord sets, suits, sarees and dupattas in everyday fabrics — block prints, chanderi and handloom cotton, made in Amritsar.',
+  email: 'saanshikaethnics@gmail.com',
+  address: ['249, Block-D, Thakur ji Estate,', 'Muraadpura, F.G.C. Road,', 'Amritsar 143001, Punjab'],
+  showSaleBadges: true,
+  showTestimonials: true,
+  colourPhotos: true,
+} as const;
+
+/** `''` when photos are in colour, the DS grayscale utility when they are not. */
+export const photoClass = siteConfig.colourPhotos ? '' : 'grayscale';
