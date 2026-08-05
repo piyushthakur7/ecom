@@ -1,8 +1,25 @@
 'use client';
 
+import Link from 'next/link';
 import { ImageSlot } from './image-slot';
+import { StarRating } from './star-rating';
 import { useCart } from './cart-context';
+import { FavouriteButton } from './favourite-button';
 import { products } from '@/lib/data';
+
+const badgeClass: Record<string, string> = {
+  'Highly Purchased': 'badge-purchased',
+  'Trending':         'badge-trending',
+  'Best Seller':      'badge-bestseller',
+  'New Arrival':      'badge-new',
+};
+
+const badgeEmoji: Record<string, string> = {
+  'Highly Purchased': '🔥',
+  'Trending':         '⚡',
+  'Best Seller':      '🏆',
+  'New Arrival':      '✨',
+};
 
 export function Featured() {
   const { addToCart } = useCart();
@@ -22,48 +39,61 @@ export function Featured() {
         <div>
           <span className="section-kicker">Featured collection</span>
           <h2 className="section-title" style={{ whiteSpace: 'nowrap' }}>
-            This week’s picks
+            This week&apos;s picks
           </h2>
         </div>
-        <a className="btn btn-ghost" href="#categories">
+        <Link className="btn btn-ghost" href="/category/kurti">
           View all products
-        </a>
+        </Link>
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))',
-          gap: 'var(--space-6) var(--space-4)',
-        }}
-      >
+      <div className="product-grid">
         {products.map((p) => (
-          <div
-            key={p.id}
-            className="product-card"
-            style={{ display: 'flex', flexDirection: 'column', gap: 10 }}
-          >
-            <div className="media-clip" style={{ width: '100%', aspectRatio: '3 / 4' }}>
-              <ImageSlot
-                src={p.src}
-                alt={p.name}
-                credit={p.credit}
-                sizes="(max-width: 600px) 50vw, (max-width: 1280px) 33vw, 290px"
-              />
-              {p.showOff && (
-                <span
-                  className="tag tag-accent"
-                  style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}
-                >
-                  {p.off}
-                </span>
-              )}
-            </div>
+          <div key={p.id} className="product-card" style={{ position: 'relative' }}>
+            {/* Image */}
+            <Link href={`/product/${p.id}`} style={{ display: 'block', textDecoration: 'none' }}>
+              <div className="media-clip" style={{ width: '100%', aspectRatio: '3 / 4', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
+                <ImageSlot
+                  src={p.src}
+                  alt={p.name}
+                  credit={p.credit}
+                  sizes="(max-width: 600px) 50vw, (max-width: 1280px) 33vw, 290px"
+                />
+                {p.showOff && p.off && (
+                  <span
+                    className="tag tag-accent"
+                    style={{ position: 'absolute', top: 10, left: 10, pointerEvents: 'none' }}
+                  >
+                    {p.off}
+                  </span>
+                )}
+              </div>
+            </Link>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: 15 }}>
-                {p.name}
+            {/* Favourite button */}
+            <FavouriteButton
+              product={{ id: p.id, name: p.name, price: p.price, image: p.src, category: p.category, rating: p.rating, reviewCount: p.reviewCount }}
+            />
+
+            {/* Badge */}
+            {p.badge && (
+              <span className={`product-badge ${badgeClass[p.badge] ?? ''}`}>
+                {badgeEmoji[p.badge]} {p.badge}
               </span>
+            )}
+
+            {/* Info */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <Link
+                href={`/product/${p.id}`}
+                style={{ textDecoration: 'none', color: 'inherit', fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: 15 }}
+              >
+                {p.name}
+              </Link>
+
+              {/* Star rating */}
+              <StarRating rating={p.rating} reviewCount={p.reviewCount} />
+
               <div
                 style={{
                   display: 'flex',
@@ -78,7 +108,7 @@ export function Featured() {
                     style={{
                       fontSize: 13,
                       textDecoration: 'line-through',
-                      color: 'color-mix(in srgb, var(--color-text) 55%, transparent)',
+                      color: 'color-mix(in srgb, var(--color-text) 50%, transparent)',
                     }}
                   >
                     {p.was}
@@ -90,7 +120,14 @@ export function Featured() {
             <button
               type="button"
               className="btn btn-secondary btn-block"
-              onClick={addToCart}
+              onClick={() => addToCart({
+                id: p.id,
+                name: p.name,
+                price: parseInt(p.price.replace(/[₹,]/g, ''), 10),
+                priceDisplay: p.price,
+                image: p.src,
+                category: p.category,
+              })}
               aria-label={`Add ${p.name} to cart`}
             >
               Add to cart

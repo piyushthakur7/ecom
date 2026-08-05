@@ -1,4 +1,5 @@
-import { ImageSlot } from './image-slot';
+import Image from 'next/image';
+import Link from 'next/link';
 import { categories } from '@/lib/data';
 
 export function Categories() {
@@ -7,63 +8,31 @@ export function Categories() {
       <div className="section">
         <span className="section-kicker">Shop by category</span>
         <h2 className="section-title" style={{ marginBottom: 36 }}>
-          Six ways to wear it
+          Seven ways to wear it
         </h2>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))',
-            gap: 'var(--space-4)',
-          }}
-        >
+
+        <div className="categories-scroll">
           {categories.map((cat) => (
-            <a
+            <Link
               key={cat.id}
-              className="card-link"
-              href="#featured"
-              style={{ textDecoration: 'none', display: 'block' }}
+              href={`/category/${cat.slug}`}
+              className="category-circle-link"
             >
-              <div className="media-clip" style={{ width: '100%', aspectRatio: '3 / 4' }}>
-                <ImageSlot
+              <div className="category-circle">
+                <Image
                   src={cat.src}
                   alt={cat.alt}
-                  credit={cat.credit}
-                  sizes="(max-width: 600px) 50vw, (max-width: 1280px) 33vw, 210px"
+                  fill
+                  sizes="(max-width: 480px) 76px, (max-width: 900px) 96px, 128px"
+                  style={{ objectFit: 'cover' }}
+                  title={cat.credit}
                 />
               </div>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'baseline',
-                  gap: 8,
-                  borderTop: '2px solid var(--color-divider)',
-                  paddingTop: 10,
-                  marginTop: 10,
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: 'var(--font-heading)',
-                    fontWeight: 700,
-                    fontSize: 14,
-                    letterSpacing: '0.06em',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  {cat.name}
-                </span>
-                <span
-                  style={{
-                    fontSize: 12,
-                    color: 'color-mix(in srgb, var(--color-text) 60%, transparent)',
-                    fontFeatureSettings: "'tnum' 1",
-                  }}
-                >
-                  {cat.count}
-                </span>
+              <div>
+                <div className="category-circle-name">{cat.name}</div>
+                <div className="category-circle-count">{cat.count}</div>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
       </div>

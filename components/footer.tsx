@@ -1,102 +1,58 @@
+import React from 'react';
+import Link from 'next/link';
 import { siteConfig } from '@/lib/site';
 
 const columns = [
   {
     heading: 'Shop',
     links: [
-      { label: 'Kurtis', href: '#categories' },
-      { label: 'Co-ord sets', href: '#categories' },
-      { label: 'Suits & salwar sets', href: '#categories' },
-      { label: 'Sarees', href: '#categories' },
-      { label: 'Dresses', href: '#categories' },
-      { label: 'Dupattas', href: '#categories' },
+      { label: 'Kurti',            href: '/category/kurti' },
+      { label: 'Tops',             href: '/category/tops' },
+      { label: 'Suits',            href: '/category/suits' },
+      { label: 'Unstitched Suits', href: '/category/unstitched-suits' },
+      { label: 'Anarkali',         href: '/category/anarkali' },
+      { label: 'Dresses',          href: '/category/dresses' },
+      { label: 'Plazzo',           href: '/category/plazzo' },
     ],
   },
   {
     heading: 'Help',
     links: [
-      { label: 'Track order', href: '#featured' },
-      { label: 'Shipping policy', href: '#featured' },
-      { label: 'Returns & refunds', href: '#featured' },
-      { label: 'Size guide', href: '#featured' },
-      { label: 'Privacy policy', href: '#featured' },
+      { label: 'Track order',      href: '#' },
+      { label: 'Shipping policy',  href: '#' },
+      { label: 'Returns & refunds',href: '#' },
+      { label: 'Size guide',       href: '#' },
+      { label: 'Privacy policy',   href: '#' },
     ],
   },
 ];
 
-const columnStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 8,
-  fontSize: 14,
-} as const;
-
-const headingStyle = {
-  fontSize: 12,
-  letterSpacing: '0.08em',
-  textTransform: 'uppercase',
-  color: 'var(--color-accent-700)',
-  marginBottom: 4,
-} as const;
-
 export function Footer() {
   return (
-    <footer style={{ borderTop: '2px solid var(--color-divider)' }}>
-      <div
-        style={{
-          maxWidth: 1280,
-          margin: '0 auto',
-          padding: 'clamp(40px,6vw,64px) clamp(20px,5vw,72px)',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,220px),1fr))',
-          gap: '36px clamp(24px,3vw,56px)',
-        }}
-      >
-        <div>
-          <p
-            style={{
-              fontFamily: 'var(--font-heading)',
-              fontWeight: 800,
-              fontSize: 20,
-              letterSpacing: '-0.01em',
-              margin: '0 0 8px',
-            }}
-          >
-            {siteConfig.name}
-          </p>
-          <p
-            style={{
-              fontSize: 14,
-              lineHeight: 1.6,
-              margin: 0,
-              maxWidth: '36ch',
-              color: 'color-mix(in srgb, var(--color-text) 70%, transparent)',
-            }}
-          >
+    <footer className="footer-wrap">
+      <div className="footer-grid">
+        <div className="footer-brand-col">
+          <p className="footer-brand-title">{siteConfig.name}</p>
+          <p className="footer-brand-desc">
             Every thread, a celebration. Ethnic wear in everyday fabrics, made in Amritsar.
           </p>
         </div>
 
         {columns.map((col) => (
-          <div key={col.heading} style={columnStyle}>
-            <span style={headingStyle}>{col.heading}</span>
+          <div key={col.heading} className="footer-col">
+            <span className="footer-heading">{col.heading}</span>
             {col.links.map((link) => (
-              <a key={link.label} href={link.href}>
+              <Link key={link.label} href={link.href} className="footer-link">
                 {link.label}
-              </a>
+              </Link>
             ))}
           </div>
         ))}
 
-        <div style={columnStyle}>
-          <span style={headingStyle}>Contact</span>
-          <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
-          <span
-            style={{
-              lineHeight: 1.6,
-              color: 'color-mix(in srgb, var(--color-text) 70%, transparent)',
-            }}
-          >
+        <div className="footer-col">
+          <span className="footer-heading">Contact</span>
+          <a href={`mailto:${siteConfig.email}`} className="footer-link">{siteConfig.email}</a>
+          <span className="footer-address">
             {siteConfig.address.map((line) => (
               <span key={line} style={{ display: 'block' }}>
                 {line}
@@ -106,16 +62,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div
-        style={{
-          maxWidth: 1280,
-          margin: '0 auto',
-          padding: '0 clamp(20px,5vw,72px) 28px',
-          fontSize: 12,
-          letterSpacing: '0.04em',
-          color: 'color-mix(in srgb, var(--color-text) 60%, transparent)',
-        }}
-      >
+      <div className="footer-bottom">
         © {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
       </div>
     </footer>

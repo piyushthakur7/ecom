@@ -1,6 +1,8 @@
+import React from 'react';
+
 const iconProps = {
-  width: 26,
-  height: 26,
+  width: 22,
+  height: 22,
   viewBox: '0 0 24 24',
   fill: 'none',
   stroke: 'var(--color-accent)',
@@ -13,7 +15,7 @@ const iconProps = {
 const features = [
   {
     title: 'Fast shipping',
-    body: 'Dispatched from Amritsar in 24–48 hours, delivered across India.',
+    body: 'Dispatched in 24–48 hours across India.',
     icon: (
       <svg {...iconProps}>
         <path d="M5 18H3c-.6 0-1-.4-1-1V7c0-.6.4-1 1-1h10c.6 0 1 .4 1 1v11" />
@@ -25,7 +27,7 @@ const features = [
   },
   {
     title: 'Secure payments',
-    body: 'UPI, cards and net banking — 100% safe checkout.',
+    body: 'UPI, cards & net banking — 100% safe.',
     icon: (
       <svg {...iconProps}>
         <path d="M20 13c0 5-3.5 7.5-7.7 9a.6.6 0 0 1-.6 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.2-2.7a1.2 1.2 0 0 1 1.6 0C14.5 3.8 17 5 19 5a1 1 0 0 1 1 1z" />
@@ -34,7 +36,7 @@ const features = [
   },
   {
     title: 'Easy returns',
-    body: '7-day hassle-free returns and exchanges on every order.',
+    body: '7-day hassle-free returns on every order.',
     icon: (
       <svg {...iconProps}>
         <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
@@ -46,7 +48,7 @@ const features = [
   },
   {
     title: 'Quality fabric',
-    body: 'Handloom cotton, chanderi and mul — checked piece by piece.',
+    body: 'Handloom cotton, chanderi and mul.',
     icon: (
       <svg {...iconProps}>
         <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" />
@@ -58,51 +60,17 @@ const features = [
 
 export function Features() {
   return (
-    <section style={{ background: 'var(--color-accent-100)' }}>
-      <div
-        style={{
-          maxWidth: 1280,
-          margin: '0 auto',
-          padding: 'clamp(36px,5vw,60px) clamp(20px,5vw,72px)',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit,minmax(210px,1fr))',
-          gap: '32px clamp(24px,3vw,48px)',
-        }}
-      >
+    <section className="features-section">
+      <div className="section features-container">
         {features.map((feature) => (
-          <div key={feature.title}>
-            <div
-              style={{
-                width: 52,
-                height: 52,
-                background: 'var(--color-bg)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
+          <div key={feature.title} className="feature-item">
+            <div className="feature-icon-wrap">
               {feature.icon}
             </div>
-            <p
-              style={{
-                fontFamily: 'var(--font-heading)',
-                fontWeight: 700,
-                fontSize: 15,
-                margin: '14px 0 4px',
-              }}
-            >
-              {feature.title}
-            </p>
-            <p
-              style={{
-                fontSize: 14,
-                lineHeight: 1.6,
-                margin: 0,
-                color: 'color-mix(in srgb, var(--color-text) 70%, transparent)',
-              }}
-            >
-              {feature.body}
-            </p>
+            <div className="feature-text">
+              <p className="feature-title">{feature.title}</p>
+              <p className="feature-body">{feature.body}</p>
+            </div>
           </div>
         ))}
       </div>

@@ -1,6 +1,10 @@
 import type { Metadata, Viewport } from 'next';
 import { Archivo } from 'next/font/google';
 import { siteConfig } from '@/lib/site';
+import { CartProvider } from '@/components/cart-context';
+import { FavouritesProvider } from '@/components/favourites-context';
+import { Marquee } from '@/components/marquee';
+import { Nav } from '@/components/nav';
 import './globals.css';
 
 const archivo = Archivo({
@@ -27,7 +31,15 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={archivo.variable}>
-      <body>{children}</body>
+      <body>
+        <CartProvider>
+          <FavouritesProvider>
+            <Marquee />
+            <Nav />
+            {children}
+          </FavouritesProvider>
+        </CartProvider>
+      </body>
     </html>
   );
 }
