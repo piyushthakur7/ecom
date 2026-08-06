@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -32,9 +32,14 @@ export default function CheckoutPage() {
   const shipping = total >= 999 ? 0 : 99;
   const grandTotal = total + shipping;
 
-  // Redirect to cart if empty (and not success)
+  // Redirect to cart if empty (and not success) inside useEffect to prevent render-phase navigation
+  useEffect(() => {
+    if (count === 0 && !success) {
+      router.replace('/cart');
+    }
+  }, [count, success, router]);
+
   if (count === 0 && !success) {
-    if (typeof window !== 'undefined') router.replace('/cart');
     return null;
   }
 

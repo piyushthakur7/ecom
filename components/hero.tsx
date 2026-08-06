@@ -1,52 +1,78 @@
-import React from 'react';
-import { ImageSlot } from './image-slot';
-import { hero, stats } from '@/lib/data';
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { heroSlides } from '@/lib/data';
 
 export function Hero() {
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  // Auto-play horizontal sliding carousel every 3.5 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveIdx((prev) => (prev + 1) % heroSlides.length);
+    }, 3500);
+    return () => clearInterval(timer);
+  }, []);
+
+  const nextSlide = () => setActiveIdx((prev) => (prev + 1) % heroSlides.length);
+  const prevSlide = () => setActiveIdx((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+
   return (
-    <section className="hero-section">
-      {/* Content Side */}
-      <div className="hero-content">
-        <span className="tag tag-accent hero-tag">
-          New collection — Festive ’26
-        </span>
+    <section className="hero-section-wrap">
+      <div className="hero-banner-card">
+        {/* Horizontal Sliding Banner Track */}
+        <Link href="#featured" aria-label="Shop New Arrivals" className="hero-banner-track-wrap">
+          <div
+            className="hero-banner-track"
+            style={{ transform: `translateX(-${activeIdx * 100}%)` }}
+          >
+            {heroSlides.map((slide, i) => (
+              <div key={slide.id} className="hero-slide-item">
+                <Image
+                  src={slide.src}
+                  alt={slide.alt}
+                  fill
+                  priority={i === 0}
+                  sizes="100vw"
+                  className="hero-banner-img"
+                />
+              </div>
+            ))}
+          </div>
+        </Link>
 
-        <h1 className="hero-title">
-          <span className="hero-title-line">Every thread,</span>
-          <br />
-          <span className="hero-title-line">a celebration.</span>
-        </h1>
-
-        <p className="hero-description">
-          Kurtis, co-ord sets, suits, sarees and dupattas in everyday fabrics — block prints,
-          chanderi and handloom cotton, cut to be worn, not saved for later.
-        </p>
-
-        <div className="hero-cta-wrap">
-          <a className="btn btn-primary hero-btn" href="#featured">
-            Shop new arrivals
-          </a>
+        {/* Slide Indicators & Navigation Arrows */}
+        <div className="hero-slider-controls">
+          <button
+            type="button"
+            className="hero-nav-arrow"
+            onClick={prevSlide}
+            aria-label="Previous banner photo"
+          >
+            ‹
+          </button>
+          <div className="hero-slide-dots">
+            {heroSlides.map((s, idx) => (
+              <button
+                key={s.id}
+                type="button"
+                className={`hero-dot ${idx === activeIdx ? 'active' : ''}`}
+                onClick={() => setActiveIdx(idx)}
+                aria-label={`Go to photo ${idx + 1}`}
+              />
+            ))}
+          </div>
+          <button
+            type="button"
+            className="hero-nav-arrow"
+            onClick={nextSlide}
+            aria-label="Next banner photo"
+          >
+            ›
+          </button>
         </div>
-
-        <div className="hero-stats">
-          {stats.map((stat) => (
-            <div key={stat.label} className="hero-stat-item">
-              <p className="stat-value">{stat.value}</p>
-              <p className="stat-label">{stat.label}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Image Side */}
-      <div className="media-clip hero-image-wrap">
-        <ImageSlot
-          src={hero.src}
-          alt={hero.alt}
-          credit={hero.credit}
-          sizes="(max-width: 840px) 100vw, 50vw"
-          priority
-        />
       </div>
     </section>
   );

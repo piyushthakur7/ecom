@@ -23,6 +23,30 @@ export const hero = {
   creditHref: 'https://unsplash.com/@naseebo',
 };
 
+export type HeroSlide = {
+  id: string;
+  src: string;
+  alt: string;
+};
+
+export const heroSlides: readonly HeroSlide[] = [
+  {
+    id: 'slide-1',
+    src: '/images/hero/banner-1.jpg',
+    alt: 'Experience The Best Quality — Festive Collection',
+  },
+  {
+    id: 'slide-2',
+    src: '/images/hero/banner-2.jpg',
+    alt: 'Discover Hand-Block Printed Cotton & Silk Blend Suits',
+  },
+  {
+    id: 'slide-3',
+    src: '/images/hero/banner-3.jpg',
+    alt: 'Premium Fabrics & Craftsmanship — Kurtis, Plazos & Suits',
+  },
+];
+
 // ─── Stats ─────────────────────────────────────────────────────────────────
 export const stats = [
   // { value: '₹500–1,500', label: 'Every piece' },

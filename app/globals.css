@@ -2138,3 +2138,574 @@ figure { margin: 0; }
     padding: 18px 16px !important;
   }
 }
+
+/* --------------------------------------------------------------------------
+   HERO BANNER — FULL PHOTO SINGLE-COLUMN CARD (DESKTOP & MOBILE)
+   -------------------------------------------------------------------------- */
+.hero-section-wrap {
+  padding-top: 16px;
+  padding-bottom: 20px;
+}
+
+.hero-banner-card {
+  position: relative;
+  width: 100%;
+  min-height: clamp(460px, 60vh, 560px);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow-xl);
+  background: #111111;
+}
+
+.hero-banner-img {
+  object-fit: cover;
+  object-position: center 25%;
+  z-index: 1;
+}
+
+.hero-banner-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.82) 0%,
+    rgba(0, 0, 0, 0.55) 50%,
+    rgba(0, 0, 0, 0.15) 100%
+  );
+}
+
+.hero-banner-content {
+  position: relative;
+  z-index: 3;
+  padding: clamp(36px, 6vw, 64px) clamp(24px, 5vw, 64px);
+  max-width: 620px;
+  color: #ffffff;
+}
+
+.hero-tag {
+  background: var(--color-accent);
+  color: #ffffff;
+  border: none;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-bottom: 20px;
+  display: inline-block;
+}
+
+.hero-title {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(32px, 4.5vw, 56px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin: 0 0 16px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.hero-description {
+  font-size: clamp(14px, 1.8vw, 16px);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 28px;
+  max-width: 52ch;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.hero-cta-wrap {
+  display: flex;
+  gap: 14px;
+}
+
+.hero-btn {
+  padding: 14px 28px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.hero-banner-footer {
+  position: relative;
+  z-index: 3;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 16px clamp(20px, 4vw, 48px);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.hero-stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hero-stat-item .stat-value {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 15px;
+  color: #ffffff;
+}
+
+.hero-stat-item .stat-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Mobile View Adjustments */
+@media (max-width: 768px) {
+  .hero-banner-card {
+    min-height: 460px;
+    border-radius: var(--radius-md);
+  }
+
+  .hero-banner-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.25) 0%,
+      rgba(0, 0, 0, 0.72) 45%,
+      rgba(0, 0, 0, 0.92) 100%
+    );
+  }
+
+  .hero-banner-content {
+    padding: 24px 20px 20px 20px;
+    margin-top: auto;
+    max-width: 100%;
+  }
+
+  .hero-title {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+
+  .hero-description {
+    font-size: 13px;
+    margin-bottom: 18px;
+  }
+
+  .hero-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero-banner-footer {
+    display: flex;
+    overflow-x: auto;
+    gap: 16px;
+    padding: 12px 16px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .hero-banner-footer::-webkit-scrollbar { display: none; }
+
+  .hero-stat-item {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+
+  .hero-stat-item .stat-value { font-size: 13px; }
+  .hero-stat-item .stat-label { font-size: 11px; }
+}
+
+/* --------------------------------------------------------------------------
+   100VW FULL-WIDTH HERO BANNER WITH CONSTANT HEIGHT RATIO (65VH)
+   -------------------------------------------------------------------------- */
+.hero-section-wrap {
+  width: 100vw;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-banner-card {
+  position: relative;
+  width: 100%;
+  height: 62vh;
+  min-height: 480px;
+  max-height: 720px;
+  border-radius: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #111111;
+}
+
+.hero-banner-img {
+  object-fit: cover;
+  object-position: center 25%;
+  z-index: 1;
+}
+
+.hero-banner-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.82) 0%,
+    rgba(0, 0, 0, 0.55) 50%,
+    rgba(0, 0, 0, 0.15) 100%
+  );
+}
+
+.hero-banner-content {
+  position: relative;
+  z-index: 3;
+  padding: clamp(32px, 5vw, 64px) clamp(24px, 6vw, 80px);
+  max-width: 680px;
+  color: #ffffff;
+}
+
+.hero-tag {
+  background: var(--color-accent);
+  color: #ffffff;
+  border: none;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-bottom: 20px;
+  display: inline-block;
+}
+
+.hero-title {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(32px, 4.5vw, 56px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin: 0 0 16px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.hero-description {
+  font-size: clamp(14px, 1.8vw, 16px);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 28px;
+  max-width: 52ch;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.hero-cta-wrap {
+  display: flex;
+  gap: 14px;
+}
+
+.hero-btn {
+  padding: 14px 28px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.hero-banner-footer {
+  position: relative;
+  z-index: 3;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 16px clamp(24px, 6vw, 80px);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.hero-stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hero-stat-item .stat-value {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 15px;
+  color: #ffffff;
+}
+
+.hero-stat-item .stat-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Mobile View - Constant 58vh ratio */
+@media (max-width: 768px) {
+  .hero-banner-card {
+    height: 58vh;
+    min-height: 420px;
+  }
+
+  .hero-banner-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.25) 0%,
+      rgba(0, 0, 0, 0.72) 45%,
+      rgba(0, 0, 0, 0.92) 100%
+    );
+  }
+
+  .hero-banner-content {
+    padding: 20px 16px 16px 16px;
+    margin-top: auto;
+    max-width: 100%;
+  }
+
+  .hero-title {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+
+  .hero-description {
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  .hero-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero-banner-footer {
+    display: flex;
+    overflow-x: auto;
+    gap: 16px;
+    padding: 12px 16px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .hero-banner-footer::-webkit-scrollbar { display: none; }
+
+  .hero-stat-item {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+
+  .hero-stat-item .stat-value { font-size: 13px; }
+  .hero-stat-item .stat-label { font-size: 11px; }
+}
+
+/* --------------------------------------------------------------------------
+   HERO BANNER SLIDESHOW & CONTAINER-QUERY FLUID SCALING
+   -------------------------------------------------------------------------- */
+
+.hero-banner-card {
+  container-type: inline-size;
+  container-name: herobanner;
+}
+
+/* Background image cross-fade slides */
+.hero-slide-bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out, transform 1.2s ease-out;
+  transform: scale(1.05);
+  pointer-events: none;
+  z-index: 1;
+}
+.hero-slide-bg.active {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+/* Animated slide text content */
+.animated-slide-content {
+  animation: slide-content-fade 0.5s ease-out;
+}
+@keyframes slide-content-fade {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Container Query Fluid Scaling — text & buttons scale 100% proportionally with banner width */
+@container herobanner (min-width: 1px) {
+  .hero-tag {
+    font-size: clamp(10px, 1.2cqi, 13px) !important;
+    padding: clamp(4px, 0.7cqi, 8px) clamp(10px, 1.4cqi, 16px) !important;
+    margin-bottom: clamp(12px, 2cqi, 24px) !important;
+  }
+  .hero-title {
+    font-size: clamp(24px, 4.4cqi, 56px) !important;
+    line-height: 1.08 !important;
+    margin-bottom: clamp(10px, 1.5cqi, 18px) !important;
+  }
+  .hero-description {
+    font-size: clamp(12px, 1.5cqi, 17px) !important;
+    line-height: 1.55 !important;
+    margin-bottom: clamp(16px, 2.5cqi, 28px) !important;
+  }
+  .hero-btn {
+    font-size: clamp(12px, 1.4cqi, 16px) !important;
+    padding: clamp(10px, 1.4cqi, 16px) clamp(18px, 2.4cqi, 32px) !important;
+  }
+}
+
+/* Slider Dots & Navigation Arrows Controls */
+.hero-slider-controls {
+  position: absolute;
+  right: clamp(16px, 4vw, 48px);
+  top: clamp(24px, 4vw, 48px);
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.hero-slide-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hero-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, width 0.3s ease;
+}
+.hero-dot.active {
+  background: #ffffff;
+  width: 20px;
+  border-radius: 4px;
+}
+
+.hero-nav-arrow {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  opacity: 0.75;
+  padding: 0 4px;
+  line-height: 1;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.hero-nav-arrow:hover {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+/* --------------------------------------------------------------------------
+   EXACT ASPECT RATIO PURE IMAGE BANNER SLIDESHOW (100% WIDTH, NO CROPPING)
+   -------------------------------------------------------------------------- */
+.hero-banner-card {
+  position: relative;
+  width: 100vw;
+  max-width: 100%;
+  aspect-ratio: 1.85 / 1 !important;
+  height: auto !important;
+  min-height: unset !important;
+  max-height: unset !important;
+  border-radius: 0;
+  overflow: hidden;
+  background: #0d0d0d;
+}
+
+.hero-banner-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.hero-banner-img {
+  object-fit: contain !important;
+  object-position: center center !important;
+  z-index: 1;
+}
+
+/* Slide Indicators at bottom right */
+.hero-slider-controls {
+  position: absolute;
+  right: clamp(16px, 4vw, 40px);
+  bottom: clamp(16px, 3vw, 36px);
+  top: auto !important;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.hero-banner-footer {
+  position: relative;
+  z-index: 3;
+  background: var(--color-bg);
+  border-top: 1px solid var(--color-divider);
+  padding: 16px clamp(24px, 6vw, 80px);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.hero-banner-footer .stat-value {
+  color: var(--color-text) !important;
+}
+
+.hero-banner-footer .stat-label {
+  color: color-mix(in srgb, var(--color-text) 65%, transparent) !important;
+}
+
+@media (max-width: 768px) {
+  .hero-banner-card {
+    aspect-ratio: 1.85 / 1 !important;
+  }
+  .hero-slider-controls {
+    right: 12px;
+    bottom: 12px;
+    padding: 4px 10px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   HORIZONTAL SLIDING BANNER TRACK (LEFT / RIGHT MOVEMENT)
+   -------------------------------------------------------------------------- */
+.hero-banner-track-wrap {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.hero-banner-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.75s cubic-bezier(0.25, 1, 0.4, 1);
+  will-change: transform;
+}
+
+.hero-slide-item {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
