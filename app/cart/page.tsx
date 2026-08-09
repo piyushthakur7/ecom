@@ -69,9 +69,11 @@ export default function CartPage() {
                   <Link href={`/product/${item.id}`} className="cart-item-name" style={{ textDecoration: 'none', color: 'inherit' }}>
                     {item.name}
                   </Link>
-                  <div className="cart-item-meta">
-                    {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
-                    {item.size && ` · Size: ${item.size}`}
+                  <div className="cart-item-meta" style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4, flexWrap: 'wrap' }}>
+                    <span>{item.category.charAt(0).toUpperCase() + item.category.slice(1)}</span>
+                    <span style={{ fontWeight: 700, color: 'var(--color-accent)', background: '#fff5f0', border: '1px solid #fcdcd7', padding: '2px 8px', borderRadius: 6, fontSize: 12 }}>
+                      Size: {item.size || 'M'}
+                    </span>
                   </div>
                   <span className="cart-item-price">{item.priceDisplay}</span>
 

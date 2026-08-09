@@ -7,17 +7,11 @@ import { useRouter } from 'next/navigation';
 import { siteConfig } from '@/lib/site';
 import { useCart } from './cart-context';
 import { useFavourites } from './favourites-context';
-import { products, categories } from '@/lib/data';
-
-const navLinks = [
-  { label: 'Kurti',           href: '/category/kurti' },
-  { label: 'Tops',            href: '/category/tops' },
-  { label: 'Suits',           href: '/category/suits' },
-  { label: 'Unstitched',      href: '/category/unstitched-suits' },
-  { label: 'Anarkali',        href: '/category/anarkali' },
-  { label: 'Dresses',         href: '/category/dresses' },
-  { label: 'Plazzo',          href: '/category/plazzo' },
-];
+import { useAuth } from './auth-context';
+import { AuthModal } from './auth-modal';
+import { products, categories as staticCategories } from '@/lib/data';
+import { getCategories } from '@/lib/services/products.service';
+import type { DBCategory } from '@/lib/types';
 
 type SearchResult = {
   id: string;
@@ -36,21 +30,16 @@ function useDebouncedSearch(query: string, delay = 200) {
     const t = setTimeout(() => {
       const q = query.toLowerCase();
       const matched: SearchResult[] = [];
-
-      // Search products
       products.forEach((p) => {
         if (p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)) {
           matched.push({ id: p.id, name: p.name, price: p.price, src: p.src, category: p.category, href: `/product/${p.id}` });
         }
       });
-
-      // Search categories
-      categories.forEach((c) => {
+      staticCategories.forEach((c) => {
         if (c.name.toLowerCase().includes(q)) {
           matched.push({ id: c.id, name: c.name, price: c.count, src: c.src, category: 'Category', href: `/category/${c.slug}` });
         }
       });
-
       setResults(matched.slice(0, 6));
     }, delay);
     return () => clearTimeout(t);
@@ -62,40 +51,60 @@ function useDebouncedSearch(query: string, delay = 200) {
 export function Nav() {
   const { count } = useCart();
   const { count: favCount } = useFavourites();
+  const { user, profile, isAdmin, signOut } = useAuth();
   const router = useRouter();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [drawerQuery, setDrawerQuery] = useState('');
+  const [authOpen, setAuthOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [categoriesDropdownOpen, setCategoriesDropdownOpen] = useState(false);
+  const [navCategories, setNavCategories] = useState<DBCategory[]>([]);
   const desktopSearchRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
 
   const results = useDebouncedSearch(query);
   const drawerResults = useDebouncedSearch(drawerQuery);
+
+  // Load categories from DB (with static fallback)
+  useEffect(() => {
+    getCategories().then((cats) => setNavCategories(cats.slice(0, 7)));
+  }, []);
+
+  const navLinks = navCategories.length > 0
+    ? navCategories.map((c) => ({ label: c.name, href: `/category/${c.slug}` }))
+    : staticCategories.slice(0, 7).map((c) => ({ label: c.name, href: `/category/${c.slug}` }));
 
   const openSearch = useCallback(() => {
     setSearchOpen(true);
     setTimeout(() => desktopSearchRef.current?.focus(), 50);
   }, []);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setQuery('');
+      }
+      if (profileMenuRef.current && !profileMenuRef.current.contains(e.target as Node)) {
+        setProfileMenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  // Prevent body scroll when drawer open
   useEffect(() => {
     document.body.style.overflow = drawerOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [drawerOpen]);
 
   const closeDrawer = () => { setDrawerOpen(false); setDrawerQuery(''); };
+
+  // Avatar initial from profile name or email
+  const avatarInitial = (profile?.full_name ?? user?.email ?? '?')[0].toUpperCase();
+  const avatarUrl = profile?.avatar_url ?? user?.profile?.avatar_url;
 
   return (
     <>
@@ -149,13 +158,8 @@ export function Nav() {
             )}
           </div>
 
-          {/* Search toggle button */}
-          <button
-            type="button"
-            className="btn btn-icon"
-            aria-label="Search"
-            onClick={openSearch}
-          >
+          {/* Search toggle (Desktop only, hidden on mobile since search is inside mobile drawer) */}
+          <button type="button" className="btn btn-icon hide-mobile" aria-label="Search" onClick={openSearch}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <circle cx="11" cy="11" r="8" />
               <path d="m21 21-4.35-4.35" />
@@ -180,27 +184,99 @@ export function Nav() {
             {count > 0 && <span className="cart-badge">{count}</span>}
           </Link>
 
-          {/* Hamburger */}
+          {/* Desktop User Profile Dropdown Menu */}
+          <div className="hide-mobile" ref={profileMenuRef} style={{ position: 'relative' }}>
+            {user ? (
+              <button
+                id="nav-profile-btn"
+                type="button"
+                className="btn btn-icon"
+                aria-label="My account"
+                onClick={() => setProfileMenuOpen((v) => !v)}
+                style={{ padding: 0, width: 36, height: 36, borderRadius: '50%', overflow: 'hidden', border: '2px solid var(--color-accent)' }}
+              >
+                {avatarUrl ? (
+                  <Image src={avatarUrl} alt={profile?.full_name ?? 'Avatar'} width={36} height={36} unoptimized style={{ objectFit: 'cover', borderRadius: '50%' }} />
+                ) : (
+                  <span style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--color-accent)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700 }}>
+                    {avatarInitial}
+                  </span>
+                )}
+              </button>
+            ) : (
+              <button
+                id="nav-sign-in-btn"
+                type="button"
+                className="btn btn-icon"
+                aria-label="Sign in"
+                onClick={() => setAuthOpen(true)}
+              >
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </button>
+            )}
+            {profileMenuOpen && (
+              <div style={{
+                position: 'absolute', top: 44, right: 0, background: '#fff',
+                border: '1px solid #e5e7eb', borderRadius: 12, boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+                minWidth: 180, zIndex: 100, overflow: 'hidden',
+              }}>
+                <div style={{ padding: '12px 16px', borderBottom: '1px solid #f0f0f0' }}>
+                  <div style={{ fontWeight: 600, fontSize: 14 }}>{profile?.full_name ?? 'My Account'}</div>
+                  <div style={{ fontSize: 12, color: '#888', marginTop: 2 }}>{user?.email}</div>
+                </div>
+                <Link href="/profile" onClick={() => setProfileMenuOpen(false)} style={{ display: 'block', padding: '11px 16px', fontSize: 14, color: 'inherit', textDecoration: 'none' }}>👤 My Profile</Link>
+                <Link href="/profile?tab=orders" onClick={() => setProfileMenuOpen(false)} style={{ display: 'block', padding: '11px 16px', fontSize: 14, color: 'inherit', textDecoration: 'none' }}>📦 My Orders</Link>
+                {isAdmin && (
+                  <Link href="/admin" onClick={() => setProfileMenuOpen(false)} style={{ display: 'block', padding: '11px 16px', fontSize: 14, color: 'var(--color-accent)', textDecoration: 'none', fontWeight: 600 }}>⚙️ Admin Dashboard</Link>
+                )}
+                <button
+                  type="button"
+                  onClick={() => { setProfileMenuOpen(false); signOut(); }}
+                  style={{ display: 'block', width: '100%', textAlign: 'left', padding: '11px 16px', fontSize: 14, background: 'none', border: 'none', cursor: 'pointer', color: '#dc2626', borderTop: '1px solid #f0f0f0' }}
+                >
+                  🚪 Sign Out
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Mobile User Gmail Avatar / Profile Button (Replaces 3-line hamburger dashes!) */}
           <button
             type="button"
-            className={`hamburger ${drawerOpen ? 'open' : ''}`}
+            className="show-mobile btn btn-icon"
             aria-label={drawerOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={drawerOpen}
             onClick={() => setDrawerOpen((v) => !v)}
+            style={{ padding: 0, width: 36, height: 36, borderRadius: '50%', overflow: 'hidden', border: user ? '2px solid var(--color-accent)' : 'none', flexShrink: 0 }}
           >
-            <span />
-            <span />
-            <span />
+            {user && avatarUrl ? (
+              <Image src={avatarUrl} alt={profile?.full_name ?? 'Avatar'} width={36} height={36} unoptimized style={{ objectFit: 'cover', borderRadius: '50%' }} />
+            ) : user ? (
+              <span style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--color-accent)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700 }}>
+                {avatarInitial}
+              </span>
+            ) : (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            )}
           </button>
         </div>
       </nav>
 
-      {/* Drawer overlay */}
-      <div
-        className={`nav-drawer-overlay ${drawerOpen ? 'open' : ''}`}
-        aria-hidden="true"
-        onClick={closeDrawer}
+      {/* Auth modal */}
+      <AuthModal
+        isOpen={authOpen}
+        onClose={() => setAuthOpen(false)}
+        onSuccess={() => router.push('/profile')}
       />
+
+      {/* Drawer overlay */}
+      <div className={`nav-drawer-overlay ${drawerOpen ? 'open' : ''}`} aria-hidden="true" onClick={closeDrawer} />
 
       {/* Mobile drawer */}
       <aside className={`nav-drawer ${drawerOpen ? 'open' : ''}`} aria-label="Navigation menu">
@@ -212,6 +288,23 @@ export function Nav() {
             </svg>
           </button>
         </div>
+
+        {/* User Card in Drawer */}
+        {user && (
+          <div style={{ margin: '0 16px 12px', padding: '12px 14px', background: '#f5f5f5', borderRadius: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
+            {avatarUrl ? (
+              <Image src={avatarUrl} alt="Avatar" width={38} height={38} unoptimized style={{ borderRadius: '50%', objectFit: 'cover' }} />
+            ) : (
+              <span style={{ width: 38, height: 38, borderRadius: '50%', background: 'var(--color-accent)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 700 }}>
+                {avatarInitial}
+              </span>
+            )}
+            <div style={{ overflow: 'hidden' }}>
+              <div style={{ fontWeight: 700, fontSize: 14, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{profile?.full_name || 'My Account'}</div>
+              <div style={{ fontSize: 12, color: '#666', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{user.email}</div>
+            </div>
+          </div>
+        )}
 
         {/* Drawer search */}
         <div className="nav-drawer-search">
@@ -245,17 +338,70 @@ export function Nav() {
 
         {/* Drawer nav links */}
         <nav className="nav-drawer-links">
-          {navLinks.map((link) => (
-            <Link key={link.label} href={link.href} onClick={closeDrawer}>
-              {link.label}
-            </Link>
-          ))}
-          <Link href="/category/dresses" className="nav-sale-mobile" onClick={closeDrawer}>
-            🔥 Sale
-          </Link>
+          {/* Categories Accordion Dropdown Tag */}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <button
+              type="button"
+              onClick={() => setCategoriesDropdownOpen((v) => !v)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                width: '100%',
+                background: 'none',
+                border: 'none',
+                padding: '12px 0',
+                fontSize: 16,
+                fontWeight: 700,
+                color: 'inherit',
+                cursor: 'pointer',
+                textAlign: 'left',
+              }}
+            >
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                🏷️ Categories ({navLinks.length})
+              </span>
+              <span style={{ fontSize: 13, color: '#888', transition: 'transform 0.2s', transform: categoriesDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+                ▼
+              </span>
+            </button>
+
+            {categoriesDropdownOpen && (
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                paddingLeft: 12,
+                marginLeft: 4,
+                borderLeft: '2px solid var(--color-accent-100, #fff0ed)',
+                marginBottom: 8,
+              }}>
+                {navLinks.map((link) => (
+                  <Link key={link.label} href={link.href} onClick={closeDrawer} style={{ padding: '8px 0', fontSize: 14, color: '#444', textDecoration: 'none', fontWeight: 500 }}>
+                    {link.label}
+                  </Link>
+                ))}
+                <Link href="/category/dresses" onClick={closeDrawer} style={{ padding: '8px 0', fontSize: 14, color: 'var(--color-accent)', fontWeight: 600, textDecoration: 'none' }}>
+                  🔥 Sale Collection
+                </Link>
+              </div>
+            )}
+          </div>
           <Link href="/favourites" onClick={closeDrawer} style={{ color: '#e91e63' }}>
             ♥ Favourites{favCount > 0 ? ` (${favCount})` : ''}
           </Link>
+          {user ? (
+            <>
+              <Link href="/profile" onClick={closeDrawer}>👤 My Profile</Link>
+              {isAdmin && <Link href="/admin" onClick={closeDrawer} style={{ color: 'var(--color-accent)' }}>⚙️ Admin</Link>}
+              <button type="button" onClick={() => { closeDrawer(); signOut(); }} style={{ background: 'none', border: 'none', textAlign: 'left', padding: 0, fontSize: 'inherit', cursor: 'pointer', color: '#dc2626' }}>
+                🚪 Sign Out
+              </button>
+            </>
+          ) : (
+            <button type="button" onClick={() => { closeDrawer(); setAuthOpen(true); }} style={{ background: 'none', border: 'none', textAlign: 'left', padding: 0, fontSize: 'inherit', cursor: 'pointer' }}>
+              👤 Sign In
+            </button>
+          )}
         </nav>
 
         <div className="nav-drawer-footer">
