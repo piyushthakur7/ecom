@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { insforge } from '@/lib/insforge-client';
 
 /* ── Types ─────────────────────────────────────────────────────────────── */
 export type Review = {
@@ -13,35 +14,6 @@ export type Review = {
   date: string;         // ISO date string
   verified: boolean;
 };
-
-/* ── Seed data (shown before any user submissions) ──────────────────────── */
-const seedReviews: Review[] = [
-  {
-    id: 'r1', productId: 'prod-1',
-    name: 'Gurleen K.', rating: 5, verified: true,
-    title: 'Absolutely love the fabric!',
-    comment: "The mul fabric is incredibly soft and breathes really well. The block print is vibrant and hasn't faded even after multiple washes. Will definitely order again.",
-    date: '2026-07-18',
-  },
-  {
-    id: 'r2', productId: 'prod-1',
-    name: 'Aditi R.', rating: 4, verified: true,
-    title: 'Beautiful kurta, slightly long',
-    comment: 'The colour is exactly as shown in the photos. Very comfortable for daily wear. My only issue is that it runs a little long — I had to get it altered slightly. Otherwise perfect!',
-    date: '2026-07-04',
-  },
-  {
-    id: 'r3', productId: 'prod-1',
-    name: 'Meera S.', rating: 5, verified: false,
-    title: 'Great purchase',
-    comment: 'Bought this as a gift for my sister and she absolutely loves it. The packaging was neat and delivery was quick.',
-    date: '2026-06-22',
-  },
-];
-
-function getSeeds(productId: string): Review[] {
-  return seedReviews.filter((r) => r.productId === productId);
-}
 
 /* ── Helpers ────────────────────────────────────────────────────────────── */
 function formatDate(iso: string) {
@@ -168,11 +140,43 @@ function ReviewCard({ review }: { review: Review }) {
 
 /* ── Main Component ─────────────────────────────────────────────────────── */
 export function ReviewSection({ productId }: { productId: string }) {
-  const [reviews, setReviews] = useState<Review[]>(() => getSeeds(productId));
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [form, setForm] = useState({ name: '', title: '', comment: '', rating: 0 });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [showForm, setShowForm] = useState(false);
+
+  useEffect(() => {
+    async function fetchReviews() {
+      try {
+        const { data, error } = await insforge.database
+          .from('reviews')
+          .select('*')
+          .eq('product_id', productId)
+          .order('created_at', { ascending: false });
+
+        if (data && !error) {
+          const mapped: Review[] = (data as unknown[]).map((r) => {
+            const row = r as Record<string, unknown>;
+            return {
+              id: String(row.id),
+              productId: String(row.product_id),
+              name: String(row.user_name || 'Anonymous'),
+              rating: Number(row.rating || 5),
+              title: '',
+              comment: String(row.comment || ''),
+              date: String(row.created_at || new Date().toISOString()),
+              verified: true,
+            };
+          });
+          setReviews(mapped);
+        }
+      } catch (err) {
+        console.error('Failed to load product reviews:', err);
+      }
+    }
+    fetchReviews();
+  }, [productId]);
 
   const set = (k: keyof typeof form, v: string | number) =>
     setForm((f) => ({ ...f, [k]: v }));
@@ -181,14 +185,15 @@ export function ReviewSection({ productId }: { productId: string }) {
     const e: Record<string, string> = {};
     if (!form.name.trim()) e.name = 'Please enter your name';
     if (form.rating === 0) e.rating = 'Please choose a star rating';
-    if (form.comment.trim().length < 15) e.comment = 'Review must be at least 15 characters';
+    if (form.comment.trim().length < 5) e.comment = 'Review must be at least 5 characters';
     setErrors(e);
     return Object.keys(e).length === 0;
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validate()) return;
+
     const newReview: Review = {
       id: `r-${Date.now()}`,
       productId,
@@ -196,14 +201,26 @@ export function ReviewSection({ productId }: { productId: string }) {
       title: form.title.trim(),
       comment: form.comment.trim(),
       rating: form.rating,
-      date: new Date().toISOString().split('T')[0],
-      verified: false,
+      date: new Date().toISOString(),
+      verified: true,
     };
+
     setReviews((prev) => [newReview, ...prev]);
     setForm({ name: '', title: '', comment: '', rating: 0 });
     setSubmitted(true);
     setShowForm(false);
     setTimeout(() => setSubmitted(false), 4000);
+
+    try {
+      await insforge.database.from('reviews').insert([{
+        product_id: productId,
+        user_name: newReview.name,
+        rating: newReview.rating,
+        comment: newReview.comment,
+      }]);
+    } catch (err) {
+      console.error('Failed to save review to InsForge database:', err);
+    }
   }
 
   return (

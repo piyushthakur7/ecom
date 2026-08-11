@@ -1,24 +1,22 @@
 /**
  * Cloudinary Image Upload Utility
- * Uploads files to Cloudinary using unsigned upload preset, returning secure image URL.
+ * Sends files to the server-side signed upload API route (/api/upload), returning a secure Cloudinary CDN image URL.
  */
-
-const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'demo';
-const UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'docs_upload_example_us_preset';
 
 export async function uploadToCloudinary(file: File): Promise<string> {
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('upload_preset', UPLOAD_PRESET);
 
   try {
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+    const res = await fetch('/api/upload', {
       method: 'POST',
       body: formData,
     });
 
-    if (!res.ok) {
-      // Fallback: convert file to local Object URL or Data URL if demo key is restricted
+    const data = await res.json();
+
+    if (!res.ok || !data.url) {
+      console.warn('Signed upload failed, falling back to local Data URL:', data?.error);
       return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onloadend = () => resolve(reader.result as string);
@@ -26,10 +24,9 @@ export async function uploadToCloudinary(file: File): Promise<string> {
       });
     }
 
-    const data = await res.json();
-    return data.secure_url || data.url;
+    return data.url;
   } catch (err) {
-    console.warn('Cloudinary upload error, using local data URL fallback:', err);
+    console.warn('Cloudinary upload route error, using Data URL fallback:', err);
     return new Promise((resolve) => {
       const reader = new FileReader();
       reader.onloadend = () => resolve(reader.result as string);

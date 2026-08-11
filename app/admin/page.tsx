@@ -39,7 +39,7 @@ export default function AdminDashboard() {
   const [prodForm, setProdForm] = useState({
     name: '', category_slug: 'kurti', price: '', original_price: '',
     stock: '50', badge: '', description: '', images: [] as string[],
-    sizes: 'XS,S,M,L,XL,XXL',
+    sizes: 'XS,S,M,L,XL,XXL', color: '',
   });
 
   // Auth guard
@@ -137,7 +137,7 @@ export default function AdminDashboard() {
     setEditingProd(null);
     setProdForm({
       name: '', category_slug: categories[0]?.slug || 'kurti', price: '', original_price: '',
-      stock: '50', badge: '', description: '', images: [], sizes: 'XS,S,M,L,XL,XXL',
+      stock: '50', badge: '', description: '', images: [], sizes: 'XS,S,M,L,XL,XXL', color: '',
     });
     setIsProdModalOpen(true);
   }
@@ -154,6 +154,7 @@ export default function AdminDashboard() {
       description: p.description,
       images: [...p.images],
       sizes: p.sizes.join(','),
+      color: p.color ?? '',
     });
     setIsProdModalOpen(true);
   }
@@ -176,6 +177,7 @@ export default function AdminDashboard() {
       badge: prodForm.badge || null,
       images: prodForm.images,
       sizes: prodForm.sizes.split(',').map((s) => s.trim()).filter(Boolean),
+      color: prodForm.color.trim() || null,
       stock: parseInt(prodForm.stock) || 50,
       description: prodForm.description || '',
       details: null,
@@ -190,7 +192,7 @@ export default function AdminDashboard() {
     setProdForm({
       name: '', category_slug: 'kurti', price: '', original_price: '',
       stock: '50', badge: '', description: '', images: [],
-      sizes: 'XS,S,M,L,XL,XXL',
+      sizes: 'XS,S,M,L,XL,XXL', color: '',
     });
 
     if (isEdit && targetId) {
@@ -198,15 +200,18 @@ export default function AdminDashboard() {
       const { id, ...rest } = payload;
       const { error } = await insforge.database.from('products').update(rest).eq('id', id);
       if (error) {
-        console.error('Failed to update product in DB:', error);
-        alert(`Failed to update product in database: ${error.message || JSON.stringify(error)}`);
+        const errMsg = error.message || error.details || error.hint || JSON.stringify(error);
+        console.error('Failed to update product in DB:', errMsg, error);
+        alert(`Failed to update product in database: ${errMsg}`);
       }
     } else {
       setProducts((prev) => [payload, ...prev]);
       const { error } = await insforge.database.from('products').insert([payload]);
       if (error) {
-        console.error('Failed to insert product in DB:', error);
-        alert(`Failed to save product to database: ${error.message || JSON.stringify(error)}`);
+        const errMsg = error.message || error.details || error.hint || JSON.stringify(error);
+        console.error('Failed to insert product in DB:', errMsg, error);
+        setProducts((prev) => prev.filter((p) => p.id !== payload.id));
+        alert(`Failed to save product to database: ${errMsg}`);
       }
     }
   }
@@ -684,6 +689,9 @@ export default function AdminDashboard() {
                 <option>New Arrival</option>
               </select>
             </AdminField>
+            <AdminField label="Color">
+              <input className="form-input" value={prodForm.color} onChange={(e) => setProdForm((f) => ({ ...f, color: e.target.value }))} placeholder="e.g. Pink, Royal Blue, Maroon" />
+            </AdminField>
             <AdminField label="Sizes (comma-separated)">
               <input className="form-input" value={prodForm.sizes} onChange={(e) => setProdForm((f) => ({ ...f, sizes: e.target.value }))} placeholder="XS,S,M,L,XL,XXL" />
             </AdminField>
@@ -857,7 +865,7 @@ function OrderDetailsModal({
               <thead>
                 <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
                   <th style={{ padding: '10px 12px', textAlign: 'left' }}>Item</th>
-                  <th style={{ padding: '10px 12px', textAlign: 'center' }}>Size</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'center' }}>Size / Color</th>
                   <th style={{ padding: '10px 12px', textAlign: 'center' }}>Qty</th>
                   <th style={{ padding: '10px 12px', textAlign: 'right' }}>Price</th>
                   <th style={{ padding: '10px 12px', textAlign: 'right' }}>Subtotal</th>
@@ -875,9 +883,16 @@ function OrderDetailsModal({
                       </div>
                     </td>
                     <td style={{ padding: '10px 12px', textAlign: 'center' }}>
-                      <span style={{ fontWeight: 700, color: 'var(--color-accent)', background: '#fff5f0', border: '1px solid #fcdcd7', padding: '2px 8px', borderRadius: 6, fontSize: 12 }}>
-                        {item.size || 'M'}
-                      </span>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                        <span style={{ fontWeight: 700, color: 'var(--color-accent)', background: '#fff5f0', border: '1px solid #fcdcd7', padding: '2px 8px', borderRadius: 6, fontSize: 12 }}>
+                          Size: {item.size || 'M'}
+                        </span>
+                        {item.color && (
+                          <span style={{ fontWeight: 700, color: '#18181b', background: '#f4f4f5', border: '1px solid #e4e4e7', padding: '2px 8px', borderRadius: 6, fontSize: 12 }}>
+                            Color: {item.color}
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td style={{ padding: '10px 12px', textAlign: 'center', fontWeight: 600 }}>
                       {item.quantity}

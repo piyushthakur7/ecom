@@ -67,6 +67,7 @@ export type DBProduct = {
   badge: string | null;
   images: string[];
   sizes: string[];
+  color?: string | null;
   stock: number;
   description: string;
   details: Record<string, string> | null;
@@ -80,6 +81,7 @@ export type DBCartItem = {
   product_id: string;
   quantity: number;
   size: string | null;
+  color?: string | null;
   price: number;
   name: string;
   image: string;
@@ -103,6 +105,7 @@ export type OrderLineItem = {
   price: number;
   quantity: number;
   size?: string;
+  color?: string;
   image: string;
 };
 

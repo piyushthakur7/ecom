@@ -9,9 +9,8 @@ import { useCart } from './cart-context';
 import { useFavourites } from './favourites-context';
 import { useAuth } from './auth-context';
 import { AuthModal } from './auth-modal';
-import { products, categories as staticCategories } from '@/lib/data';
-import { getCategories } from '@/lib/services/products.service';
-import type { DBCategory } from '@/lib/types';
+import { getCategories, getProducts } from '@/lib/services/products.service';
+import type { DBCategory, DBProduct } from '@/lib/types';
 
 type SearchResult = {
   id: string;
@@ -27,17 +26,20 @@ function useDebouncedSearch(query: string, delay = 200) {
 
   useEffect(() => {
     if (!query.trim()) { setResults([]); return; }
-    const t = setTimeout(() => {
+    const t = setTimeout(async () => {
       const q = query.toLowerCase();
       const matched: SearchResult[] = [];
-      products.forEach((p) => {
-        if (p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)) {
-          matched.push({ id: p.id, name: p.name, price: p.price, src: p.src, category: p.category, href: `/product/${p.id}` });
+      const [prods, cats] = await Promise.all([getProducts(), getCategories()]);
+
+      prods.forEach((p) => {
+        if (p.name.toLowerCase().includes(q) || p.category_slug.toLowerCase().includes(q)) {
+          const img = Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : '';
+          matched.push({ id: p.id, name: p.name, price: `₹${p.price}`, src: img, category: p.category_slug, href: `/product/${p.id}` });
         }
       });
-      staticCategories.forEach((c) => {
+      cats.forEach((c) => {
         if (c.name.toLowerCase().includes(q)) {
-          matched.push({ id: c.id, name: c.name, price: c.count, src: c.src, category: 'Category', href: `/category/${c.slug}` });
+          matched.push({ id: c.id, name: c.name, price: c.count || '', src: c.src, category: 'Category', href: `/category/${c.slug}` });
         }
       });
       setResults(matched.slice(0, 6));
@@ -73,9 +75,7 @@ export function Nav() {
     getCategories().then((cats) => setNavCategories(cats.slice(0, 7)));
   }, []);
 
-  const navLinks = navCategories.length > 0
-    ? navCategories.map((c) => ({ label: c.name, href: `/category/${c.slug}` }))
-    : staticCategories.slice(0, 7).map((c) => ({ label: c.name, href: `/category/${c.slug}` }));
+  const navLinks = navCategories.map((c: DBCategory) => ({ label: c.name, href: `/category/${c.slug}` }));
 
   const openSearch = useCallback(() => {
     setSearchOpen(true);

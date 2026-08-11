@@ -392,7 +392,7 @@ export default function ProfilePage() {
                       <div style={{ padding: '14px 20px' }}>
                         {order.items.map((item, i) => (
                           <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, padding: '4px 0', borderBottom: i < order.items.length - 1 ? '1px solid #f0f0f0' : 'none' }}>
-                            <span>{item.name}{item.size ? ` (${item.size})` : ''} × {item.quantity}</span>
+                            <span>{item.name}{item.size || item.color ? ` (${[item.size ? `Size: ${item.size}` : '', item.color ? `Color: ${item.color}` : ''].filter(Boolean).join(', ')})` : ''} × {item.quantity}</span>
                             <span style={{ fontWeight: 600 }}>₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
                           </div>
                         ))}

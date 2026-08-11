@@ -56,7 +56,7 @@ export default function CartPage() {
           {/* Items list */}
           <div>
             {items.map((item) => (
-              <div key={`${item.id}-${item.size ?? ''}`} className="cart-item">
+              <div key={`${item.id}-${item.size ?? ''}-${item.color ?? ''}`} className="cart-item">
                 {/* Thumbnail */}
                 <Link href={`/product/${item.id}`}>
                   <div className="cart-item-img">
@@ -74,6 +74,11 @@ export default function CartPage() {
                     <span style={{ fontWeight: 700, color: 'var(--color-accent)', background: '#fff5f0', border: '1px solid #fcdcd7', padding: '2px 8px', borderRadius: 6, fontSize: 12 }}>
                       Size: {item.size || 'M'}
                     </span>
+                    {item.color && (
+                      <span style={{ fontWeight: 700, color: '#18181b', background: '#f4f4f5', border: '1px solid #e4e4e7', padding: '2px 8px', borderRadius: 6, fontSize: 12 }}>
+                        Color: {item.color}
+                      </span>
+                    )}
                   </div>
                   <span className="cart-item-price">{item.priceDisplay}</span>
 
@@ -83,7 +88,7 @@ export default function CartPage() {
                       type="button"
                       className="qty-btn"
                       aria-label="Decrease quantity"
-                      onClick={() => updateQty(item.id, item.quantity - 1, item.size)}
+                      onClick={() => updateQty(item.id, item.quantity - 1, item.size, item.color)}
                     >
                       −
                     </button>
@@ -92,7 +97,7 @@ export default function CartPage() {
                       type="button"
                       className="qty-btn"
                       aria-label="Increase quantity"
-                      onClick={() => updateQty(item.id, item.quantity + 1, item.size)}
+                      onClick={() => updateQty(item.id, item.quantity + 1, item.size, item.color)}
                     >
                       +
                     </button>
@@ -104,7 +109,7 @@ export default function CartPage() {
                   type="button"
                   className="cart-remove-btn cart-item-remove"
                   aria-label={`Remove ${item.name}`}
-                  onClick={() => removeFromCart(item.id, item.size)}
+                  onClick={() => removeFromCart(item.id, item.size, item.color)}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
                     <path d="M18 6 6 18M6 6l12 12" />

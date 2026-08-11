@@ -1,5 +1,13 @@
 import { Fragment } from 'react';
-import { marqueeItems } from '@/lib/data';
+
+const marqueeItems = [
+  '100% Pure Mul & Cotton',
+  'Hand Block Printed',
+  'Dispatch from Amritsar in 48 Hours',
+  'Free Shipping Across India',
+  'Ethically Crafted & Sustainable',
+  'Easy Returns & Exchanges',
+];
 
 /** The track holds two identical groups so the -50% keyframe loops seamlessly. */
 export function Marquee() {

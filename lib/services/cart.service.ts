@@ -19,6 +19,7 @@ export async function fetchCartFromDB(userId: string): Promise<CartItem[]> {
         image: String(r.image),
         category: String(r.category ?? ''),
         size: r.size ? String(r.size) : undefined,
+        color: r.color ? String(r.color) : undefined,
         quantity: Number(r.quantity),
         _dbRowId: String(r.id),
       } as CartItem & { _dbRowId: string };
@@ -34,13 +35,14 @@ export async function upsertCartItem(
   item: CartItem
 ): Promise<void> {
   try {
-    // Check if row exists for this user + product + size combo
+    // Check if row exists for this user + product + size + color combo
     const { data } = await insforge.database
       .from('cart_items')
       .select('id, quantity')
       .eq('user_id', userId)
       .eq('product_id', item.id)
-      .eq('size', item.size ?? null);
+      .eq('size', item.size ?? null)
+      .eq('color', item.color ?? null);
 
     const existing = Array.isArray(data) && data.length > 0
       ? (data[0] as Record<string, unknown>)
@@ -57,6 +59,7 @@ export async function upsertCartItem(
         product_id: item.id,
         quantity: item.quantity,
         size: item.size ?? null,
+        color: item.color ?? null,
         price: item.price,
         name: item.name,
         image: item.image,
@@ -73,6 +76,7 @@ export async function updateCartItemQty(
   userId: string,
   productId: string,
   size: string | undefined,
+  color: string | undefined,
   qty: number
 ): Promise<void> {
   try {
@@ -81,7 +85,8 @@ export async function updateCartItemQty(
       .update({ quantity: qty })
       .eq('user_id', userId)
       .eq('product_id', productId)
-      .eq('size', size ?? null);
+      .eq('size', size ?? null)
+      .eq('color', color ?? null);
   } catch {
     // silent
   }
@@ -91,7 +96,8 @@ export async function updateCartItemQty(
 export async function removeCartItemFromDB(
   userId: string,
   productId: string,
-  size: string | undefined
+  size: string | undefined,
+  color?: string | undefined
 ): Promise<void> {
   try {
     await insforge.database
@@ -99,7 +105,8 @@ export async function removeCartItemFromDB(
       .delete()
       .eq('user_id', userId)
       .eq('product_id', productId)
-      .eq('size', size ?? null);
+      .eq('size', size ?? null)
+      .eq('color', color ?? null);
   } catch {
     // silent
   }

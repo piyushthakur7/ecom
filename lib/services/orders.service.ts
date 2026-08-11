@@ -29,6 +29,7 @@ export async function createOrder(input: CreateOrderInput): Promise<{ orderId: s
       price: i.price,
       quantity: i.quantity,
       size: i.size,
+      color: i.color,
       image: i.image,
     }));
 

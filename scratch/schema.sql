@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS public.products (
   badge TEXT,
   images JSONB NOT NULL DEFAULT '[]'::jsonb,
   sizes JSONB DEFAULT '["XS","S","M","L","XL","XXL"]'::jsonb,
+  color TEXT,
   stock INT DEFAULT 50,
   description TEXT,
   details JSONB DEFAULT '[]'::jsonb,

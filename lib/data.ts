@@ -29,32 +29,31 @@ export type HeroSlide = {
   alt: string;
 };
 
-export const heroSlides: readonly HeroSlide[] = [
-  {
-    id: 'slide-1',
-    src: '/images/hero/banner-1.jpg',
-    alt: 'Experience The Best Quality — Festive Collection',
-  },
-  {
-    id: 'slide-2',
-    src: '/images/hero/banner-2.jpg',
-    alt: 'Discover Hand-Block Printed Cotton & Silk Blend Suits',
-  },
-  {
-    id: 'slide-3',
-    src: '/images/hero/banner-3.jpg',
-    alt: 'Premium Fabrics & Craftsmanship — Kurtis, Plazos & Suits',
-  },
-];
+// export const heroSlides: readonly HeroSlide[] = [
+//   {
+//     id: 'slide-1',
+//     src: '/images/hero/banner-1.jpg',
+//     alt: 'Experience The Best Quality — Festive Collection',
+//   },
+//   {
+//     id: 'slide-2',
+//     src: '/images/hero/banner-2.jpg',
+//     alt: 'Discover Hand-Block Printed Cotton & Silk Blend Suits',
+//   },
+//   {
+//     id: 'slide-3',
+//     src: '/images/hero/banner-3.jpg',
+//     alt: 'Premium Fabrics & Craftsmanship — Kurtis, Plazos & Suits',
+//   },
+// ];
 
 // ─── Stats ─────────────────────────────────────────────────────────────────
 export const stats = [
-  // { value: '₹500–1,500', label: 'Every piece' },
   { value: '160+',        label: 'Styles live' },
   { value: '48h',         label: 'Dispatch, Amritsar' },
 ];
 
-// ─── Categories (7 required) ───────────────────────────────────────────────
+// ─── Categories ───────────────────────────────────────────────────────────
 export type Category = (typeof categories)[number];
 
 export const categories = [
@@ -121,12 +120,65 @@ export const categories = [
     alt: 'Plazzo — category photo',
     credit: `Photo by ${by.jainica[0]} on Unsplash`,
   },
+  {
+    id: 'cat-8',
+    name: 'Lehenga',
+    slug: 'lehengas',
+    count: '15 styles',
+    src: u('photo-1597983073750-16f5ded1321f'),
+    alt: 'Lehenga — category photo',
+    credit: `Photo by ${by.dollar[0]} on Unsplash`,
+  },
 ] as const;
 
 // ─── Products ──────────────────────────────────────────────────────────────
 export type Product = (typeof products)[number];
 
 export const products = [
+  {
+    id: 'prod-226',
+    name: 'Digital Print Embroidery Sequence Work Kaftan Sharara Set',
+    price: '₹899',
+    was: '₹1,299',
+    off: '31% off',
+    showOff: siteConfig.showSaleBadges,
+    category: 'suits',
+    rating: 4.9,
+    reviewCount: 18,
+    badge: 'New Arrival' as const,
+    src: '/images/products/kaftan-sharara-1.jpg',
+    images: [
+      '/images/products/kaftan-sharara-1.jpg',
+      '/images/products/kaftan-sharara-2.jpg',
+      '/images/products/kaftan-sharara-3.jpg',
+      '/images/products/kaftan-sharara-4.jpg',
+      '/images/products/kaftan-sharara-5.jpg',
+    ],
+    credit: 'Saanshika Ethnics Collection (Code: 226)',
+    description:
+      'New Designer Fancy Digital Print with Embroidery Sequence Work Kaftan Set (Code: 226). Kaftan Fabric: Heavy Faux Georgette with Fancy Digital Print & Embroidered Sequins Work with Fancy Latkan (Length: 36"). Choli Fabric: Heavy Faux Georgette. Sharara Fabric: Heavy Faux Georgette with Heavy Micro Cotton Inner (Length: 39"). Full stitched, sizes M(38), L(40), XL(42) max up to 44. Weight: 800g.',
+    sizes: ['M', 'L', 'XL'],
+  },
+  {
+    id: 'prod-lehenga-2026',
+    name: 'Rang Be Rangi Navratri Rayon Lehenga Set',
+    price: '₹1,399',
+    was: '₹1,899',
+    off: '26% off',
+    showOff: siteConfig.showSaleBadges,
+    category: 'lehengas',
+    rating: 5.0,
+    reviewCount: 12,
+    badge: 'Trending' as const,
+    src: u('photo-1597983073750-16f5ded1321f'),
+    images: [
+      u('photo-1597983073750-16f5ded1321f'),
+    ],
+    credit: 'Navaratri 2026 Collection',
+    description:
+      '#Navaratri 2026 Collection — Rang Be Rangi. Pehnava Jo Virasat Ban Jaye. Elegant Navratri Lehenga With Graceful 4-Meter Flair & Timeless Festive Vibe. Lehenga Fabric: 14 kg Rayon with Colorful Fancy Border & Micro Cotton Inner (Height: 40", Flair: 4M). Blouse Fabric: Banglory Silk with Heavy Front & Back Embroidery Work and Back Side Dori Pattern. Dupatta Not Available. Premium Quality. Weight: 1.2 KG.',
+    sizes: ['M', 'L', 'XL', 'Free Size'],
+  },
   {
     id: 'prod-1',
     name: 'Block-print Mul Kurti — Brick',

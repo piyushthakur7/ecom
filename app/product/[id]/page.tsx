@@ -37,6 +37,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
   const [product, setProduct] = useState<DBProduct | null | undefined>(undefined); // undefined = loading
   const [related, setRelated] = useState<DBProduct[]>([]);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [added, setAdded] = useState(false);
 
   useEffect(() => {
@@ -45,6 +46,12 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
       if (p) {
         if (p.sizes && p.sizes.length > 0) setSelectedSize(p.sizes[0]);
         else setSelectedSize('M');
+
+        if (p.color) {
+          const colors = p.color.split(',').map((c) => c.trim()).filter(Boolean);
+          if (colors.length > 0) setSelectedColor(colors[0]);
+        }
+
         getProductsByCategory(p.category_slug).then((all) =>
           setRelated(all.filter((r) => r.id !== p.id).slice(0, 4))
         );
@@ -80,6 +87,10 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
     ? `${Math.round((1 - p.price / p.original_price) * 100)}% off`
     : null;
 
+  const colorOptions = p.color
+    ? p.color.split(',').map((c) => c.trim()).filter(Boolean)
+    : [];
+
   function handleAddToCart() {
     addToCart({
       id: p.id,
@@ -89,6 +100,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
       image: img,
       category: p.category_slug,
       size: selectedSize ?? undefined,
+      color: selectedColor ?? undefined,
     });
     setAdded(true);
     toast(`${p.name} added to cart`);
@@ -104,6 +116,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
       image: img,
       category: p.category_slug,
       size: selectedSize ?? undefined,
+      color: selectedColor ?? undefined,
     });
     router.push('/checkout');
   }
@@ -158,6 +171,29 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
               {wasDisplay && <span className="price-was">{wasDisplay}</span>}
               {offPct && <span className="price-off">({offPct})</span>}
             </div>
+
+            {/* Color selector */}
+            {colorOptions.length > 0 && (
+              <>
+                <hr className="product-divider" />
+                <div className="size-selector">
+                  <span className="size-label">Color: <strong style={{ color: '#18181b', fontWeight: 600 }}>{selectedColor}</strong></span>
+                  <div className="size-options">
+                    {colorOptions.map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        className={`size-btn ${selectedColor === c ? 'selected' : ''}`}
+                        onClick={() => setSelectedColor(c)}
+                        style={{ borderRadius: 20, padding: '6px 16px', minWidth: 'auto' }}
+                      >
+                        🎨 {c}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
 
             {/* Size selector */}
             {p.sizes && p.sizes.length > 0 && (

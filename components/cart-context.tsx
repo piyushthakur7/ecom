@@ -19,6 +19,7 @@ export type CartItem = {
   image: string;
   category: string;
   size?: string;
+  color?: string;
   quantity: number;
 };
 
@@ -27,16 +28,17 @@ type CartValue = {
   count: number;
   total: number;
   addToCart: (product: Omit<CartItem, 'quantity'>) => void;
-  removeFromCart: (id: string, size?: string) => void;
-  updateQty: (id: string, qty: number, size?: string) => void;
+  removeFromCart: (id: string, size?: string, color?: string) => void;
+  updateQty: (id: string, qty: number, size?: string, color?: string) => void;
   clearCart: () => void;
 };
 
 const CartContext = createContext<CartValue | null>(null);
 
-function makeKey(id: string, size?: string) {
+function makeKey(id: string, size?: string, color?: string) {
   const finalSize = size || 'M';
-  return `${id}::${finalSize}`;
+  const finalColor = color || '';
+  return `${id}::${finalSize}::${finalColor}`;
 }
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
@@ -70,54 +72,55 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [user, authLoading]);
 
   const addToCart = useCallback((product: Omit<CartItem, 'quantity'>) => {
-    const itemWithSize: Omit<CartItem, 'quantity'> = {
+    const itemWithDetails: Omit<CartItem, 'quantity'> = {
       ...product,
       size: product.size || 'M',
+      color: product.color || undefined,
     };
 
     setItems((prev) => {
-      const key = makeKey(itemWithSize.id, itemWithSize.size);
-      const existing = prev.find((i) => makeKey(i.id, i.size) === key);
+      const key = makeKey(itemWithDetails.id, itemWithDetails.size, itemWithDetails.color);
+      const existing = prev.find((i) => makeKey(i.id, i.size, i.color) === key);
       let next: CartItem[];
       if (existing) {
         next = prev.map((i) =>
-          makeKey(i.id, i.size) === key ? { ...i, quantity: i.quantity + 1 } : i
+          makeKey(i.id, i.size, i.color) === key ? { ...i, quantity: i.quantity + 1 } : i
         );
       } else {
-        next = [...prev, { ...itemWithSize, quantity: 1 }];
+        next = [...prev, { ...itemWithDetails, quantity: 1 }];
       }
       // Persist to DB if logged in
       const uid = prevUserIdRef.current;
       if (uid) {
-        const updated = next.find((i) => makeKey(i.id, i.size) === key);
+        const updated = next.find((i) => makeKey(i.id, i.size, i.color) === key);
         if (updated) upsertCartItem(uid, updated);
       }
       return next;
     });
   }, []);
 
-  const removeFromCart = useCallback((id: string, size?: string) => {
-    const key = makeKey(id, size);
+  const removeFromCart = useCallback((id: string, size?: string, color?: string) => {
+    const key = makeKey(id, size, color);
     setItems((prev) => {
-      const next = prev.filter((i) => makeKey(i.id, i.size) !== key);
+      const next = prev.filter((i) => makeKey(i.id, i.size, i.color) !== key);
       const uid = prevUserIdRef.current;
-      if (uid) removeCartItemFromDB(uid, id, size);
+      if (uid) removeCartItemFromDB(uid, id, size, color);
       return next;
     });
   }, []);
 
-  const updateQty = useCallback((id: string, qty: number, size?: string) => {
-    const key = makeKey(id, size);
+  const updateQty = useCallback((id: string, qty: number, size?: string, color?: string) => {
+    const key = makeKey(id, size, color);
     const uid = prevUserIdRef.current;
     if (qty <= 0) {
       setItems((prev) => {
-        if (uid) removeCartItemFromDB(uid, id, size);
-        return prev.filter((i) => makeKey(i.id, i.size) !== key);
+        if (uid) removeCartItemFromDB(uid, id, size, color);
+        return prev.filter((i) => makeKey(i.id, i.size, i.color) !== key);
       });
     } else {
       setItems((prev) => {
-        const next = prev.map((i) => (makeKey(i.id, i.size) === key ? { ...i, quantity: qty } : i));
-        if (uid) updateCartItemQty(uid, id, size, qty);
+        const next = prev.map((i) => (makeKey(i.id, i.size, i.color) === key ? { ...i, quantity: qty } : i));
+        if (uid) updateCartItemQty(uid, id, size, color, qty);
         return next;
       });
     }
