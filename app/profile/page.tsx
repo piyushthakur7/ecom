@@ -34,7 +34,7 @@ const emptyAddress: Omit<SavedAddress, 'id'> = {
   name: '', phone: '', street: '', city: '', state: '', pincode: '', landmark: '', isDefault: false,
 };
 
-export default function ProfilePage() {
+function ProfileContent() {
   const { user, profile, isLoading, refreshProfile, patchProfile, signOut } = useAuth();
   const searchParams = useSearchParams();
   const toast = useToast();
@@ -425,5 +425,21 @@ export default function ProfilePage() {
       </div>
       <Footer />
     </main>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <React.Suspense
+      fallback={
+        <main>
+          <div className="section" style={{ minHeight: '60vh' }}>
+            <div style={{ height: 28, background: '#f0eeee', borderRadius: 4, width: '30%', animation: 'pulse 1.5s ease-in-out infinite', marginBottom: 24 }} />
+          </div>
+        </main>
+      }
+    >
+      <ProfileContent />
+    </React.Suspense>
   );
 }
