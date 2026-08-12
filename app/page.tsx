@@ -1,4 +1,5 @@
 import { Hero } from '@/components/hero';
+import { VideoSection } from '@/components/product-videos';
 import { Categories } from '@/components/categories';
 import { Featured } from '@/components/featured';
 import { Features } from '@/components/features';
@@ -11,6 +12,8 @@ export default function HomePage() {
   return (
     <main>
       <Hero />
+      <hr className="rule" />
+      <VideoSection />
       <hr className="rule" />
       <Categories />
       <hr className="rule" />
