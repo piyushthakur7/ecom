@@ -12,8 +12,7 @@ export default function HomePage() {
   return (
     <main>
       <Hero />
-      <hr className="rule" />
-      <VideoSection />
+      
       <hr className="rule" />
       <Categories />
       <hr className="rule" />
@@ -26,7 +25,10 @@ export default function HomePage() {
           <Testimonials />
         </>
       )}
+      <hr className="rule" />
+      <VideoSection />
       <Newsletter />
+      
       <Footer />
     </main>
   );
