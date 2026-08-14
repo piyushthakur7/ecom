@@ -26,8 +26,8 @@ export function Categories() {
           <div className="categories-scroll">
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                <div style={{ width: 96, height: 96, borderRadius: '50%', background: '#e5e5e5', animation: 'pulse 1.5s ease-in-out infinite' }} />
-                <div style={{ width: 60, height: 12, borderRadius: 4, background: '#e5e5e5' }} />
+                <div style={{ width: 96, height: 96, borderRadius: '50%', background: 'var(--color-skeleton)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                <div style={{ width: 60, height: 12, borderRadius: 4, background: 'var(--color-skeleton)' }} />
               </div>
             ))}
           </div>

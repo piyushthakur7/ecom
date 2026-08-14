@@ -49,9 +49,9 @@ export function Featured() {
         <div className="product-grid">
           {[1,2,3,4].map((i) => (
             <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <div style={{ width: '100%', aspectRatio: '3/4', borderRadius: 'var(--radius-md)', background: '#f0eeee', animation: 'pulse 1.5s ease-in-out infinite' }} />
-              <div style={{ height: 14, borderRadius: 4, background: '#f0eeee', width: '80%' }} />
-              <div style={{ height: 12, borderRadius: 4, background: '#f0eeee', width: '50%' }} />
+              <div style={{ width: '100%', aspectRatio: '3/4', borderRadius: 'var(--radius-md)', background: 'var(--color-skeleton)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+              <div style={{ height: 14, borderRadius: 4, background: 'var(--color-skeleton)', width: '80%' }} />
+              <div style={{ height: 12, borderRadius: 4, background: 'var(--color-skeleton)', width: '50%' }} />
             </div>
           ))}
         </div>

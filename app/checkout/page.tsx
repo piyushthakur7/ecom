@@ -197,7 +197,7 @@ export default function CheckoutPage() {
         <div className="section">
           <div className="checkout-success">
             <div className="success-icon">
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" style={{ stroke: 'var(--color-success-dark)' }} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M20 6 9 17l-5-5" />
               </svg>
             </div>
@@ -238,7 +238,7 @@ export default function CheckoutPage() {
 
         {/* Auth notice for guests */}
         {!user && (
-          <div style={{ marginBottom: 20, padding: '14px 18px', background: '#fff9e6', border: '1.5px solid #f5c842', borderRadius: 10, display: 'flex', alignItems: 'center', gap: 12, fontSize: 14 }}>
+          <div style={{ marginBottom: 20, padding: '14px 18px', background: 'var(--color-warning-bg)', border: '1.5px solid var(--color-warning-border)', borderRadius: 10, display: 'flex', alignItems: 'center', gap: 12, fontSize: 14 }}>
             <span>🔐</span>
             <span>
               <button type="button" onClick={() => setAuthOpen(true)} style={{ background: 'none', border: 'none', color: 'var(--color-accent)', fontWeight: 600, cursor: 'pointer', padding: 0, fontSize: 'inherit' }}>
@@ -262,16 +262,16 @@ export default function CheckoutPage() {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                     {profile.addresses.map((addr) => (
-                      <label key={addr.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '12px 16px', border: `1.5px solid ${selectedAddressId === addr.id ? 'var(--color-accent)' : '#e0e0e0'}`, borderRadius: 10, cursor: 'pointer', background: selectedAddressId === addr.id ? 'var(--color-accent-100)' : '#fff' }}>
+                      <label key={addr.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '12px 16px', border: `1.5px solid ${selectedAddressId === addr.id ? 'var(--color-accent)' : 'var(--color-border)'}`, borderRadius: 10, cursor: 'pointer', background: selectedAddressId === addr.id ? 'var(--color-accent-100)' : 'var(--color-surface-raised)' }}>
                         <input type="radio" name="saved-address" checked={selectedAddressId === addr.id} onChange={() => setSelectedAddressId(addr.id)} style={{ marginTop: 2 }} />
                         <div style={{ fontSize: 14 }}>
-                          <div style={{ fontWeight: 600 }}>{addr.name}{addr.isDefault && <span style={{ marginLeft: 8, fontSize: 11, background: '#e8f5e9', color: '#2e7d32', padding: '2px 8px', borderRadius: 20 }}>Default</span>}</div>
-                          <div style={{ color: '#666', marginTop: 2 }}>{addr.street}, {addr.city}, {addr.state} — {addr.pincode}</div>
-                          {addr.phone && <div style={{ color: '#888', fontSize: 12 }}>📞 {addr.phone}</div>}
+                          <div style={{ fontWeight: 600 }}>{addr.name}{addr.isDefault && <span style={{ marginLeft: 8, fontSize: 11, background: 'var(--color-success-bg)', color: 'var(--color-success-dark)', padding: '2px 8px', borderRadius: 20 }}>Default</span>}</div>
+                          <div style={{ color: 'var(--color-text-muted)', marginTop: 2 }}>{addr.street}, {addr.city}, {addr.state} — {addr.pincode}</div>
+                          {addr.phone && <div style={{ color: 'var(--color-text-subtle)', fontSize: 12 }}>📞 {addr.phone}</div>}
                         </div>
                       </label>
                     ))}
-                    <label style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', border: `1.5px solid ${selectedAddressId === 'new' ? 'var(--color-accent)' : '#e0e0e0'}`, borderRadius: 10, cursor: 'pointer' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', border: `1.5px solid ${selectedAddressId === 'new' ? 'var(--color-accent)' : 'var(--color-border)'}`, borderRadius: 10, cursor: 'pointer' }}>
                       <input type="radio" name="saved-address" checked={selectedAddressId === 'new'} onChange={() => setSelectedAddressId('new')} />
                       <span style={{ fontSize: 14, fontWeight: 600 }}>+ Use a new address</span>
                     </label>
@@ -373,7 +373,7 @@ export default function CheckoutPage() {
                     </div>
                     <div className="order-line-name">
                       {item.name}
-                      <span style={{ display: 'inline-block', fontSize: 11, fontWeight: 700, color: 'var(--color-accent)', background: '#fff5f0', border: '1px solid #fcdcd7', padding: '1px 6px', borderRadius: 4, marginTop: 3 }}>
+                      <span style={{ display: 'inline-block', fontSize: 11, fontWeight: 700, color: 'var(--color-accent)', background: 'var(--color-accent-100)', border: '1px solid var(--color-accent-200)', padding: '1px 6px', borderRadius: 4, marginTop: 3 }}>
                         Size: {item.size || 'M'}
                       </span>
                       <span style={{ display: 'block', fontSize: 11, fontWeight: 400, opacity: 0.65, marginTop: 2 }}>Qty: {item.quantity}</span>
@@ -383,7 +383,7 @@ export default function CheckoutPage() {
                 ))}
                 <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 6 }}>
                   <div className="cart-summary-row"><span>Subtotal</span><span>₹{total.toLocaleString('en-IN')}</span></div>
-                  <div className="cart-summary-row"><span>Shipping</span><span style={{ color: shipping === 0 ? '#2e7d32' : 'inherit' }}>{shipping === 0 ? 'FREE' : `₹${shipping}`}</span></div>
+                  <div className="cart-summary-row"><span>Shipping</span><span style={{ color: shipping === 0 ? 'var(--color-success-dark)' : 'inherit' }}>{shipping === 0 ? 'FREE' : `₹${shipping}`}</span></div>
                   <div className="cart-summary-row cart-summary-total"><span>Total</span><span>₹{grandTotal.toLocaleString('en-IN')}</span></div>
                 </div>
                 <div className="hide-mobile">

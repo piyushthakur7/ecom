@@ -247,18 +247,18 @@ export default function AdminDashboard() {
   }
 
   const statusColors: Record<string, { bg: string; text: string }> = {
-    Pending:    { bg: '#fff8e1', text: '#f59e0b' },
-    Processing: { bg: '#e3f2fd', text: '#2563eb' },
-    Shipped:    { bg: '#e8f5e9', text: '#16a34a' },
-    Delivered:  { bg: '#f0fdf4', text: '#15803d' },
-    Cancelled:  { bg: '#fef2f2', text: '#dc2626' },
+    Pending:    { bg: 'var(--color-warning-bg)', text: 'var(--color-warning)' },
+    Processing: { bg: 'var(--color-info-bg)', text: 'var(--color-info)' },
+    Shipped:    { bg: 'var(--color-success-bg)', text: 'var(--color-success)' },
+    Delivered:  { bg: 'var(--color-success-bg)', text: 'var(--color-success-dark)' },
+    Cancelled:  { bg: 'var(--color-danger-bg)', text: 'var(--color-danger)' },
   };
 
   // Guard: loading or not admin
   if (isLoading) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
-        <div style={{ fontSize: 16, color: '#888' }}>Loading…</div>
+        <div style={{ fontSize: 16, color: 'var(--color-text-subtle)' }}>Loading…</div>
       </div>
     );
   }
@@ -278,22 +278,22 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <main style={{ minHeight: '100vh', background: '#f8f9fa' }}>
+    <main style={{ minHeight: '100vh', background: 'var(--color-surface-page)' }}>
       {/* Admin header */}
-      <div style={{ background: '#1a1a1a', color: '#fff', padding: '14px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ background: 'var(--color-surface-inverse)', color: 'var(--color-on-dark)', padding: '14px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <Link href="/" style={{ color: '#fff', textDecoration: 'none', fontSize: 18, fontWeight: 800 }}>Saanshika</Link>
-          <span style={{ color: '#888', fontSize: 13 }}>/ Admin Dashboard</span>
+          <Link href="/" style={{ color: 'var(--color-on-dark)', textDecoration: 'none', fontSize: 18, fontWeight: 800 }}>Saanshika</Link>
+          <span style={{ color: 'var(--color-text-subtle)', fontSize: 13 }}>/ Admin Dashboard</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 13, color: '#aaa' }}>{user.email}</span>
-          <Link href="/" style={{ color: '#fff', textDecoration: 'none', fontSize: 13 }}>← View Store</Link>
+          <span style={{ fontSize: 13, color: 'var(--color-text-faint)' }}>{user.email}</span>
+          <Link href="/" style={{ color: 'var(--color-on-dark)', textDecoration: 'none', fontSize: 13 }}>← View Store</Link>
         </div>
       </div>
 
       <div style={{ display: 'flex', minHeight: 'calc(100vh - 56px)' }}>
         {/* Sidebar */}
-        <div style={{ width: 220, background: '#fff', borderRight: '1px solid #e5e7eb', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 4, padding: '20px 12px' }}>
+        <div style={{ width: 220, background: 'var(--color-surface-raised)', borderRight: '1px solid var(--color-border)', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 4, padding: '20px 12px' }}>
           {tabs.map((t) => (
             <button
               key={t.id}
@@ -302,8 +302,8 @@ export default function AdminDashboard() {
               style={{
                 display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
                 borderRadius: 8, border: 'none', cursor: 'pointer', textAlign: 'left',
-                background: activeTab === t.id ? 'var(--color-accent-100, #fff5f0)' : 'none',
-                color: activeTab === t.id ? 'var(--color-accent, #c94040)' : '#444',
+                background: activeTab === t.id ? 'var(--color-accent-100)' : 'none',
+                color: activeTab === t.id ? 'var(--color-accent)' : 'var(--color-text-body)',
                 fontWeight: activeTab === t.id ? 600 : 400, fontSize: 14,
                 transition: 'all 0.15s',
               }}
@@ -322,29 +322,29 @@ export default function AdminDashboard() {
               <h1 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: 24, marginBottom: 24 }}>Dashboard Overview</h1>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16, marginBottom: 32 }}>
                 {[
-                  { label: 'Total Revenue', value: `₹${totalRevenue.toLocaleString('en-IN')}`, icon: '💰', color: '#16a34a' },
-                  { label: 'Total Orders', value: orders.length, icon: '📦', color: '#2563eb' },
-                  { label: 'Pending Orders', value: pendingOrders, icon: '⏳', color: '#f59e0b' },
-                  { label: 'Products', value: products.length, icon: '👗', color: '#7c3aed' },
-                  { label: 'Categories', value: categories.length, icon: '🏷️', color: '#0891b2' },
-                  { label: 'Users', value: users.length, icon: '👥', color: '#db2777' },
+                  { label: 'Total Revenue', value: `₹${totalRevenue.toLocaleString('en-IN')}`, icon: '💰', color: 'var(--color-chart-1)' },
+                  { label: 'Total Orders', value: orders.length, icon: '📦', color: 'var(--color-chart-2)' },
+                  { label: 'Pending Orders', value: pendingOrders, icon: '⏳', color: 'var(--color-chart-3)' },
+                  { label: 'Products', value: products.length, icon: '👗', color: 'var(--color-chart-4)' },
+                  { label: 'Categories', value: categories.length, icon: '🏷️', color: 'var(--color-chart-5)' },
+                  { label: 'Users', value: users.length, icon: '👥', color: 'var(--color-chart-6)' },
                 ].map((stat) => (
-                  <div key={stat.label} style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 14, padding: '20px 24px' }}>
+                  <div key={stat.label} style={{ background: 'var(--color-surface-raised)', border: '1px solid var(--color-border)', borderRadius: 14, padding: '20px 24px' }}>
                     <div style={{ fontSize: 28, marginBottom: 8 }}>{stat.icon}</div>
                     <div style={{ fontSize: 24, fontWeight: 800, color: stat.color }}>{stat.value}</div>
-                    <div style={{ fontSize: 13, color: '#888', marginTop: 4 }}>{stat.label}</div>
+                    <div style={{ fontSize: 13, color: 'var(--color-text-subtle)', marginTop: 4 }}>{stat.label}</div>
                   </div>
                 ))}
               </div>
 
               {/* Recent orders */}
               <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: 18, marginBottom: 14 }}>Recent Orders</h2>
-              <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 14, overflow: 'hidden' }}>
+              <div style={{ background: 'var(--color-surface-raised)', border: '1px solid var(--color-border)', borderRadius: 14, overflow: 'hidden' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
                   <thead>
-                    <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+                    <tr style={{ background: 'var(--color-surface-sunken)', borderBottom: '1px solid var(--color-border)' }}>
                       {['Order #', 'Customer', 'Amount', 'Status', 'Date'].map((h) => (
-                        <th key={h} style={{ textAlign: 'left', padding: '12px 16px', fontWeight: 600, color: '#444' }}>{h}</th>
+                        <th key={h} style={{ textAlign: 'left', padding: '12px 16px', fontWeight: 600, color: 'var(--color-text-body)' }}>{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -352,17 +352,17 @@ export default function AdminDashboard() {
                     {orders.slice(0, 5).map((o) => {
                       const sc = statusColors[o.status] ?? statusColors.Pending;
                       return (
-                        <tr key={o.id} style={{ borderBottom: '1px solid #f0f0f0', cursor: 'pointer' }} onClick={() => setSelectedOrder(o)}>
-                          <td style={{ padding: '12px 16px', fontWeight: 600, color: '#2563eb' }}>{o.order_number}</td>
+                        <tr key={o.id} style={{ borderBottom: '1px solid var(--color-border-subtle)', cursor: 'pointer' }} onClick={() => setSelectedOrder(o)}>
+                          <td style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--color-info)' }}>{o.order_number}</td>
                           <td style={{ padding: '12px 16px' }}>{o.customer_name}</td>
                           <td style={{ padding: '12px 16px', fontWeight: 600 }}>₹{Number(Number(o.total) + Number(o.shipping)).toLocaleString('en-IN')}</td>
                           <td style={{ padding: '12px 16px' }}><span style={{ fontSize: 12, background: sc.bg, color: sc.text, padding: '3px 10px', borderRadius: 20, fontWeight: 600 }}>{o.status}</span></td>
-                          <td style={{ padding: '12px 16px', color: '#888' }}>{new Date(o.created_at).toLocaleDateString('en-IN')}</td>
+                          <td style={{ padding: '12px 16px', color: 'var(--color-text-subtle)' }}>{new Date(o.created_at).toLocaleDateString('en-IN')}</td>
                         </tr>
                       );
                     })}
                     {orders.length === 0 && (
-                      <tr><td colSpan={5} style={{ padding: '24px', textAlign: 'center', color: '#888' }}>No orders yet</td></tr>
+                      <tr><td colSpan={5} style={{ padding: '24px', textAlign: 'center', color: 'var(--color-text-subtle)' }}>No orders yet</td></tr>
                     )}
                   </tbody>
                 </table>
@@ -379,22 +379,22 @@ export default function AdminDashboard() {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16 }}>
                 {categories.map((cat) => (
-                  <div key={cat.id} style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 14, overflow: 'hidden' }}>
+                  <div key={cat.id} style={{ background: 'var(--color-surface-raised)', border: '1px solid var(--color-border)', borderRadius: 14, overflow: 'hidden' }}>
                     <div style={{ aspectRatio: '1', overflow: 'hidden', position: 'relative' }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={cat.src} alt={cat.alt} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
                     <div style={{ padding: '12px 14px' }}>
                       <div style={{ fontWeight: 700, fontSize: 15 }}>{cat.name}</div>
-                      <div style={{ fontSize: 12, color: '#888', marginTop: 2 }}>{cat.slug} · {cat.count}</div>
+                      <div style={{ fontSize: 12, color: 'var(--color-text-subtle)', marginTop: 2 }}>{cat.slug} · {cat.count}</div>
                       <div style={{ marginTop: 10, display: 'flex', gap: 8 }}>
-                        <Link href={`/category/${cat.slug}`} style={{ fontSize: 12, color: '#2563eb', textDecoration: 'none' }}>View ↗</Link>
-                        <button type="button" onClick={() => handleDeleteCategory(cat.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 12, color: '#dc2626', padding: 0 }}>Delete</button>
+                        <Link href={`/category/${cat.slug}`} style={{ fontSize: 12, color: 'var(--color-info)', textDecoration: 'none' }}>View ↗</Link>
+                        <button type="button" onClick={() => handleDeleteCategory(cat.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 12, color: 'var(--color-danger)', padding: 0 }}>Delete</button>
                       </div>
                     </div>
                   </div>
                 ))}
-                {!dbLoading && categories.length === 0 && <p style={{ color: '#888', gridColumn: '1/-1' }}>No categories yet.</p>}
+                {!dbLoading && categories.length === 0 && <p style={{ color: 'var(--color-text-subtle)', gridColumn: '1/-1' }}>No categories yet.</p>}
               </div>
             </div>
           )}
@@ -408,20 +408,20 @@ export default function AdminDashboard() {
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                 {heroSlides.map((slide, idx) => (
-                  <div key={slide.id} style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 14, overflow: 'hidden', display: 'flex', alignItems: 'center', gap: 0 }}>
+                  <div key={slide.id} style={{ background: 'var(--color-surface-raised)', border: '1px solid var(--color-border)', borderRadius: 14, overflow: 'hidden', display: 'flex', alignItems: 'center', gap: 0 }}>
                     <div style={{ width: 180, height: 90, flexShrink: 0, overflow: 'hidden' }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={slide.src} alt={slide.alt} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
                     <div style={{ flex: 1, padding: '14px 20px' }}>
                       <div style={{ fontWeight: 600 }}>{slide.alt}</div>
-                      <div style={{ fontSize: 13, color: '#2563eb', marginTop: 4 }}>→ {slide.link}</div>
-                      <div style={{ fontSize: 12, color: '#aaa', marginTop: 2 }}>Position: {idx + 1}</div>
+                      <div style={{ fontSize: 13, color: 'var(--color-info)', marginTop: 4 }}>→ {slide.link}</div>
+                      <div style={{ fontSize: 12, color: 'var(--color-text-faint)', marginTop: 2 }}>Position: {idx + 1}</div>
                     </div>
-                    <button type="button" onClick={() => handleDeleteHero(slide.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#dc2626', padding: '14px 20px', fontSize: 13 }}>Delete</button>
+                    <button type="button" onClick={() => handleDeleteHero(slide.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-danger)', padding: '14px 20px', fontSize: 13 }}>Delete</button>
                   </div>
                 ))}
-                {!dbLoading && heroSlides.length === 0 && <p style={{ color: '#888' }}>No hero banners yet.</p>}
+                {!dbLoading && heroSlides.length === 0 && <p style={{ color: 'var(--color-text-subtle)' }}>No hero banners yet.</p>}
               </div>
             </div>
           )}
@@ -433,12 +433,12 @@ export default function AdminDashboard() {
                 <h1 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: 22 }}>Products ({products.length})</h1>
                 <button type="button" className="btn btn-primary" onClick={openAddProduct}>+ Add Product</button>
               </div>
-              <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 14, overflow: 'hidden' }}>
+              <div style={{ background: 'var(--color-surface-raised)', border: '1px solid var(--color-border)', borderRadius: 14, overflow: 'hidden' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
                   <thead>
-                    <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+                    <tr style={{ background: 'var(--color-surface-sunken)', borderBottom: '1px solid var(--color-border)' }}>
                       {['Image', 'Product', 'Category', 'Price', 'Stock', 'Actions'].map((h) => (
-                        <th key={h} style={{ textAlign: 'left', padding: '12px 16px', fontWeight: 600, color: '#444' }}>{h}</th>
+                        <th key={h} style={{ textAlign: 'left', padding: '12px 16px', fontWeight: 600, color: 'var(--color-text-body)' }}>{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -446,28 +446,28 @@ export default function AdminDashboard() {
                     {products.map((p) => {
                       const img = p.images?.[0] ?? '';
                       return (
-                        <tr key={p.id} style={{ borderBottom: '1px solid #f0f0f0' }}>
+                        <tr key={p.id} style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
                           <td style={{ padding: '10px 16px' }}>
                             {img && <div style={{ width: 44, height: 44, borderRadius: 8, overflow: 'hidden' }}><Image src={img} alt={p.name} width={44} height={44} style={{ objectFit: 'cover' }} /></div>}
                           </td>
                           <td style={{ padding: '10px 16px' }}>
                             <div style={{ fontWeight: 600 }}>{p.name}</div>
-                            {p.badge && <span style={{ fontSize: 11, background: '#fff5f0', color: 'var(--color-accent)', padding: '2px 6px', borderRadius: 10 }}>{p.badge}</span>}
+                            {p.badge && <span style={{ fontSize: 11, background: 'var(--color-accent-100)', color: 'var(--color-accent)', padding: '2px 6px', borderRadius: 10 }}>{p.badge}</span>}
                           </td>
-                          <td style={{ padding: '10px 16px', color: '#666' }}>{p.category_slug}</td>
+                          <td style={{ padding: '10px 16px', color: 'var(--color-text-muted)' }}>{p.category_slug}</td>
                           <td style={{ padding: '10px 16px', fontWeight: 600 }}>₹{Number(p.price).toLocaleString('en-IN')}</td>
-                          <td style={{ padding: '10px 16px' }}><span style={{ color: p.stock <= 5 ? '#dc2626' : p.stock <= 20 ? '#f59e0b' : '#16a34a' }}>{p.stock}</span></td>
+                          <td style={{ padding: '10px 16px' }}><span style={{ color: p.stock <= 5 ? 'var(--color-danger)' : p.stock <= 20 ? 'var(--color-warning)' : 'var(--color-success)' }}>{p.stock}</span></td>
                           <td style={{ padding: '10px 16px' }}>
                             <div style={{ display: 'flex', gap: 8 }}>
                               <button type="button" className="btn btn-ghost" onClick={() => openEditProduct(p)} style={{ fontSize: 12, padding: '5px 10px' }}>Edit</button>
-                              <button type="button" onClick={() => handleDeleteProduct(p.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#dc2626', fontSize: 12 }}>Delete</button>
+                              <button type="button" onClick={() => handleDeleteProduct(p.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-danger)', fontSize: 12 }}>Delete</button>
                             </div>
                           </td>
                         </tr>
                       );
                     })}
                     {!dbLoading && products.length === 0 && (
-                      <tr><td colSpan={6} style={{ padding: '24px', textAlign: 'center', color: '#888' }}>No products yet</td></tr>
+                      <tr><td colSpan={6} style={{ padding: '24px', textAlign: 'center', color: 'var(--color-text-subtle)' }}>No products yet</td></tr>
                     )}
                   </tbody>
                 </table>
@@ -479,12 +479,12 @@ export default function AdminDashboard() {
           {activeTab === 'orders' && (
             <div>
               <h1 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: 22, marginBottom: 20 }}>Orders ({orders.length})</h1>
-              <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 14, overflow: 'hidden' }}>
+              <div style={{ background: 'var(--color-surface-raised)', border: '1px solid var(--color-border)', borderRadius: 14, overflow: 'hidden' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
                   <thead>
-                    <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+                    <tr style={{ background: 'var(--color-surface-sunken)', borderBottom: '1px solid var(--color-border)' }}>
                       {['Order #', 'Customer', 'Total', 'Status', 'Date', 'Update Status', 'Details'].map((h) => (
-                        <th key={h} style={{ textAlign: 'left', padding: '12px 14px', fontWeight: 600, color: '#444', whiteSpace: 'nowrap' }}>{h}</th>
+                        <th key={h} style={{ textAlign: 'left', padding: '12px 14px', fontWeight: 600, color: 'var(--color-text-body)', whiteSpace: 'nowrap' }}>{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -492,22 +492,22 @@ export default function AdminDashboard() {
                     {orders.map((o) => {
                       const sc = statusColors[o.status] ?? statusColors.Pending;
                       return (
-                        <tr key={o.id} style={{ borderBottom: '1px solid #f0f0f0', cursor: 'pointer' }} onClick={() => setSelectedOrder(o)}>
-                          <td style={{ padding: '12px 14px', fontWeight: 600, color: '#2563eb' }}>{o.order_number}</td>
+                        <tr key={o.id} style={{ borderBottom: '1px solid var(--color-border-subtle)', cursor: 'pointer' }} onClick={() => setSelectedOrder(o)}>
+                          <td style={{ padding: '12px 14px', fontWeight: 600, color: 'var(--color-info)' }}>{o.order_number}</td>
                           <td style={{ padding: '12px 14px' }}>
                             <div style={{ fontWeight: 600 }}>{o.customer_name}</div>
-                            <div style={{ fontSize: 12, color: '#888' }}>{o.customer_email}</div>
+                            <div style={{ fontSize: 12, color: 'var(--color-text-subtle)' }}>{o.customer_email}</div>
                           </td>
                           <td style={{ padding: '12px 14px', fontWeight: 600 }}>₹{Number(Number(o.total) + Number(o.shipping)).toLocaleString('en-IN')}</td>
                           <td style={{ padding: '12px 14px' }}>
                             <span style={{ fontSize: 12, background: sc.bg, color: sc.text, padding: '3px 10px', borderRadius: 20, fontWeight: 600 }}>{o.status}</span>
                           </td>
-                          <td style={{ padding: '12px 14px', color: '#888', whiteSpace: 'nowrap' }}>{new Date(o.created_at).toLocaleDateString('en-IN')}</td>
+                          <td style={{ padding: '12px 14px', color: 'var(--color-text-subtle)', whiteSpace: 'nowrap' }}>{new Date(o.created_at).toLocaleDateString('en-IN')}</td>
                           <td style={{ padding: '12px 14px' }} onClick={(e) => e.stopPropagation()}>
                             <select
                               value={o.status}
                               onChange={(e) => handleOrderStatusChange(o.id, e.target.value as OrderStatus)}
-                              style={{ fontSize: 12, padding: '5px 8px', borderRadius: 6, border: '1px solid #e0e0e0', cursor: 'pointer' }}
+                              style={{ fontSize: 12, padding: '5px 8px', borderRadius: 6, border: '1px solid var(--color-border)', cursor: 'pointer' }}
                             >
                               {['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'].map((s) => (
                                 <option key={s} value={s}>{s}</option>
@@ -528,7 +528,7 @@ export default function AdminDashboard() {
                       );
                     })}
                     {!dbLoading && orders.length === 0 && (
-                      <tr><td colSpan={7} style={{ padding: '24px', textAlign: 'center', color: '#888' }}>No orders yet</td></tr>
+                      <tr><td colSpan={7} style={{ padding: '24px', textAlign: 'center', color: 'var(--color-text-subtle)' }}>No orders yet</td></tr>
                     )}
                   </tbody>
                 </table>
@@ -540,42 +540,42 @@ export default function AdminDashboard() {
           {activeTab === 'users' && (
             <div>
               <h1 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: 22, marginBottom: 20 }}>Users ({users.length})</h1>
-              <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 14, overflow: 'hidden' }}>
+              <div style={{ background: 'var(--color-surface-raised)', border: '1px solid var(--color-border)', borderRadius: 14, overflow: 'hidden' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
                   <thead>
-                    <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+                    <tr style={{ background: 'var(--color-surface-sunken)', borderBottom: '1px solid var(--color-border)' }}>
                       {['Name', 'Email', 'Phone', 'Role', 'Joined'].map((h) => (
-                        <th key={h} style={{ textAlign: 'left', padding: '12px 16px', fontWeight: 600, color: '#444' }}>{h}</th>
+                        <th key={h} style={{ textAlign: 'left', padding: '12px 16px', fontWeight: 600, color: 'var(--color-text-body)' }}>{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {users.map((u) => (
-                      <tr key={u.id} style={{ borderBottom: '1px solid #f0f0f0' }}>
+                      <tr key={u.id} style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
                         <td style={{ padding: '12px 16px' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                             {u.avatar_url ? (
                               <Image src={u.avatar_url} alt={u.full_name ?? ''} width={32} height={32} unoptimized style={{ borderRadius: '50%', objectFit: 'cover' }} />
                             ) : (
-                              <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--color-accent)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700 }}>
+                              <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--color-accent)', color: 'var(--color-on-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700 }}>
                                 {(u.full_name ?? u.email ?? '?')[0].toUpperCase()}
                               </div>
                             )}
                             <span style={{ fontWeight: 600 }}>{u.full_name ?? '—'}</span>
                           </div>
                         </td>
-                        <td style={{ padding: '12px 16px', color: '#666' }}>{u.email}</td>
-                        <td style={{ padding: '12px 16px', color: '#666' }}>{u.phone ?? '—'}</td>
+                        <td style={{ padding: '12px 16px', color: 'var(--color-text-muted)' }}>{u.email}</td>
+                        <td style={{ padding: '12px 16px', color: 'var(--color-text-muted)' }}>{u.phone ?? '—'}</td>
                         <td style={{ padding: '12px 16px' }}>
-                          <span style={{ fontSize: 12, background: u.role === 'admin' ? '#fef2f2' : '#f0fdf4', color: u.role === 'admin' ? '#dc2626' : '#16a34a', padding: '3px 10px', borderRadius: 20, fontWeight: 600 }}>
+                          <span style={{ fontSize: 12, background: u.role === 'admin' ? 'var(--color-danger-bg)' : 'var(--color-success-bg)', color: u.role === 'admin' ? 'var(--color-danger)' : 'var(--color-success)', padding: '3px 10px', borderRadius: 20, fontWeight: 600 }}>
                             {u.role}
                           </span>
                         </td>
-                        <td style={{ padding: '12px 16px', color: '#888' }}>{u.created_at ? new Date(u.created_at).toLocaleDateString('en-IN') : '—'}</td>
+                        <td style={{ padding: '12px 16px', color: 'var(--color-text-subtle)' }}>{u.created_at ? new Date(u.created_at).toLocaleDateString('en-IN') : '—'}</td>
                       </tr>
                     ))}
                     {!dbLoading && users.length === 0 && (
-                      <tr><td colSpan={5} style={{ padding: '24px', textAlign: 'center', color: '#888' }}>No users yet</td></tr>
+                      <tr><td colSpan={5} style={{ padding: '24px', textAlign: 'center', color: 'var(--color-text-subtle)' }}>No users yet</td></tr>
                     )}
                   </tbody>
                 </table>
@@ -708,7 +708,7 @@ export default function AdminDashboard() {
                   {prodForm.images.map((url, i) => (
                     <div key={i} style={{ position: 'relative' }}>
                       <img src={url} alt={`img-${i}`} style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8 }} />
-                      <button type="button" onClick={() => setProdForm((f) => ({ ...f, images: f.images.filter((_, idx) => idx !== i) }))} style={{ position: 'absolute', top: -6, right: -6, background: '#dc2626', color: '#fff', border: 'none', borderRadius: '50%', width: 18, height: 18, cursor: 'pointer', fontSize: 11, lineHeight: 1 }}>×</button>
+                      <button type="button" onClick={() => setProdForm((f) => ({ ...f, images: f.images.filter((_, idx) => idx !== i) }))} style={{ position: 'absolute', top: -6, right: -6, background: 'var(--color-danger)', color: 'var(--color-on-accent)', border: 'none', borderRadius: '50%', width: 18, height: 18, cursor: 'pointer', fontSize: 11, lineHeight: 1 }}>×</button>
                     </div>
                   ))}
                 </div>
@@ -739,16 +739,16 @@ export default function AdminDashboard() {
 function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
   return (
     <>
-      <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 200 }} />
+      <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'var(--color-scrim)', zIndex: 200 }} />
       <div style={{
         position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-        background: '#fff', borderRadius: 16, padding: '28px 28px 24px',
+        background: 'var(--color-surface-raised)', borderRadius: 16, padding: '28px 28px 24px',
         width: '92vw', maxWidth: 640, maxHeight: '90vh', overflowY: 'auto',
-        zIndex: 201, boxShadow: '0 20px 60px rgba(0,0,0,0.20)',
+        zIndex: 201, boxShadow: '0 20px 60px var(--color-shadow-strong)',
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: 18, margin: 0 }}>{title}</h2>
-          <button type="button" onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, color: '#aaa', lineHeight: 1 }}>×</button>
+          <button type="button" onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, color: 'var(--color-text-faint)', lineHeight: 1 }}>×</button>
         </div>
         {children}
       </div>
@@ -774,9 +774,9 @@ function OrderDetailsModal({
     <Modal title={`Order Details — ${order.order_number}`} onClose={onClose}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
         {/* Status bar */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 10, flexWrap: 'wrap', gap: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: 'var(--color-surface-sunken)', border: '1px solid var(--color-border)', borderRadius: 10, flexWrap: 'wrap', gap: 10 }}>
           <div>
-            <div style={{ fontSize: 12, color: '#888' }}>Order Placed On</div>
+            <div style={{ fontSize: 12, color: 'var(--color-text-subtle)' }}>Order Placed On</div>
             <div style={{ fontWeight: 600, fontSize: 13 }}>
               {new Date(order.created_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
             </div>
@@ -788,7 +788,7 @@ function OrderDetailsModal({
             <select
               value={order.status}
               onChange={(e) => onStatusChange(order.id, e.target.value as OrderStatus)}
-              style={{ fontSize: 12, padding: '5px 10px', borderRadius: 6, border: '1px solid #d0d0d0', cursor: 'pointer', fontWeight: 600 }}
+              style={{ fontSize: 12, padding: '5px 10px', borderRadius: 6, border: '1px solid var(--color-border-strong)', cursor: 'pointer', fontWeight: 600 }}
             >
               {['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'].map((s) => (
                 <option key={s} value={s}>{s}</option>
@@ -800,56 +800,56 @@ function OrderDetailsModal({
         {/* Customer & Address split */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
           {/* Customer info */}
-          <div style={{ padding: '14px 16px', border: '1px solid #e5e7eb', borderRadius: 10, background: '#fafafa' }}>
-            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8, color: '#1a1a1a' }}>
+          <div style={{ padding: '14px 16px', border: '1px solid var(--color-border)', borderRadius: 10, background: 'var(--color-surface-sunken)' }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8, color: 'var(--color-text)' }}>
               👤 Customer Details
             </div>
             <div style={{ fontSize: 13, display: 'flex', flexDirection: 'column', gap: 4 }}>
               <div style={{ fontWeight: 600 }}>{order.customer_name}</div>
-              <div><a href={`mailto:${order.customer_email}`} style={{ color: '#2563eb', textDecoration: 'none' }}>✉️ {order.customer_email}</a></div>
-              <div><a href={`tel:${order.customer_phone}`} style={{ color: '#2563eb', textDecoration: 'none' }}>📞 {order.customer_phone}</a></div>
+              <div><a href={`mailto:${order.customer_email}`} style={{ color: 'var(--color-info)', textDecoration: 'none' }}>✉️ {order.customer_email}</a></div>
+              <div><a href={`tel:${order.customer_phone}`} style={{ color: 'var(--color-info)', textDecoration: 'none' }}>📞 {order.customer_phone}</a></div>
             </div>
           </div>
 
           {/* Shipping Address */}
-          <div style={{ padding: '14px 16px', border: '1px solid #e5e7eb', borderRadius: 10, background: '#fafafa' }}>
-            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8, color: '#1a1a1a' }}>
+          <div style={{ padding: '14px 16px', border: '1px solid var(--color-border)', borderRadius: 10, background: 'var(--color-surface-sunken)' }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8, color: 'var(--color-text)' }}>
               📍 Shipping Address
             </div>
             {order.shipping_address ? (
-              <div style={{ fontSize: 13, color: '#333', lineHeight: 1.5 }}>
+              <div style={{ fontSize: 13, color: 'var(--color-text-body)', lineHeight: 1.5 }}>
                 <div style={{ fontWeight: 600 }}>{order.shipping_address.name || order.customer_name}</div>
                 <div>{order.shipping_address.street}</div>
                 <div>{order.shipping_address.city}, {order.shipping_address.state} — <strong>{order.shipping_address.pincode}</strong></div>
-                {order.shipping_address.landmark && <div style={{ fontSize: 12, color: '#888' }}>Landmark: {order.shipping_address.landmark}</div>}
-                <div style={{ fontSize: 12, color: '#888', marginTop: 2 }}>📞 {order.shipping_address.phone || order.customer_phone}</div>
+                {order.shipping_address.landmark && <div style={{ fontSize: 12, color: 'var(--color-text-subtle)' }}>Landmark: {order.shipping_address.landmark}</div>}
+                <div style={{ fontSize: 12, color: 'var(--color-text-subtle)', marginTop: 2 }}>📞 {order.shipping_address.phone || order.customer_phone}</div>
               </div>
             ) : (
-              <div style={{ fontSize: 13, color: '#888' }}>No address recorded</div>
+              <div style={{ fontSize: 13, color: 'var(--color-text-subtle)' }}>No address recorded</div>
             )}
           </div>
         </div>
 
         {/* Payment & Summary */}
-        <div style={{ padding: '14px 16px', border: '1px solid #e5e7eb', borderRadius: 10 }}>
-          <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10, color: '#1a1a1a' }}>
+        <div style={{ padding: '14px 16px', border: '1px solid var(--color-border)', borderRadius: 10 }}>
+          <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10, color: 'var(--color-text)' }}>
             💳 Payment Breakdown
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 12, fontSize: 13 }}>
             <div>
-              <span style={{ color: '#888', display: 'block', fontSize: 12 }}>Method</span>
+              <span style={{ color: 'var(--color-text-subtle)', display: 'block', fontSize: 12 }}>Method</span>
               <span style={{ fontWeight: 600, textTransform: 'uppercase' }}>{order.payment_method}</span>
             </div>
             <div>
-              <span style={{ color: '#888', display: 'block', fontSize: 12 }}>Subtotal</span>
+              <span style={{ color: 'var(--color-text-subtle)', display: 'block', fontSize: 12 }}>Subtotal</span>
               <span style={{ fontWeight: 600 }}>₹{Number(order.total).toLocaleString('en-IN')}</span>
             </div>
             <div>
-              <span style={{ color: '#888', display: 'block', fontSize: 12 }}>Shipping</span>
-              <span style={{ fontWeight: 600, color: order.shipping === 0 ? '#16a34a' : 'inherit' }}>{order.shipping === 0 ? 'FREE' : `₹${order.shipping}`}</span>
+              <span style={{ color: 'var(--color-text-subtle)', display: 'block', fontSize: 12 }}>Shipping</span>
+              <span style={{ fontWeight: 600, color: order.shipping === 0 ? 'var(--color-success)' : 'inherit' }}>{order.shipping === 0 ? 'FREE' : `₹${order.shipping}`}</span>
             </div>
             <div>
-              <span style={{ color: '#888', display: 'block', fontSize: 12 }}>Grand Total</span>
+              <span style={{ color: 'var(--color-text-subtle)', display: 'block', fontSize: 12 }}>Grand Total</span>
               <span style={{ fontWeight: 800, fontSize: 16, color: 'var(--color-accent)' }}>₹{grandTotal.toLocaleString('en-IN')}</span>
             </div>
           </div>
@@ -857,13 +857,13 @@ function OrderDetailsModal({
 
         {/* Product Items Table */}
         <div>
-          <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10, color: '#1a1a1a' }}>
+          <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10, color: 'var(--color-text)' }}>
             👗 Ordered Products ({order.items.length})
           </div>
-          <div style={{ border: '1px solid #e5e7eb', borderRadius: 10, overflow: 'hidden' }}>
+          <div style={{ border: '1px solid var(--color-border)', borderRadius: 10, overflow: 'hidden' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
-                <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+                <tr style={{ background: 'var(--color-surface-sunken)', borderBottom: '1px solid var(--color-border)' }}>
                   <th style={{ padding: '10px 12px', textAlign: 'left' }}>Item</th>
                   <th style={{ padding: '10px 12px', textAlign: 'center' }}>Size / Color</th>
                   <th style={{ padding: '10px 12px', textAlign: 'center' }}>Qty</th>
@@ -873,7 +873,7 @@ function OrderDetailsModal({
               </thead>
               <tbody>
                 {order.items.map((item, idx) => (
-                  <tr key={idx} style={{ borderBottom: idx < order.items.length - 1 ? '1px solid #f0f0f0' : 'none' }}>
+                  <tr key={idx} style={{ borderBottom: idx < order.items.length - 1 ? '1px solid var(--color-border-subtle)' : 'none' }}>
                     <td style={{ padding: '10px 12px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                         {item.image && (
@@ -884,11 +884,11 @@ function OrderDetailsModal({
                     </td>
                     <td style={{ padding: '10px 12px', textAlign: 'center' }}>
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                        <span style={{ fontWeight: 700, color: 'var(--color-accent)', background: '#fff5f0', border: '1px solid #fcdcd7', padding: '2px 8px', borderRadius: 6, fontSize: 12 }}>
+                        <span style={{ fontWeight: 700, color: 'var(--color-accent)', background: 'var(--color-accent-100)', border: '1px solid var(--color-accent-200)', padding: '2px 8px', borderRadius: 6, fontSize: 12 }}>
                           Size: {item.size || 'M'}
                         </span>
                         {item.color && (
-                          <span style={{ fontWeight: 700, color: '#18181b', background: '#f4f4f5', border: '1px solid #e4e4e7', padding: '2px 8px', borderRadius: 6, fontSize: 12 }}>
+                          <span style={{ fontWeight: 700, color: 'var(--color-text)', background: 'var(--color-surface-alt)', border: '1px solid var(--color-border)', padding: '2px 8px', borderRadius: 6, fontSize: 12 }}>
                             Color: {item.color}
                           </span>
                         )}
@@ -897,7 +897,7 @@ function OrderDetailsModal({
                     <td style={{ padding: '10px 12px', textAlign: 'center', fontWeight: 600 }}>
                       {item.quantity}
                     </td>
-                    <td style={{ padding: '10px 12px', textAlign: 'right', color: '#666' }}>
+                    <td style={{ padding: '10px 12px', textAlign: 'right', color: 'var(--color-text-muted)' }}>
                       ₹{Number(item.price).toLocaleString('en-IN')}
                     </td>
                     <td style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 700 }}>
@@ -917,7 +917,7 @@ function OrderDetailsModal({
 function AdminField({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-      <label style={{ fontSize: 13, fontWeight: 600, color: '#444' }}>{label}</label>
+      <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text-body)' }}>{label}</label>
       {children}
     </div>
   );
