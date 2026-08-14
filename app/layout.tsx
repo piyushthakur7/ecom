@@ -28,8 +28,9 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   // <meta name="theme-color"> needs a literal colour, so this one cannot be a
-  // CSS variable. Keep it in sync with --color-bg in app/globals.css.
-  themeColor: '#f3f2f2',
+  // CSS variable. Matches --color-accent in app/globals.css - the marquee is
+  // the topmost band on the page, so the browser chrome blends into it.
+  themeColor: '#8b1e2f',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

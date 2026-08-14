@@ -4,61 +4,65 @@
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 :root {
-  --color-bg: #f3f2f2;
-  --color-surface: #eae9e9;
-  --color-text: #201e1d;
-  --color-accent: #ec3013;
-  --color-accent-2: #e15b47;
+  --color-bg: #ffffff;          /* page base */
+  --color-surface: #f8f1ec;     /* warm blush panels, inputs, cards */
+  --color-text: #2a1f20;        /* warm near-black */
+  --color-accent: #8b1e2f;      /* deep maroon - buttons, bars, footer */
+  --color-accent-2: #c9a24a;    /* antique gold - dividers, highlights */
   --color-divider: color-mix(in srgb, var(--color-text) 40%, transparent);
 
-  --color-neutral-100: #f8f4f4;
-  --color-neutral-200: #eae7e7;
-  --color-neutral-300: #d7d3d3;
-  --color-neutral-400: #bab6b6;
-  --color-neutral-500: #9b9797;
-  --color-neutral-600: #7d7979;
-  --color-neutral-700: #605d5d;
-  --color-neutral-800: #444141;
-  --color-neutral-900: #2d2b2b;
+  /* Warm taupe neutrals, on the same hue axis as the blush surfaces */
+  --color-neutral-100: #faf6f3;
+  --color-neutral-200: #f2ebe6;
+  --color-neutral-300: #e3d9d2;
+  --color-neutral-400: #cbbdb4;
+  --color-neutral-500: #ab9c92;
+  --color-neutral-600: #8b7c72;
+  --color-neutral-700: #6b5e56;
+  --color-neutral-800: #4b423d;
+  --color-neutral-900: #302a27;
 
-  --color-accent-100: #fff2ef;
-  --color-accent-200: #ffe0d9;
-  --color-accent-300: #ffc4b8;
-  --color-accent-400: #ff9783;
-  --color-accent-500: #ff563c;
-  --color-accent-600: #dd2b0f;
-  --color-accent-700: #ae1800;
-  --color-accent-800: #7c1405;
-  --color-accent-900: #4d170e;
+  /* Maroon ramp - --color-accent sits between 500 and 600 so :hover
+     (600) and :active (700) darken correctly */
+  --color-accent-100: #fdf3f4;
+  --color-accent-200: #f7dfe3;
+  --color-accent-300: #eec0c7;
+  --color-accent-400: #d38e9c;
+  --color-accent-500: #a8253a;
+  --color-accent-600: #79192a;
+  --color-accent-700: #5f1321;
+  --color-accent-800: #451018;
+  --color-accent-900: #2e0b10;
 
-  --color-accent-2-100: #fff2ef;
-  --color-accent-2-200: #ffe0da;
-  --color-accent-2-300: #ffc4b9;
-  --color-accent-2-400: #ff9784;
-  --color-accent-2-500: #ef6853;
-  --color-accent-2-600: #c94b39;
-  --color-accent-2-700: #9e3526;
-  --color-accent-2-800: #71261b;
-  --color-accent-2-900: #471d16;
+  /* Antique gold ramp */
+  --color-accent-2-100: #fdf8ec;
+  --color-accent-2-200: #f8edd2;
+  --color-accent-2-300: #f0dcab;
+  --color-accent-2-400: #e2c477;
+  --color-accent-2-500: #cfa951;
+  --color-accent-2-600: #b08c3a;
+  --color-accent-2-700: #8c6d2c;
+  --color-accent-2-800: #654e20;
+  --color-accent-2-900: #423316;
 
   /* -- Semantic: surfaces ------------------------------------------------- */
-  --color-surface-raised:  #fff;      /* cards, modals, tables lifted off the page */
-  --color-surface-sunken:  #f9fafb;   /* table headers, inset panels */
-  --color-surface-alt:     #f5f5f5;   /* filled tiles, neutral chips, hover fills */
-  --color-surface-page:    #f8f8f7;   /* secondary page background (hero band, admin) */
-  --color-surface-inverse: #201e1d;   /* dark bars and solid dark buttons */
-  --color-skeleton:        #f0eeee;   /* loading placeholders */
+  --color-surface-raised:  #ffffff;   /* cards, modals, tables lifted off the page */
+  --color-surface-sunken:  #faf6f3;   /* table headers, inset panels */
+  --color-surface-alt:     #f4ece6;   /* filled tiles, neutral chips, hover fills */
+  --color-surface-page:    #fbf6f2;   /* secondary page background (hero band, admin) */
+  --color-surface-inverse: #2a1f20;   /* dark bars and solid dark buttons */
+  --color-skeleton:        #f0e7e1;   /* loading placeholders */
 
   /* -- Semantic: borders -------------------------------------------------- */
-  --color-border:        #e5e7eb;     /* hairline on raised surfaces */
-  --color-border-strong: #d0d0d0;
-  --color-border-subtle: #f0f0f0;     /* table row separators */
+  --color-border:        #e8ddd6;     /* hairline on raised surfaces */
+  --color-border-strong: #d5c7bf;
+  --color-border-subtle: #f3ebe6;     /* table row separators */
 
   /* -- Semantic: text ----------------------------------------------------- */
-  --color-text-body:   #444;          /* secondary copy, table headers */
-  --color-text-muted:  #666;
-  --color-text-subtle: #888;          /* metadata, timestamps */
-  --color-text-faint:  #aaa;
+  --color-text-body:   #4b423d;       /* secondary copy, table headers */
+  --color-text-muted:  #6b5e56;
+  --color-text-subtle: #7d6e64;       /* metadata, timestamps (AA on white) */
+  --color-text-faint:  #9c8d83;
   --color-on-accent:   #fff;          /* text/icons on an accent fill */
   --color-on-dark:     #fff;          /* text/icons on a dark bar */
 
@@ -81,9 +85,9 @@
   --color-info:           #2563eb;
   --color-info-bg:        #e3f2fd;
 
-  --color-rating: #f5a623;            /* filled review stars */
-  --color-fav:    #e91e63;            /* wishlist heart */
-  --color-fav-bg: #fff0f4;
+  --color-rating: #e0a32e;            /* filled review stars (gold) */
+  --color-fav:    #b02a3f;            /* wishlist heart (rose, in the maroon family) */
+  --color-fav-bg: #fbeef0;
 
   /* -- Categorical: admin stat tiles -------------------------------------- */
   --color-chart-1: #16a34a;
@@ -1004,8 +1008,17 @@ figure { margin: 0; }
 }
 .newsletter-input::placeholder { color: color-mix(in srgb, var(--color-bg) 70%, transparent); }
 .newsletter-input:focus-visible { outline: 2px solid var(--color-bg); outline-offset: 2px; }
-.btn-on-accent { color: var(--color-bg); border-color: var(--color-bg); }
-.btn-on-accent:hover { background: color-mix(in srgb, var(--color-bg) 15%, transparent); color: var(--color-bg); }
+/* Gold fill on the maroon newsletter strip */
+.btn-on-accent {
+  background: var(--color-accent-2);
+  border-color: var(--color-accent-2);
+  color: var(--color-accent-900);
+}
+.btn-on-accent:hover {
+  background: var(--color-accent-2-400);
+  border-color: var(--color-accent-2-400);
+  color: var(--color-accent-900);
+}
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    CATEGORY PAGE
