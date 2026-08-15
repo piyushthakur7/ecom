@@ -11,6 +11,7 @@ import { Footer } from '@/components/footer';
 import { useToast } from '@/components/toast';
 import { createOrder } from '@/lib/services/orders.service';
 import { updateAddresses, updateProfile } from '@/lib/services/auth.service';
+import { loadRazorpayScript } from '@/lib/razorpay';
 import type { SavedAddress } from '@/lib/types';
 
 const STATES = [
@@ -22,16 +23,62 @@ const STATES = [
 ];
 
 type FormState = {
-  firstName: string; lastName: string; phone: string; email: string;
-  address: string; city: string; state: string; pincode: string; landmark: string;
-  payment: string; upiId: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  address: string;
+  city: string;
+  state: string;
+  pincode: string;
+  landmark: string;
+  payment: 'razorpay' | 'cod';
 };
 
 const emptyForm: FormState = {
-  firstName: '', lastName: '', phone: '', email: '',
-  address: '', city: '', state: '', pincode: '', landmark: '',
-  payment: 'upi', upiId: '',
+  firstName: '',
+  lastName: '',
+  phone: '',
+  email: '',
+  address: '',
+  city: '',
+  state: '',
+  pincode: '',
+  landmark: '',
+  payment: 'razorpay',
 };
+
+interface RazorpayResponse {
+  razorpay_payment_id: string;
+  razorpay_order_id: string;
+  razorpay_signature: string;
+}
+
+interface RazorpayOptions {
+  key: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  order_id: string;
+  handler: (response: RazorpayResponse) => void | Promise<void>;
+  prefill?: {
+    name?: string;
+    email?: string;
+    contact?: string;
+  };
+  notes?: Record<string, string>;
+  theme?: {
+    color?: string;
+  };
+  modal?: {
+    ondismiss?: () => void;
+  };
+}
+
+interface RazorpayConstructor {
+  new (options: RazorpayOptions): { open: () => void };
+}
 
 export default function CheckoutPage() {
   const { items, total, count, clearCart } = useCart();
@@ -44,6 +91,7 @@ export default function CheckoutPage() {
   const [placing, setPlacing] = useState(false);
   const [success, setSuccess] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
+  const [paymentId, setPaymentId] = useState('');
   const [authOpen, setAuthOpen] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState<string | 'new'>('new');
 
@@ -110,7 +158,6 @@ export default function CheckoutPage() {
     if (!form.city.trim()) e.city = 'Required';
     if (!form.state) e.state = 'Required';
     if (!/^\d{6}$/.test(form.pincode)) e.pincode = 'Enter a valid 6-digit pincode';
-    if (form.payment === 'upi' && !form.upiId.trim()) e.upiId = 'Enter your UPI ID';
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -139,7 +186,7 @@ export default function CheckoutPage() {
       isDefault: false,
     };
 
-    // Upload / Save address to user's profile in DB if logged in
+    // Auto-save address & user details to profile
     if (user) {
       try {
         const existingAddrs = profile?.addresses || [];
@@ -156,7 +203,6 @@ export default function CheckoutPage() {
           await updateAddresses(user.id, updatedAddrs);
           patchProfile({ addresses: updatedAddrs });
         }
-        // Save phone / name to profile if missing
         if (!profile?.phone || !profile?.full_name) {
           await updateProfile(user.id, {
             full_name: profile?.full_name || `${form.firstName} ${form.lastName}`,
@@ -168,13 +214,115 @@ export default function CheckoutPage() {
       }
     }
 
+    // ── Payment Route A: Razorpay Online Payment ────────────────────────
+    if (form.payment === 'razorpay') {
+      try {
+        const scriptLoaded = await loadRazorpayScript();
+        if (!scriptLoaded) {
+          toast('Razorpay SDK failed to load. Check your internet connection.', 'error');
+          setPlacing(false);
+          return;
+        }
+
+        // 1. Create Razorpay order on server
+        const createRes = await fetch('/api/razorpay/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: grandTotal }),
+        });
+
+        const orderData = await createRes.json();
+
+        if (!createRes.ok || !orderData.success) {
+          toast(orderData.error || 'Failed to initialize payment gateway', 'error');
+          setPlacing(false);
+          return;
+        }
+
+        // 2. Launch Razorpay Checkout Modal
+        const RazorpayWindow = (window as unknown as { Razorpay: RazorpayConstructor }).Razorpay;
+        const options: RazorpayOptions = {
+          key: orderData.key,
+          amount: orderData.amount,
+          currency: orderData.currency,
+          name: 'Saanshika Ethnics',
+          description: `Payment for Order (${items.length} items)`,
+          order_id: orderData.orderId,
+          handler: async function (response: RazorpayResponse) {
+            try {
+              // 3. Verify signature on server
+              const verifyRes = await fetch('/api/razorpay/verify-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  orderDetails: {
+                    userId: user ? user.id : null,
+                    customerName: `${form.firstName} ${form.lastName}`,
+                    customerEmail: form.email,
+                    customerPhone: form.phone,
+                    shippingAddress,
+                    items,
+                    total,
+                    shipping,
+                  },
+                }),
+              });
+
+              const verifyData = await verifyRes.json();
+
+              if (verifyRes.ok && verifyData.success) {
+                clearCart();
+                setOrderNumber(verifyData.orderNumber);
+                setPaymentId(verifyData.paymentId);
+                setSuccess(true);
+                toast('Payment successful! Order placed 🎉');
+              } else {
+                toast(verifyData.error || 'Payment verification failed', 'error');
+              }
+            } catch (err) {
+              console.error('Verification error:', err);
+              toast('An error occurred verifying your payment.', 'error');
+            } finally {
+              setPlacing(false);
+            }
+          },
+          prefill: {
+            name: `${form.firstName} ${form.lastName}`,
+            email: form.email,
+            contact: form.phone,
+          },
+          theme: {
+            color: '#6b1d2f', // Deep Crimson Maroon theme!
+          },
+          modal: {
+            ondismiss: function () {
+              setPlacing(false);
+              toast('Payment window closed.', 'info');
+            },
+          },
+        };
+
+        const rzp = new RazorpayWindow(options);
+        rzp.open();
+      } catch (err) {
+        console.error('Razorpay flow error:', err);
+        toast('Failed to initiate online payment.', 'error');
+        setPlacing(false);
+      }
+      return;
+    }
+
+    // ── Payment Route B: Cash on Delivery (COD) ─────────────────────────
     const result = await createOrder({
       userId: user ? user.id : null,
       customerName: `${form.firstName} ${form.lastName}`,
       customerEmail: form.email,
       customerPhone: form.phone,
       shippingAddress,
-      paymentMethod: form.payment,
+      paymentMethod: 'cod',
       items,
       total,
       shipping,
@@ -183,8 +331,9 @@ export default function CheckoutPage() {
     if (result) {
       clearCart();
       setOrderNumber(result.orderNumber);
+      setPaymentId('');
       setSuccess(true);
-      toast('Order placed successfully! 🎉');
+      toast('COD Order placed successfully! 🎉');
     } else {
       toast('Failed to place order. Please try again.', 'error');
     }
@@ -201,13 +350,17 @@ export default function CheckoutPage() {
                 <path d="M20 6 9 17l-5-5" />
               </svg>
             </div>
-            <h1 style={{ fontSize: 28, marginBottom: 10 }}>Order Placed! 🎉</h1>
-            <p style={{ color: 'color-mix(in srgb, var(--color-text) 65%, transparent)', marginBottom: 8, lineHeight: 1.7 }}>
+            <h1 style={{ fontSize: 28, marginBottom: 10, color: 'var(--color-text)' }}>Order Confirmed! 🎉</h1>
+            <p style={{ color: 'color-mix(in srgb, var(--color-text) 75%, transparent)', marginBottom: 8, lineHeight: 1.7 }}>
               Thank you, <strong>{form.firstName}</strong>! Your order <strong>{orderNumber}</strong> has been placed successfully.
-              We&apos;ll send a confirmation to <strong>{form.email}</strong>.
+              {paymentId && (
+                <span style={{ display: 'block', fontSize: 13, color: '#6b1d2f', fontWeight: 600, marginTop: 4 }}>
+                  💳 Razorpay Payment ID: {paymentId}
+                </span>
+              )}
             </p>
-            <p style={{ fontSize: 14, color: 'color-mix(in srgb, var(--color-text) 55%, transparent)', marginBottom: 32 }}>
-              📦 Expected delivery: 3–5 business days · Ships from Amritsar
+            <p style={{ fontSize: 14, color: 'color-mix(in srgb, var(--color-text) 65%, transparent)', marginBottom: 32 }}>
+              📦 We will send confirmation & tracking updates to <strong>{form.email}</strong>. Expected delivery: 3–5 business days.
             </p>
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
               <Link href="/profile?tab=orders" className="btn btn-primary btn-large">View My Orders</Link>
@@ -258,7 +411,7 @@ export default function CheckoutPage() {
                 <div className="checkout-section">
                   <div className="checkout-section-title">
                     <span className="checkout-step-num">1</span>
-                    Saved Addresses
+                    Saved Delivery Addresses
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                     {profile.addresses.map((addr) => (
@@ -305,7 +458,7 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* Delivery */}
+              {/* Delivery Address */}
               <div className="checkout-section">
                 <div className="checkout-section-title">
                   <span className="checkout-step-num">{user && profile?.addresses?.length ? '3' : '2'}</span>
@@ -335,37 +488,54 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* Payment */}
+              {/* Payment Method */}
               <div className="checkout-section">
                 <div className="checkout-section-title">
                   <span className="checkout-step-num">{user && profile?.addresses?.length ? '4' : '3'}</span>
                   Payment Method
                 </div>
                 <div className="payment-options">
-                  <PaymentTile id="pay-upi" value="upi" checked={form.payment === 'upi'} onChange={() => set('payment', 'upi')} icon="📱" label="UPI" sub="PhonePe, GPay, Paytm, BHIM" />
-                  {form.payment === 'upi' && (
-                    <div style={{ paddingLeft: 12 }}>
-                      <Field label="Your UPI ID" error={errors.upiId}>
-                        <input className="form-input" placeholder="yourname@upi" value={form.upiId} onChange={(e) => set('upiId', e.target.value)} />
-                      </Field>
+                  {/* Razorpay Online */}
+                  <label className={`payment-tile ${form.payment === 'razorpay' ? 'selected' : ''}`} htmlFor="pay-razorpay" style={{ border: form.payment === 'razorpay' ? '2px solid var(--color-accent)' : '1.5px solid var(--color-divider)', background: form.payment === 'razorpay' ? 'var(--color-accent-100)' : '#fff', borderRadius: 10, padding: 14, cursor: 'pointer', display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                    <input id="pay-razorpay" type="radio" name="payment" value="razorpay" checked={form.payment === 'razorpay'} onChange={() => set('payment', 'razorpay')} style={{ marginTop: 3 }} />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={{ fontSize: 18 }}>⚡</span>
+                        <span className="payment-tile-label" style={{ fontWeight: 700, fontSize: 15 }}>Online Payment (Razorpay)</span>
+                        <span style={{ background: 'var(--color-accent)', color: '#fff', fontSize: 10, fontWeight: 800, padding: '2px 8px', borderRadius: 12, textTransform: 'uppercase' }}>Recommended</span>
+                      </div>
+                      <div className="payment-tile-sub" style={{ fontSize: 13, color: '#555', marginTop: 4 }}>
+                        UPI (GPay, PhonePe, Paytm, BHIM), Credit / Debit Cards, NetBanking & Wallets
+                      </div>
                     </div>
-                  )}
-                  <PaymentTile id="pay-card" value="card" checked={form.payment === 'card'} onChange={() => set('payment', 'card')} icon="💳" label="Debit / Credit Card" sub="Visa, Mastercard, RuPay" />
-                  <PaymentTile id="pay-netbanking" value="netbanking" checked={form.payment === 'netbanking'} onChange={() => set('payment', 'netbanking')} icon="🏦" label="Net Banking" sub="All major Indian banks" />
-                  <PaymentTile id="pay-cod" value="cod" checked={form.payment === 'cod'} onChange={() => set('payment', 'cod')} icon="🏠" label="Cash on Delivery" sub="Pay when you receive" />
+                  </label>
+
+                  {/* Cash on Delivery */}
+                  <label className={`payment-tile ${form.payment === 'cod' ? 'selected' : ''}`} htmlFor="pay-cod" style={{ border: form.payment === 'cod' ? '2px solid var(--color-accent)' : '1.5px solid var(--color-divider)', background: form.payment === 'cod' ? 'var(--color-accent-100)' : '#fff', borderRadius: 10, padding: 14, cursor: 'pointer', display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                    <input id="pay-cod" type="radio" name="payment" value="cod" checked={form.payment === 'cod'} onChange={() => set('payment', 'cod')} style={{ marginTop: 3 }} />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={{ fontSize: 18 }}>🏠</span>
+                        <span className="payment-tile-label" style={{ fontWeight: 700, fontSize: 15 }}>Cash on Delivery (COD)</span>
+                      </div>
+                      <div className="payment-tile-sub" style={{ fontSize: 13, color: '#555', marginTop: 4 }}>
+                        Pay cash directly to the delivery partner when your package arrives
+                      </div>
+                    </div>
+                  </label>
                 </div>
               </div>
 
-              {/* Place order (mobile) */}
+              {/* Place order (mobile button) */}
               <div className="show-mobile" style={{ display: 'block' }}>
-                <PlaceOrderBtn total={grandTotal} placing={placing} />
+                <PlaceOrderBtn total={grandTotal} placing={placing} isRazorpay={form.payment === 'razorpay'} />
               </div>
             </div>
 
             {/* RIGHT — order summary */}
             <div className="checkout-order-col">
               <div className="checkout-order-summary">
-                <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: 16, margin: '0 0 16px' }}>Your Order</h2>
+                <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: 16, margin: '0 0 16px' }}>Your Order Summary</h2>
                 {items.map((item) => (
                   <div key={`${item.id}-${item.size ?? ''}`} className="order-line-item">
                     <div className="order-line-img">
@@ -373,7 +543,7 @@ export default function CheckoutPage() {
                     </div>
                     <div className="order-line-name">
                       {item.name}
-                      <span style={{ display: 'inline-block', fontSize: 11, fontWeight: 700, color: 'var(--color-accent)', background: '#fff5f0', border: '1px solid #fcdcd7', padding: '1px 6px', borderRadius: 4, marginTop: 3 }}>
+                      <span style={{ display: 'inline-block', fontSize: 11, fontWeight: 700, color: 'var(--color-accent)', background: 'var(--color-accent-100)', border: '1px solid var(--color-accent-300)', padding: '1px 6px', borderRadius: 4, marginTop: 3 }}>
                         Size: {item.size || 'M'}
                       </span>
                       <span style={{ display: 'block', fontSize: 11, fontWeight: 400, opacity: 0.65, marginTop: 2 }}>Qty: {item.quantity}</span>
@@ -387,7 +557,7 @@ export default function CheckoutPage() {
                   <div className="cart-summary-row cart-summary-total"><span>Total</span><span>₹{grandTotal.toLocaleString('en-IN')}</span></div>
                 </div>
                 <div className="hide-mobile">
-                  <PlaceOrderBtn total={grandTotal} placing={placing} />
+                  <PlaceOrderBtn total={grandTotal} placing={placing} isRazorpay={form.payment === 'razorpay'} />
                 </div>
               </div>
             </div>
@@ -418,29 +588,28 @@ function Field({ label, error, children }: { label: string; error?: string; chil
   );
 }
 
-function PaymentTile({ id, value, checked, onChange, icon, label, sub }: {
-  id: string; value: string; checked: boolean; onChange: () => void;
-  icon: string; label: string; sub: string;
-}) {
+function PlaceOrderBtn({ total, placing, isRazorpay }: { total: number; placing: boolean; isRazorpay: boolean }) {
   return (
-    <label className="payment-tile" htmlFor={id}>
-      <input id={id} type="radio" name="payment" value={value} checked={checked} onChange={onChange} />
-      <span style={{ fontSize: 22 }}>{icon}</span>
-      <div>
-        <div className="payment-tile-label">{label}</div>
-        <div className="payment-tile-sub">{sub}</div>
-      </div>
-    </label>
-  );
-}
-
-function PlaceOrderBtn({ total, placing }: { total: number; placing: boolean }) {
-  return (
-    <button type="submit" className="btn btn-primary btn-block btn-large" disabled={placing} style={{ marginTop: 16, justifyContent: 'center', borderRadius: 'var(--radius-md)', opacity: placing ? 0.75 : 1 }}>
+    <button
+      type="submit"
+      className="btn btn-primary btn-block btn-large"
+      disabled={placing}
+      style={{
+        marginTop: 16,
+        justifyContent: 'center',
+        borderRadius: 'var(--radius-md)',
+        opacity: placing ? 0.75 : 1,
+        padding: '14px 28px',
+        fontSize: 16,
+        fontWeight: 800,
+      }}
+    >
       {placing ? (
-        <><span style={{ display: 'inline-block', animation: 'spin 0.8s linear infinite', marginRight: 6 }}>⟳</span>Placing order…</>
+        <><span style={{ display: 'inline-block', animation: 'spin 0.8s linear infinite', marginRight: 6 }}>⟳</span>Processing…</>
+      ) : isRazorpay ? (
+        `Pay Now · ₹${total.toLocaleString('en-IN')}`
       ) : (
-        `Place Order · ₹${total.toLocaleString('en-IN')}`
+        `Place Order (COD) · ₹${total.toLocaleString('en-IN')}`
       )}
     </button>
   );

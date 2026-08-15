@@ -45,8 +45,8 @@ export function Hero() {
       style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-        background: '#f8f8f7',
-        borderBottom: '1px solid var(--color-neutral-200, #e4e4e7)',
+        background: '#fdfbf7',
+        borderBottom: '1px solid var(--color-divider)',
         overflow: 'hidden',
         minHeight: 'clamp(520px, 70vh, 700px)',
       }}
@@ -59,7 +59,7 @@ export function Hero() {
           flexDirection: 'column',
           justifyContent: 'center',
           gap: 'clamp(20px, 3vw, 32px)',
-          background: '#f8f8f7',
+          background: '#fdfbf7',
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -69,10 +69,10 @@ export function Hero() {
               style={{
                 fontSize: 12,
                 fontWeight: 700,
-                color: 'var(--color-accent, #c97d4e)',
+                color: 'var(--color-accent)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.08em',
-                background: 'rgba(201, 125, 78, 0.1)',
+                background: 'rgba(107, 29, 47, 0.08)',
                 padding: '4px 10px',
                 borderRadius: 4,
               }}
@@ -88,7 +88,7 @@ export function Hero() {
               fontSize: 'clamp(36px, 4.5vw, 58px)',
               fontWeight: 800,
               lineHeight: 1.08,
-              color: '#18181b',
+              color: 'var(--color-text)',
               letterSpacing: '-0.02em',
               margin: 0,
             }}
@@ -100,7 +100,7 @@ export function Hero() {
           <p
             style={{
               fontSize: 'clamp(14px, 1.2vw, 16px)',
-              color: '#52525b',
+              color: 'color-mix(in srgb, var(--color-text) 75%, transparent)',
               lineHeight: 1.6,
               maxWidth: 480,
               margin: 0,

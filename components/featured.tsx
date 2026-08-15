@@ -135,7 +135,8 @@ export function Featured() {
 
               <button
                 type="button"
-                className="btn btn-secondary btn-block"
+                className="btn btn-primary btn-block"
+                style={{ fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase', fontSize: 13 }}
                 onClick={() => {
                   addToCart({
                     id: p.id,

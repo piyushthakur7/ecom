@@ -1,45 +1,45 @@
-﻿/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    Saanshika Ethnics â€” Design System
    Source of truth for tokens, base styles and all component classes.
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 :root {
-  --color-bg: #f3f2f2;
-  --color-surface: #eae9e9;
-  --color-text: #201e1d;
-  --color-accent: #ec3013;
-  --color-accent-2: #e15b47;
-  --color-divider: color-mix(in srgb, #201e1d 40%, transparent);
+  --color-bg: #fdfbf7;
+  --color-surface: #f6f0e6;
+  --color-text: #2b1b17;
+  --color-accent: #6b1d2f;
+  --color-accent-2: #c59b27;
+  --color-divider: #e8e0d5;
 
-  --color-neutral-100: #f8f4f4;
-  --color-neutral-200: #eae7e7;
-  --color-neutral-300: #d7d3d3;
-  --color-neutral-400: #bab6b6;
-  --color-neutral-500: #9b9797;
-  --color-neutral-600: #7d7979;
-  --color-neutral-700: #605d5d;
-  --color-neutral-800: #444141;
-  --color-neutral-900: #2d2b2b;
+  --color-neutral-100: #faf7f2;
+  --color-neutral-200: #f0e9df;
+  --color-neutral-300: #e2d7c9;
+  --color-neutral-400: #c5b8a6;
+  --color-neutral-500: #9e9080;
+  --color-neutral-600: #7a6e60;
+  --color-neutral-700: #574d43;
+  --color-neutral-800: #3a322b;
+  --color-neutral-900: #231c17;
 
-  --color-accent-100: #fff2ef;
-  --color-accent-200: #ffe0d9;
-  --color-accent-300: #ffc4b8;
-  --color-accent-400: #ff9783;
-  --color-accent-500: #ff563c;
-  --color-accent-600: #dd2b0f;
-  --color-accent-700: #ae1800;
-  --color-accent-800: #7c1405;
-  --color-accent-900: #4d170e;
+  --color-accent-100: #fbf2f4;
+  --color-accent-200: #f4dede;
+  --color-accent-300: #e4afb8;
+  --color-accent-400: #cf7788;
+  --color-accent-500: #a3394f;
+  --color-accent-600: #802339;
+  --color-accent-700: #6b1d2f;
+  --color-accent-800: #521423;
+  --color-accent-900: #380c17;
 
-  --color-accent-2-100: #fff2ef;
-  --color-accent-2-200: #ffe0da;
-  --color-accent-2-300: #ffc4b9;
-  --color-accent-2-400: #ff9784;
-  --color-accent-2-500: #ef6853;
-  --color-accent-2-600: #c94b39;
-  --color-accent-2-700: #9e3526;
-  --color-accent-2-800: #71261b;
-  --color-accent-2-900: #471d16;
+  --color-accent-2-100: #fefaf0;
+  --color-accent-2-200: #fbf0d5;
+  --color-accent-2-300: #f4e0a6;
+  --color-accent-2-400: #e7cb72;
+  --color-accent-2-500: #c59b27;
+  --color-accent-2-600: #a67f1b;
+  --color-accent-2-700: #836212;
+  --color-accent-2-800: #61470d;
+  --color-accent-2-900: #423008;
 
   --font-heading: var(--font-archivo), system-ui, sans-serif;
   --font-heading-weight: 800;
@@ -57,10 +57,10 @@
   --radius-lg: 12px;
   --radius-full: 9999px;
 
-  --shadow-sm: 0 1px 2px color-mix(in srgb, #2d2b2b 14%, transparent);
-  --shadow-md: 0 3px 10px color-mix(in srgb, #2d2b2b 16%, transparent);
-  --shadow-lg: 0 12px 32px color-mix(in srgb, #2d2b2b 22%, transparent);
-  --shadow-xl: 0 20px 60px color-mix(in srgb, #2d2b2b 28%, transparent);
+  --shadow-sm: 0 1px 2px color-mix(in srgb, #231c17 10%, transparent);
+  --shadow-md: 0 3px 10px color-mix(in srgb, #231c17 12%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, #231c17 16%, transparent);
+  --shadow-xl: 0 20px 60px color-mix(in srgb, #231c17 22%, transparent);
 
   --nav-height: 64px;
   --transition-fast: 0.18s ease;
@@ -2007,7 +2007,9 @@ figure { margin: 0; }
 
 /* -- Footer Section Default (Desktop) ------------------------------------ */
 .footer-wrap {
-  border-top: 2px solid var(--color-divider);
+  background: #380c17;
+  color: #fdfbf7;
+  border-top: 2px solid #521423;
 }
 .footer-grid {
   max-width: 1280px;
@@ -2020,16 +2022,17 @@ figure { margin: 0; }
 .footer-brand-title {
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: 20px;
+  font-size: 22px;
   letter-spacing: -0.01em;
   margin: 0 0 8px;
+  color: #c59b27;
 }
 .footer-brand-desc {
   font-size: 14px;
   line-height: 1.6;
   margin: 0;
   max-width: 36ch;
-  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+  color: rgba(253, 251, 247, 0.75);
 }
 .footer-col {
   display: flex;
@@ -2041,28 +2044,30 @@ figure { margin: 0; }
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-accent-700);
+  color: #c59b27;
   margin-bottom: 4px;
   font-weight: 700;
 }
 .footer-link {
-  color: inherit;
+  color: rgba(253, 251, 247, 0.85);
   text-decoration: none;
+  transition: color 0.18s ease;
 }
 .footer-link:hover {
-  color: var(--color-accent);
+  color: #f4d068;
 }
 .footer-address {
   line-height: 1.6;
-  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+  color: rgba(253, 251, 247, 0.75);
 }
 .footer-bottom {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 clamp(20px, 5vw, 72px) 28px;
+  padding: 20px clamp(20px, 5vw, 72px) 28px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   font-size: 12px;
   letter-spacing: 0.04em;
-  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  color: rgba(253, 251, 247, 0.6);
 }
 
 /* Footer Section Mobile Override */
