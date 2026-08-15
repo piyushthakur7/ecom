@@ -31,9 +31,9 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 
   const iconMap: Record<ToastType, string> = { success: '✓', error: '✕', info: 'ℹ' };
   const colorMap: Record<ToastType, string> = {
-    success: '#16a34a',
-    error: '#dc2626',
-    info: '#2563eb',
+    success: 'var(--color-success)',
+    error: 'var(--color-danger)',
+    info: 'var(--color-info)',
   };
 
   return (
@@ -62,13 +62,13 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               display: 'flex',
               alignItems: 'center',
               gap: 10,
-              background: '#fff',
-              color: '#1a1a1a',
+              background: 'var(--color-surface-raised)',
+              color: 'var(--color-text)',
               border: `1.5px solid ${colorMap[t.type]}`,
               borderLeft: `4px solid ${colorMap[t.type]}`,
               borderRadius: 10,
               padding: '12px 18px',
-              boxShadow: '0 4px 24px rgba(0,0,0,0.10)',
+              boxShadow: '0 4px 24px var(--color-shadow-soft)',
               fontFamily: 'var(--font-body, sans-serif)',
               fontSize: 14,
               fontWeight: 500,
@@ -84,7 +84,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                 height: 22,
                 borderRadius: '50%',
                 background: colorMap[t.type],
-                color: '#fff',
+                color: 'var(--color-on-accent)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',

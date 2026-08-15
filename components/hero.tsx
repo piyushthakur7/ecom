@@ -45,8 +45,13 @@ export function Hero() {
       style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+<<<<<<< HEAD
         background: '#fdfbf7',
         borderBottom: '1px solid var(--color-divider)',
+=======
+        background: 'var(--color-surface-page)',
+        borderBottom: '1px solid var(--color-neutral-200)',
+>>>>>>> e016ab3281336e03fe307186f7650c29a80f92ea
         overflow: 'hidden',
         minHeight: 'clamp(520px, 70vh, 700px)',
       }}
@@ -59,7 +64,11 @@ export function Hero() {
           flexDirection: 'column',
           justifyContent: 'center',
           gap: 'clamp(20px, 3vw, 32px)',
+<<<<<<< HEAD
           background: '#fdfbf7',
+=======
+          background: 'var(--color-surface-page)',
+>>>>>>> e016ab3281336e03fe307186f7650c29a80f92ea
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -72,7 +81,11 @@ export function Hero() {
                 color: 'var(--color-accent)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.08em',
+<<<<<<< HEAD
                 background: 'rgba(107, 29, 47, 0.08)',
+=======
+                background: 'color-mix(in srgb, var(--color-accent) 10%, transparent)',
+>>>>>>> e016ab3281336e03fe307186f7650c29a80f92ea
                 padding: '4px 10px',
                 borderRadius: 4,
               }}
@@ -100,7 +113,11 @@ export function Hero() {
           <p
             style={{
               fontSize: 'clamp(14px, 1.2vw, 16px)',
+<<<<<<< HEAD
               color: 'color-mix(in srgb, var(--color-text) 75%, transparent)',
+=======
+              color: 'var(--color-text-muted)',
+>>>>>>> e016ab3281336e03fe307186f7650c29a80f92ea
               lineHeight: 1.6,
               maxWidth: 480,
               margin: 0,
@@ -131,7 +148,7 @@ export function Hero() {
             style={{
               fontSize: 15,
               fontWeight: 700,
-              color: 'var(--color-accent, #c97d4e)',
+              color: 'var(--color-accent)',
               textDecoration: 'none',
               padding: '14px 20px',
             }}
@@ -141,23 +158,23 @@ export function Hero() {
         </div>
 
         {/* Divider */}
-        <hr style={{ border: 'none', borderTop: '1px solid #e4e4e7', margin: '4px 0 0 0' }} />
+        <hr style={{ border: 'none', borderTop: '1px solid var(--color-border)', margin: '4px 0 0 0' }} />
 
         {/* Stats Row */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
           <div>
-            <div style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(20px, 2.2vw, 26px)', fontWeight: 800, color: '#18181b' }}>
+            <div style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(20px, 2.2vw, 26px)', fontWeight: 800, color: 'var(--color-text)' }}>
               160+
             </div>
-            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#71717a', marginTop: 4 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-text-muted)', marginTop: 4 }}>
               Styles Live
             </div>
           </div>
           <div>
-            <div style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(20px, 2.2vw, 26px)', fontWeight: 800, color: '#18181b' }}>
+            <div style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(20px, 2.2vw, 26px)', fontWeight: 800, color: 'var(--color-text)' }}>
               48h
             </div>
-            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#71717a', marginTop: 4 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-text-muted)', marginTop: 4 }}>
               Dispatch, Amritsar
             </div>
           </div>
@@ -169,7 +186,7 @@ export function Hero() {
         style={{
           position: 'relative',
           minHeight: 400,
-          background: '#e4e4e7',
+          background: 'var(--color-neutral-200)',
           overflow: 'hidden',
         }}
       >
@@ -195,7 +212,7 @@ export function Hero() {
             />
           </Link>
         ) : (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#a1a1aa', fontSize: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--color-text-faint)', fontSize: 14 }}>
             Loading images…
           </div>
         )}
@@ -224,12 +241,12 @@ export function Hero() {
                   width: i === current ? 28 : 8,
                   height: 8,
                   borderRadius: 4,
-                  background: i === current ? '#ffffff' : 'rgba(255,255,255,0.5)',
+                  background: i === current ? 'var(--color-on-media)' : 'var(--color-scrim-light-soft)',
                   border: 'none',
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
                   padding: 0,
-                  boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
+                  boxShadow: '0 1px 4px var(--color-shadow-heavy)',
                 }}
               />
             ))}
@@ -248,7 +265,7 @@ export function Hero() {
                 top: '50%',
                 left: 16,
                 transform: 'translateY(-50%)',
-                background: 'rgba(255,255,255,0.85)',
+                background: 'var(--color-scrim-light)',
                 border: 'none',
                 borderRadius: '50%',
                 width: 40,
@@ -258,10 +275,10 @@ export function Hero() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 zIndex: 2,
-                boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+                boxShadow: '0 2px 10px var(--color-shadow-strong)',
               }}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#18181b" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ stroke: 'var(--color-text)' }} strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
                 <path d="M15 18l-6-6 6-6" />
               </svg>
             </button>
@@ -274,7 +291,7 @@ export function Hero() {
                 top: '50%',
                 right: 16,
                 transform: 'translateY(-50%)',
-                background: 'rgba(255,255,255,0.85)',
+                background: 'var(--color-scrim-light)',
                 border: 'none',
                 borderRadius: '50%',
                 width: 40,
@@ -284,10 +301,10 @@ export function Hero() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 zIndex: 2,
-                boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+                boxShadow: '0 2px 10px var(--color-shadow-strong)',
               }}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#18181b" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ stroke: 'var(--color-text)' }} strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
                 <path d="M9 18l6-6-6-6" />
               </svg>
             </button>

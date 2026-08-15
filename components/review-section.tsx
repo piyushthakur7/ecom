@@ -38,7 +38,13 @@ function initials(name: string) {
     .toUpperCase();
 }
 
-const AVATAR_COLORS = ['#7c5cbf', '#c97d4e', '#3a8f6e', '#b85c5c', '#4f7fbf'];
+const AVATAR_COLORS = [
+  'var(--color-avatar-1)',
+  'var(--color-avatar-2)',
+  'var(--color-avatar-3)',
+  'var(--color-avatar-4)',
+  'var(--color-avatar-5)',
+];
 function avatarColor(name: string) {
   let hash = 0;
   for (const ch of name) hash = ch.charCodeAt(0) + ((hash << 5) - hash);
