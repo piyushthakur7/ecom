@@ -168,7 +168,7 @@ export function Nav() {
 
           {/* Favourites */}
           <Link href="/favourites" className="btn btn-icon" style={{ position: 'relative' }} aria-label={`Favourites — ${favCount} items`}>
-            <svg width="19" height="19" viewBox="0 0 24 24" style={{ fill: favCount > 0 ? 'var(--color-fav)' : 'none', stroke: favCount > 0 ? 'var(--color-fav)' : 'currentColor' }} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill={favCount > 0 ? '#e91e63' : 'none'} stroke={favCount > 0 ? '#e91e63' : 'currentColor'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
             </svg>
             {favCount > 0 && <span className="fav-nav-badge">{favCount}</span>}
@@ -198,7 +198,7 @@ export function Nav() {
                 {avatarUrl ? (
                   <Image src={avatarUrl} alt={profile?.full_name ?? 'Avatar'} width={36} height={36} unoptimized style={{ objectFit: 'cover', borderRadius: '50%' }} />
                 ) : (
-                  <span style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--color-accent)', color: 'var(--color-on-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700 }}>
+                  <span style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--color-accent)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700 }}>
                     {avatarInitial}
                   </span>
                 )}
@@ -219,13 +219,13 @@ export function Nav() {
             )}
             {profileMenuOpen && (
               <div style={{
-                position: 'absolute', top: 44, right: 0, background: 'var(--color-surface-raised)',
-                border: '1px solid var(--color-border)', borderRadius: 12, boxShadow: '0 8px 32px var(--color-shadow)',
+                position: 'absolute', top: 44, right: 0, background: '#fff',
+                border: '1px solid #e5e7eb', borderRadius: 12, boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
                 minWidth: 180, zIndex: 100, overflow: 'hidden',
               }}>
-                <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--color-border-subtle)' }}>
+                <div style={{ padding: '12px 16px', borderBottom: '1px solid #f0f0f0' }}>
                   <div style={{ fontWeight: 600, fontSize: 14 }}>{profile?.full_name ?? 'My Account'}</div>
-                  <div style={{ fontSize: 12, color: 'var(--color-text-subtle)', marginTop: 2 }}>{user?.email}</div>
+                  <div style={{ fontSize: 12, color: '#888', marginTop: 2 }}>{user?.email}</div>
                 </div>
                 <Link href="/profile" onClick={() => setProfileMenuOpen(false)} style={{ display: 'block', padding: '11px 16px', fontSize: 14, color: 'inherit', textDecoration: 'none' }}>👤 My Profile</Link>
                 <Link href="/profile?tab=orders" onClick={() => setProfileMenuOpen(false)} style={{ display: 'block', padding: '11px 16px', fontSize: 14, color: 'inherit', textDecoration: 'none' }}>📦 My Orders</Link>
@@ -235,7 +235,7 @@ export function Nav() {
                 <button
                   type="button"
                   onClick={() => { setProfileMenuOpen(false); signOut(); }}
-                  style={{ display: 'block', width: '100%', textAlign: 'left', padding: '11px 16px', fontSize: 14, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-danger)', borderTop: '1px solid var(--color-border-subtle)' }}
+                  style={{ display: 'block', width: '100%', textAlign: 'left', padding: '11px 16px', fontSize: 14, background: 'none', border: 'none', cursor: 'pointer', color: '#dc2626', borderTop: '1px solid #f0f0f0' }}
                 >
                   🚪 Sign Out
                 </button>
@@ -255,7 +255,7 @@ export function Nav() {
             {user && avatarUrl ? (
               <Image src={avatarUrl} alt={profile?.full_name ?? 'Avatar'} width={36} height={36} unoptimized style={{ objectFit: 'cover', borderRadius: '50%' }} />
             ) : user ? (
-              <span style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--color-accent)', color: 'var(--color-on-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700 }}>
+              <span style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--color-accent)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700 }}>
                 {avatarInitial}
               </span>
             ) : (
@@ -291,17 +291,17 @@ export function Nav() {
 
         {/* User Card in Drawer */}
         {user && (
-          <div style={{ margin: '0 16px 12px', padding: '12px 14px', background: 'var(--color-surface-alt)', borderRadius: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ margin: '0 16px 12px', padding: '12px 14px', background: '#f5f5f5', borderRadius: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
             {avatarUrl ? (
               <Image src={avatarUrl} alt="Avatar" width={38} height={38} unoptimized style={{ borderRadius: '50%', objectFit: 'cover' }} />
             ) : (
-              <span style={{ width: 38, height: 38, borderRadius: '50%', background: 'var(--color-accent)', color: 'var(--color-on-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 700 }}>
+              <span style={{ width: 38, height: 38, borderRadius: '50%', background: 'var(--color-accent)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 700 }}>
                 {avatarInitial}
               </span>
             )}
             <div style={{ overflow: 'hidden' }}>
               <div style={{ fontWeight: 700, fontSize: 14, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{profile?.full_name || 'My Account'}</div>
-              <div style={{ fontSize: 12, color: 'var(--color-text-muted)', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{user.email}</div>
+              <div style={{ fontSize: 12, color: '#666', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{user.email}</div>
             </div>
           </div>
         )}
@@ -361,7 +361,7 @@ export function Nav() {
               <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 🏷️ Categories ({navLinks.length})
               </span>
-              <span style={{ fontSize: 13, color: 'var(--color-text-subtle)', transition: 'transform 0.2s', transform: categoriesDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+              <span style={{ fontSize: 13, color: '#888', transition: 'transform 0.2s', transform: categoriesDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
                 ▼
               </span>
             </button>
@@ -372,11 +372,11 @@ export function Nav() {
                 flexDirection: 'column',
                 paddingLeft: 12,
                 marginLeft: 4,
-                borderLeft: '2px solid var(--color-accent-100)',
+                borderLeft: '2px solid var(--color-accent-100, #fff0ed)',
                 marginBottom: 8,
               }}>
                 {navLinks.map((link) => (
-                  <Link key={link.label} href={link.href} onClick={closeDrawer} style={{ padding: '8px 0', fontSize: 14, color: 'var(--color-text-body)', textDecoration: 'none', fontWeight: 500 }}>
+                  <Link key={link.label} href={link.href} onClick={closeDrawer} style={{ padding: '8px 0', fontSize: 14, color: '#444', textDecoration: 'none', fontWeight: 500 }}>
                     {link.label}
                   </Link>
                 ))}
@@ -386,14 +386,14 @@ export function Nav() {
               </div>
             )}
           </div>
-          <Link href="/favourites" onClick={closeDrawer} style={{ color: 'var(--color-fav)' }}>
+          <Link href="/favourites" onClick={closeDrawer} style={{ color: '#e91e63' }}>
             ♥ Favourites{favCount > 0 ? ` (${favCount})` : ''}
           </Link>
           {user ? (
             <>
               <Link href="/profile" onClick={closeDrawer}>👤 My Profile</Link>
               {isAdmin && <Link href="/admin" onClick={closeDrawer} style={{ color: 'var(--color-accent)' }}>⚙️ Admin</Link>}
-              <button type="button" onClick={() => { closeDrawer(); signOut(); }} style={{ background: 'none', border: 'none', textAlign: 'left', padding: 0, fontSize: 'inherit', cursor: 'pointer', color: 'var(--color-danger)' }}>
+              <button type="button" onClick={() => { closeDrawer(); signOut(); }} style={{ background: 'none', border: 'none', textAlign: 'left', padding: 0, fontSize: 'inherit', cursor: 'pointer', color: '#dc2626' }}>
                 🚪 Sign Out
               </button>
             </>

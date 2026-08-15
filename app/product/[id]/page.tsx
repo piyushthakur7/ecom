@@ -65,11 +65,11 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
       <main>
         <div className="section" style={{ paddingTop: 'clamp(24px,3vw,40px)' }}>
           <div className="product-detail-grid">
-            <div style={{ width: '100%', aspectRatio: '3/4', background: 'var(--color-skeleton)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+            <div style={{ width: '100%', aspectRatio: '3/4', background: '#f0eeee', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite' }} />
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div style={{ height: 28, background: 'var(--color-skeleton)', borderRadius: 4, width: '70%' }} />
-              <div style={{ height: 16, background: 'var(--color-skeleton)', borderRadius: 4, width: '40%' }} />
-              <div style={{ height: 20, background: 'var(--color-skeleton)', borderRadius: 4, width: '25%' }} />
+              <div style={{ height: 28, background: '#f0eeee', borderRadius: 4, width: '70%' }} />
+              <div style={{ height: 16, background: '#f0eeee', borderRadius: 4, width: '40%' }} />
+              <div style={{ height: 20, background: '#f0eeee', borderRadius: 4, width: '25%' }} />
             </div>
           </div>
         </div>
@@ -177,7 +177,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
               <>
                 <hr className="product-divider" />
                 <div className="size-selector">
-                  <span className="size-label">Color: <strong style={{ color: 'var(--color-text)', fontWeight: 600 }}>{selectedColor}</strong></span>
+                  <span className="size-label">Color: <strong style={{ color: '#18181b', fontWeight: 600 }}>{selectedColor}</strong></span>
                   <div className="size-options">
                     {colorOptions.map((c) => (
                       <button

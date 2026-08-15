@@ -71,11 +71,11 @@ export default function CartPage() {
                   </Link>
                   <div className="cart-item-meta" style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4, flexWrap: 'wrap' }}>
                     <span>{item.category.charAt(0).toUpperCase() + item.category.slice(1)}</span>
-                    <span style={{ fontWeight: 700, color: 'var(--color-accent)', background: 'var(--color-accent-100)', border: '1px solid var(--color-accent-200)', padding: '2px 8px', borderRadius: 6, fontSize: 12 }}>
+                    <span style={{ fontWeight: 700, color: 'var(--color-accent)', background: '#fff5f0', border: '1px solid #fcdcd7', padding: '2px 8px', borderRadius: 6, fontSize: 12 }}>
                       Size: {item.size || 'M'}
                     </span>
                     {item.color && (
-                      <span style={{ fontWeight: 700, color: 'var(--color-text)', background: 'var(--color-surface-alt)', border: '1px solid var(--color-border)', padding: '2px 8px', borderRadius: 6, fontSize: 12 }}>
+                      <span style={{ fontWeight: 700, color: '#18181b', background: '#f4f4f5', border: '1px solid #e4e4e7', padding: '2px 8px', borderRadius: 6, fontSize: 12 }}>
                         Color: {item.color}
                       </span>
                     )}
@@ -142,10 +142,10 @@ export default function CartPage() {
                 style={{
                   marginTop: 16,
                   padding: '12px 16px',
-                  background: 'var(--color-success-bg)',
+                  background: '#e8f5e9',
                   borderRadius: 'var(--radius-md)',
                   fontSize: 13,
-                  color: 'var(--color-success-dark)',
+                  color: '#2e7d32',
                   display: 'flex',
                   alignItems: 'center',
                   gap: 8,
@@ -169,7 +169,7 @@ export default function CartPage() {
             </div>
             <div className="cart-summary-row">
               <span>Shipping</span>
-              <span style={{ color: shipping === 0 ? 'var(--color-success-dark)' : 'inherit' }}>
+              <span style={{ color: shipping === 0 ? '#2e7d32' : 'inherit' }}>
                 {shipping === 0 ? 'FREE' : `₹${shipping}`}
               </span>
             </div>

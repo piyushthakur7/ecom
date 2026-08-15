@@ -66,11 +66,11 @@ export function VideoSection() {
           <div
             key={video.id}
             style={{
-              background: 'var(--color-surface-raised)',
+              background: '#ffffff',
               borderRadius: 'var(--radius-lg, 16px)',
               overflow: 'hidden',
-              border: '1px solid var(--color-neutral-200)',
-              boxShadow: '0 8px 30px var(--color-shadow-subtle)',
+              border: '1px solid var(--color-neutral-200, #e4e4e7)',
+              boxShadow: '0 8px 30px rgba(0,0,0,0.06)',
               display: 'flex',
               flexDirection: 'column',
             }}
@@ -81,7 +81,7 @@ export function VideoSection() {
                 position: 'relative',
                 width: '100%',
                 aspectRatio: '9 / 16',
-                background: 'var(--color-media-bg)',
+                background: '#09090b',
                 overflow: 'hidden',
               }}
             >
@@ -106,7 +106,7 @@ export function VideoSection() {
                 style={{
                   position: 'absolute',
                   inset: 0,
-                  background: 'var(--gradient-media-scrim)',
+                  background: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 30%, transparent 65%, rgba(0,0,0,0.65) 100%)',
                   pointerEvents: 'none',
                   zIndex: 2,
                 }}
@@ -118,15 +118,15 @@ export function VideoSection() {
                   position: 'absolute',
                   top: 14,
                   left: 14,
-                  background: 'var(--color-scrim-strong)',
+                  background: 'rgba(0, 0, 0, 0.70)',
                   backdropFilter: 'blur(10px)',
-                  color: 'var(--color-on-media)',
+                  color: '#fff',
                   fontSize: 12,
                   fontWeight: 600,
                   padding: '5px 14px',
                   borderRadius: 20,
                   letterSpacing: '0.02em',
-                  boxShadow: '0 2px 8px var(--color-shadow-strong)',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
                   zIndex: 3,
                 }}
               >
@@ -140,21 +140,21 @@ export function VideoSection() {
                   bottom: 14,
                   left: 14,
                   right: 14,
-                  color: 'var(--color-on-media)',
+                  color: '#ffffff',
                   zIndex: 3,
                 }}
               >
-                <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-accent-300)' }}>
+                <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#fca5a5' }}>
                   {video.category}
                 </span>
-                <div style={{ fontFamily: 'var(--font-heading)', fontSize: 15, fontWeight: 700, margin: '2px 0 0', textShadow: '0 2px 4px var(--color-shadow-heavy)' }}>
+                <div style={{ fontFamily: 'var(--font-heading)', fontSize: 15, fontWeight: 700, margin: '2px 0 0', textShadow: '0 2px 4px rgba(0,0,0,0.6)' }}>
                   {video.title}
                 </div>
               </div>
             </div>
 
             {/* Card Footer CTA */}
-            <div style={{ padding: '14px 18px', background: 'var(--color-surface-raised)', display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ padding: '14px 18px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: 10 }}>
               <Link
                 href={video.productLink}
                 className="btn btn-secondary btn-block"
