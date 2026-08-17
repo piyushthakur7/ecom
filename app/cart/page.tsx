@@ -198,7 +198,7 @@ export default function CartPage() {
               {[
                 { icon: <IconLock size={14} />, label: 'Secure payment' },
                 { icon: <IconPackage size={14} />, label: 'Ships in 24–48h' },
-                { icon: <IconRotateLeft size={14} />, label: '7-day easy returns' },
+                { icon: <IconRotateLeft size={14} />, label: '3-day easy returns' },
               ].map((t) => (
                 <span key={t.label} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'color-mix(in srgb, var(--color-text) 60%, transparent)' }}>{t.icon}{t.label}</span>
               ))}

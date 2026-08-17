@@ -372,6 +372,6 @@ export const testimonials = [
 export const marqueeItems = [
   'Free shipping over ₹999',
   "Festive \u202626 collection live",
-  '7-day easy returns',
+  '3-day easy returns',
   'Made in Amritsar, India',
 ];

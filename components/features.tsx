@@ -36,7 +36,7 @@ const features = [
   },
   {
     title: 'Easy returns',
-    body: '7-day hassle-free returns on every order.',
+    body: '3-day hassle-free returns on every order.',
     icon: (
       <svg {...iconProps}>
         <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
