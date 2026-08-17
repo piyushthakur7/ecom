@@ -9,7 +9,7 @@ import { useCart } from './cart-context';
 import { useFavourites } from './favourites-context';
 import { useAuth } from './auth-context';
 import { AuthModal } from './auth-modal';
-import { IconTag, IconChevronDown, IconHeart, IconUser, IconPackage, IconSettings, IconLogIn, IconLogOut } from './icons';
+import { IconTag, IconChevronDown, IconHeart, IconHome, IconShoppingBag, IconUser, IconPackage, IconSettings, IconLogIn, IconLogOut } from './icons';
 import { getCategories, getProducts } from '@/lib/services/products.service';
 import type { DBCategory, DBProduct } from '@/lib/types';
 
@@ -63,17 +63,19 @@ export function Nav() {
   const [authOpen, setAuthOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [categoriesDropdownOpen, setCategoriesDropdownOpen] = useState(false);
+  const [catMenuOpen, setCatMenuOpen] = useState(false);
   const [navCategories, setNavCategories] = useState<DBCategory[]>([]);
   const desktopSearchRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const profileMenuRef = useRef<HTMLDivElement>(null);
+  const catMenuRef = useRef<HTMLLIElement>(null);
 
   const results = useDebouncedSearch(query);
   const drawerResults = useDebouncedSearch(drawerQuery);
 
   // Load categories from DB (with static fallback)
   useEffect(() => {
-    getCategories().then((cats) => setNavCategories(cats.slice(0, 7)));
+    getCategories().then((cats) => setNavCategories(cats));
   }, []);
 
   const navLinks = navCategories.map((c: DBCategory) => ({ label: c.name, href: `/category/${c.slug}` }));
@@ -91,9 +93,20 @@ export function Nav() {
       if (profileMenuRef.current && !profileMenuRef.current.contains(e.target as Node)) {
         setProfileMenuOpen(false);
       }
+      if (catMenuRef.current && !catMenuRef.current.contains(e.target as Node)) {
+        setCatMenuOpen(false);
+      }
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { setCatMenuOpen(false); setProfileMenuOpen(false); }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
   }, []);
 
   useEffect(() => {
@@ -115,11 +128,31 @@ export function Nav() {
 
         {/* Desktop links */}
         <ul className="nav-links">
-          {navLinks.map((link) => (
-            <li key={link.label}>
-              <Link href={link.href}>{link.label}</Link>
-            </li>
-          ))}
+          <li><Link href="/">Home</Link></li>
+          <li><Link href="/#featured">Shop</Link></li>
+
+          <li className="nav-dropdown" ref={catMenuRef}>
+            <button
+              type="button"
+              className="nav-dropdown-toggle"
+              aria-haspopup="true"
+              aria-expanded={catMenuOpen}
+              onClick={() => setCatMenuOpen((v) => !v)}
+            >
+              Categories
+              <IconChevronDown className="nav-dropdown-chevron" size={14} />
+            </button>
+            {catMenuOpen && (
+              <div className="nav-dropdown-menu">
+                {navLinks.map((link) => (
+                  <Link key={link.label} href={link.href} onClick={() => setCatMenuOpen(false)}>
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </li>
+
           <li>
             <Link href="/category/dresses" className="nav-sale">Sale</Link>
           </li>
@@ -339,6 +372,15 @@ export function Nav() {
 
         {/* Drawer nav links */}
         <nav className="nav-drawer-links">
+          <Link href="/" onClick={closeDrawer}>
+            <IconHome />
+            Home
+          </Link>
+          <Link href="/#featured" onClick={closeDrawer}>
+            <IconShoppingBag />
+            Shop
+          </Link>
+
           {/* Categories accordion */}
           <div className="nav-drawer-accordion">
             <button
