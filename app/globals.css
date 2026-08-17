@@ -2065,9 +2065,9 @@ figure { margin: 0; }
 
 /* -- Footer Section Default (Desktop) ------------------------------------ */
 .footer-wrap {
-  background: #380c17;
-  color: #fdfbf7;
-  border-top: 2px solid #521423;
+  background: var(--color-accent-900);
+  color: var(--color-bg);
+  border-top: 2px solid var(--color-accent-800);
 }
 .footer-grid {
   max-width: 1280px;
@@ -2083,14 +2083,14 @@ figure { margin: 0; }
   font-size: 22px;
   letter-spacing: -0.01em;
   margin: 0 0 8px;
-  color: #c59b27;
+  color: var(--color-accent-2);
 }
 .footer-brand-desc {
   font-size: 14px;
   line-height: 1.6;
   margin: 0;
   max-width: 36ch;
-  color: rgba(253, 251, 247, 0.75);
+  color: color-mix(in srgb, var(--color-bg) 75%, transparent);
 }
 .footer-col {
   display: flex;
@@ -2102,30 +2102,30 @@ figure { margin: 0; }
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #c59b27;
+  color: var(--color-accent-2);
   margin-bottom: 4px;
   font-weight: 700;
 }
 .footer-link {
-  color: rgba(253, 251, 247, 0.85);
+  color: var(--color-accent-2);
   text-decoration: none;
   transition: color 0.18s ease;
 }
 .footer-link:hover {
-  color: #f4d068;
+  color: var(--color-accent-2-300);
 }
 .footer-address {
   line-height: 1.6;
-  color: rgba(253, 251, 247, 0.75);
+  color: color-mix(in srgb, var(--color-bg) 75%, transparent);
 }
 .footer-bottom {
   max-width: 1280px;
   margin: 0 auto;
   padding: 20px clamp(20px, 5vw, 72px) 28px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid color-mix(in srgb, var(--color-bg) 12%, transparent);
   font-size: 12px;
   letter-spacing: 0.04em;
-  color: rgba(253, 251, 247, 0.6);
+  color: color-mix(in srgb, var(--color-bg) 60%, transparent);
 }
 
 /* Footer Section Mobile Override */
