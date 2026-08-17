@@ -12,6 +12,7 @@ import { useToast } from '@/components/toast';
 import { createOrder } from '@/lib/services/orders.service';
 import { updateAddresses, updateProfile } from '@/lib/services/auth.service';
 import { loadRazorpayScript } from '@/lib/razorpay';
+import { IconCreditCard, IconPackage, IconShieldCheck, IconPhone, IconZap, IconHome } from '@/components/icons';
 import type { SavedAddress } from '@/lib/types';
 
 const STATES = [
@@ -278,7 +279,7 @@ export default function CheckoutPage() {
                 setOrderNumber(verifyData.orderNumber);
                 setPaymentId(verifyData.paymentId);
                 setSuccess(true);
-                toast('Payment successful! Order placed 🎉');
+                toast('Payment successful! Order placed');
               } else {
                 toast(verifyData.error || 'Payment verification failed', 'error');
               }
@@ -333,7 +334,7 @@ export default function CheckoutPage() {
       setOrderNumber(result.orderNumber);
       setPaymentId('');
       setSuccess(true);
-      toast('COD Order placed successfully! 🎉');
+      toast('COD Order placed successfully!');
     } else {
       toast('Failed to place order. Please try again.', 'error');
     }
@@ -350,17 +351,17 @@ export default function CheckoutPage() {
                 <path d="M20 6 9 17l-5-5" />
               </svg>
             </div>
-            <h1 style={{ fontSize: 28, marginBottom: 10, color: 'var(--color-text)' }}>Order Confirmed! 🎉</h1>
+            <h1 style={{ fontSize: 28, marginBottom: 10, color: 'var(--color-text)' }}>Order Confirmed!</h1>
             <p style={{ color: 'color-mix(in srgb, var(--color-text) 75%, transparent)', marginBottom: 8, lineHeight: 1.7 }}>
               Thank you, <strong>{form.firstName}</strong>! Your order <strong>{orderNumber}</strong> has been placed successfully.
               {paymentId && (
                 <span style={{ display: 'block', fontSize: 13, color: '#6b1d2f', fontWeight: 600, marginTop: 4 }}>
-                  💳 Razorpay Payment ID: {paymentId}
+                  <IconCreditCard size={14} style={{ verticalAlign: -2, marginRight: 4, display: 'inline-block' }} />Razorpay Payment ID: {paymentId}
                 </span>
               )}
             </p>
             <p style={{ fontSize: 14, color: 'color-mix(in srgb, var(--color-text) 65%, transparent)', marginBottom: 32 }}>
-              📦 We will send confirmation & tracking updates to <strong>{form.email}</strong>. Expected delivery: 3–5 business days.
+              <IconPackage size={14} style={{ verticalAlign: -2, marginRight: 4, display: 'inline-block' }} />We will send confirmation & tracking updates to <strong>{form.email}</strong>. Expected delivery: 3–5 business days.
             </p>
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
               <Link href="/profile?tab=orders" className="btn btn-primary btn-large">View My Orders</Link>
@@ -392,7 +393,7 @@ export default function CheckoutPage() {
         {/* Auth notice for guests */}
         {!user && (
           <div style={{ marginBottom: 20, padding: '14px 18px', background: '#fff9e6', border: '1.5px solid #f5c842', borderRadius: 10, display: 'flex', alignItems: 'center', gap: 12, fontSize: 14 }}>
-            <span>🔐</span>
+            <IconShieldCheck size={18} />
             <span>
               <button type="button" onClick={() => setAuthOpen(true)} style={{ background: 'none', border: 'none', color: 'var(--color-accent)', fontWeight: 600, cursor: 'pointer', padding: 0, fontSize: 'inherit' }}>
                 Sign in
@@ -420,7 +421,7 @@ export default function CheckoutPage() {
                         <div style={{ fontSize: 14 }}>
                           <div style={{ fontWeight: 600 }}>{addr.name}{addr.isDefault && <span style={{ marginLeft: 8, fontSize: 11, background: '#e8f5e9', color: '#2e7d32', padding: '2px 8px', borderRadius: 20 }}>Default</span>}</div>
                           <div style={{ color: '#666', marginTop: 2 }}>{addr.street}, {addr.city}, {addr.state} — {addr.pincode}</div>
-                          {addr.phone && <div style={{ color: '#888', fontSize: 12 }}>📞 {addr.phone}</div>}
+                          {addr.phone && <div style={{ display: 'flex', alignItems: 'center', gap: 5, color: '#888', fontSize: 12 }}><IconPhone size={12} />{addr.phone}</div>}
                         </div>
                       </label>
                     ))}
@@ -500,7 +501,7 @@ export default function CheckoutPage() {
                     <input id="pay-razorpay" type="radio" name="payment" value="razorpay" checked={form.payment === 'razorpay'} onChange={() => set('payment', 'razorpay')} style={{ marginTop: 3 }} />
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <span style={{ fontSize: 18 }}>⚡</span>
+                        <IconZap size={18} />
                         <span className="payment-tile-label" style={{ fontWeight: 700, fontSize: 15 }}>Online Payment (Razorpay)</span>
                         <span style={{ background: 'var(--color-accent)', color: '#fff', fontSize: 10, fontWeight: 800, padding: '2px 8px', borderRadius: 12, textTransform: 'uppercase' }}>Recommended</span>
                       </div>
@@ -515,7 +516,7 @@ export default function CheckoutPage() {
                     <input id="pay-cod" type="radio" name="payment" value="cod" checked={form.payment === 'cod'} onChange={() => set('payment', 'cod')} style={{ marginTop: 3 }} />
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <span style={{ fontSize: 18 }}>🏠</span>
+                        <IconHome size={18} />
                         <span className="payment-tile-label" style={{ fontWeight: 700, fontSize: 15 }}>Cash on Delivery (COD)</span>
                       </div>
                       <div className="payment-tile-sub" style={{ fontSize: 13, color: '#555', marginTop: 4 }}>

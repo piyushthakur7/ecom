@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { IconCheck, IconX, IconInfo } from './icons';
 
 export type ToastType = 'success' | 'error' | 'info';
 
@@ -29,7 +30,11 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo(() => ({ toast }), [toast]);
 
-  const iconMap: Record<ToastType, string> = { success: '✓', error: '✕', info: 'ℹ' };
+  const iconMap: Record<ToastType, React.ReactNode> = {
+    success: <IconCheck size={13} />,
+    error: <IconX size={13} />,
+    info: <IconInfo size={13} />,
+  };
   const colorMap: Record<ToastType, string> = {
     success: '#16a34a',
     error: '#dc2626',

@@ -130,7 +130,7 @@ export function VideoSection() {
                   zIndex: 3,
                 }}
               >
-                🎬 {video.tag}
+                {video.tag}
               </span> */}
 
               {/* Bottom title overlay on reel */}

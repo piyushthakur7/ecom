@@ -133,7 +133,7 @@ export function AuthModal({ isOpen, onClose, onSuccess, message }: Props) {
         ) : (
           <>
             <div id="auth-modal-title" style={{ fontSize: 20, fontWeight: 700, fontFamily: 'var(--font-heading)', marginBottom: 6 }}>
-              Almost there! 👋
+              Almost there!
             </div>
             <div style={{ fontSize: 14, color: '#888', marginBottom: 24 }}>
               Tell us your name and phone number to get started.

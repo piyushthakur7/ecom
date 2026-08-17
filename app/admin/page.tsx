@@ -9,6 +9,11 @@ import { useAuth } from '@/components/auth-context';
 import { uploadToCloudinary } from '@/lib/cloudinary';
 import { getAllOrders, updateOrderStatus } from '@/lib/services/orders.service';
 import type { DBCategory, DBHeroSlide, DBProduct, DBOrder, OrderStatus, Profile } from '@/lib/types';
+import {
+  IconChart, IconTag, IconImage, IconShirt, IconPackage, IconUsers,
+  IconWallet, IconClock, IconEye, IconUser, IconMail, IconPhone,
+  IconMapPin, IconCreditCard,
+} from '@/components/icons';
 
 type AdminTab = 'overview' | 'categories' | 'hero' | 'products' | 'orders' | 'users';
 
@@ -268,13 +273,13 @@ export default function AdminDashboard() {
   const totalRevenue = orders.reduce((s, o) => s + Number(o.total) + Number(o.shipping), 0);
   const pendingOrders = orders.filter((o) => o.status === 'Pending' || o.status === 'Processing').length;
 
-  const tabs: { id: AdminTab; label: string; icon: string }[] = [
-    { id: 'overview',   label: 'Overview',    icon: '📊' },
-    { id: 'categories', label: 'Categories',  icon: '🏷️' },
-    { id: 'hero',       label: 'Hero Banners',icon: '🖼️' },
-    { id: 'products',   label: 'Products',    icon: '👗' },
-    { id: 'orders',     label: 'Orders',      icon: '📦' },
-    { id: 'users',      label: 'Users',       icon: '👥' },
+  const tabs: { id: AdminTab; label: string; icon: React.ReactNode }[] = [
+    { id: 'overview',   label: 'Overview',    icon: <IconChart size={16} /> },
+    { id: 'categories', label: 'Categories',  icon: <IconTag size={16} /> },
+    { id: 'hero',       label: 'Hero Banners',icon: <IconImage size={16} /> },
+    { id: 'products',   label: 'Products',    icon: <IconShirt size={16} /> },
+    { id: 'orders',     label: 'Orders',      icon: <IconPackage size={16} /> },
+    { id: 'users',      label: 'Users',       icon: <IconUsers size={16} /> },
   ];
 
   return (
@@ -322,15 +327,15 @@ export default function AdminDashboard() {
               <h1 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: 24, marginBottom: 24 }}>Dashboard Overview</h1>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16, marginBottom: 32 }}>
                 {[
-                  { label: 'Total Revenue', value: `₹${totalRevenue.toLocaleString('en-IN')}`, icon: '💰', color: '#16a34a' },
-                  { label: 'Total Orders', value: orders.length, icon: '📦', color: '#2563eb' },
-                  { label: 'Pending Orders', value: pendingOrders, icon: '⏳', color: '#f59e0b' },
-                  { label: 'Products', value: products.length, icon: '👗', color: '#7c3aed' },
-                  { label: 'Categories', value: categories.length, icon: '🏷️', color: '#0891b2' },
-                  { label: 'Users', value: users.length, icon: '👥', color: '#db2777' },
+                  { label: 'Total Revenue', value: `₹${totalRevenue.toLocaleString('en-IN')}`, icon: <IconWallet size={22} />, color: '#16a34a' },
+                  { label: 'Total Orders', value: orders.length, icon: <IconPackage size={22} />, color: '#2563eb' },
+                  { label: 'Pending Orders', value: pendingOrders, icon: <IconClock size={22} />, color: '#f59e0b' },
+                  { label: 'Products', value: products.length, icon: <IconShirt size={22} />, color: '#7c3aed' },
+                  { label: 'Categories', value: categories.length, icon: <IconTag size={22} />, color: '#0891b2' },
+                  { label: 'Users', value: users.length, icon: <IconUsers size={22} />, color: '#db2777' },
                 ].map((stat) => (
                   <div key={stat.label} style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 14, padding: '20px 24px' }}>
-                    <div style={{ fontSize: 28, marginBottom: 8 }}>{stat.icon}</div>
+                    <div style={{ marginBottom: 8, color: stat.color }}>{stat.icon}</div>
                     <div style={{ fontSize: 24, fontWeight: 800, color: stat.color }}>{stat.value}</div>
                     <div style={{ fontSize: 13, color: '#888', marginTop: 4 }}>{stat.label}</div>
                   </div>
@@ -521,7 +526,7 @@ export default function AdminDashboard() {
                               onClick={(e) => { e.stopPropagation(); setSelectedOrder(o); }}
                               style={{ fontSize: 12, padding: '5px 10px' }}
                             >
-                              View 👁️
+                              <IconEye size={13} /> View
                             </button>
                           </td>
                         </tr>
@@ -801,20 +806,20 @@ function OrderDetailsModal({
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
           {/* Customer info */}
           <div style={{ padding: '14px 16px', border: '1px solid #e5e7eb', borderRadius: 10, background: '#fafafa' }}>
-            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8, color: '#1a1a1a' }}>
-              👤 Customer Details
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8, color: '#1a1a1a', display: 'flex', alignItems: 'center', gap: 7 }}>
+              <IconUser size={15} /> Customer Details
             </div>
             <div style={{ fontSize: 13, display: 'flex', flexDirection: 'column', gap: 4 }}>
               <div style={{ fontWeight: 600 }}>{order.customer_name}</div>
-              <div><a href={`mailto:${order.customer_email}`} style={{ color: '#2563eb', textDecoration: 'none' }}>✉️ {order.customer_email}</a></div>
-              <div><a href={`tel:${order.customer_phone}`} style={{ color: '#2563eb', textDecoration: 'none' }}>📞 {order.customer_phone}</a></div>
+              <div><a href={`mailto:${order.customer_email}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#2563eb', textDecoration: 'none' }}><IconMail size={13} />{order.customer_email}</a></div>
+              <div><a href={`tel:${order.customer_phone}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#2563eb', textDecoration: 'none' }}><IconPhone size={13} />{order.customer_phone}</a></div>
             </div>
           </div>
 
           {/* Shipping Address */}
           <div style={{ padding: '14px 16px', border: '1px solid #e5e7eb', borderRadius: 10, background: '#fafafa' }}>
-            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8, color: '#1a1a1a' }}>
-              📍 Shipping Address
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8, color: '#1a1a1a', display: 'flex', alignItems: 'center', gap: 7 }}>
+              <IconMapPin size={15} /> Shipping Address
             </div>
             {order.shipping_address ? (
               <div style={{ fontSize: 13, color: '#333', lineHeight: 1.5 }}>
@@ -822,7 +827,7 @@ function OrderDetailsModal({
                 <div>{order.shipping_address.street}</div>
                 <div>{order.shipping_address.city}, {order.shipping_address.state} — <strong>{order.shipping_address.pincode}</strong></div>
                 {order.shipping_address.landmark && <div style={{ fontSize: 12, color: '#888' }}>Landmark: {order.shipping_address.landmark}</div>}
-                <div style={{ fontSize: 12, color: '#888', marginTop: 2 }}>📞 {order.shipping_address.phone || order.customer_phone}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#888', marginTop: 2 }}><IconPhone size={12} />{order.shipping_address.phone || order.customer_phone}</div>
               </div>
             ) : (
               <div style={{ fontSize: 13, color: '#888' }}>No address recorded</div>
@@ -832,8 +837,8 @@ function OrderDetailsModal({
 
         {/* Payment & Summary */}
         <div style={{ padding: '14px 16px', border: '1px solid #e5e7eb', borderRadius: 10 }}>
-          <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10, color: '#1a1a1a' }}>
-            💳 Payment Breakdown
+          <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10, color: '#1a1a1a', display: 'flex', alignItems: 'center', gap: 7 }}>
+            <IconCreditCard size={15} /> Payment Breakdown
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 12, fontSize: 13 }}>
             <div>
@@ -857,8 +862,8 @@ function OrderDetailsModal({
 
         {/* Product Items Table */}
         <div>
-          <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10, color: '#1a1a1a' }}>
-            👗 Ordered Products ({order.items.length})
+          <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10, color: '#1a1a1a', display: 'flex', alignItems: 'center', gap: 7 }}>
+            <IconShirt size={15} /> Ordered Products ({order.items.length})
           </div>
           <div style={{ border: '1px solid #e5e7eb', borderRadius: 10, overflow: 'hidden' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>

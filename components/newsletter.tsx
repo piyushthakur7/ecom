@@ -1,5 +1,7 @@
 'use client';
 
+import { IconCheck } from './icons';
+
 import { useState } from 'react';
 
 export function Newsletter() {
@@ -61,7 +63,7 @@ export function Newsletter() {
 
         {subscribed ? (
           <p style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: 16, color: '#f4d068', margin: 0 }}>
-            ✓ You&apos;re on the list! Thank you for subscribing.
+            <IconCheck size={16} style={{ verticalAlign: -3, marginRight: 4, display: 'inline-block' }} />You&apos;re on the list! Thank you for subscribing.
           </p>
         ) : (
           <form

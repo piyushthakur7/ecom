@@ -7,6 +7,7 @@ import { useCart } from '@/components/cart-context';
 import { FavouriteButton } from '@/components/favourite-button';
 import { StarRating } from '@/components/star-rating';
 import { Footer } from '@/components/footer';
+import { IconHeart } from '@/components/icons';
 
 export default function FavouritesPage() {
   const { items, count } = useFavourites();
@@ -25,10 +26,10 @@ export default function FavouritesPage() {
 
         {count === 0 ? (
           <div className="favourites-empty">
-            <div className="favourites-empty-icon">🤍</div>
+            <div className="favourites-empty-icon"><IconHeart size={56} /></div>
             <h2 style={{ fontSize: 22, marginBottom: 10 }}>Nothing saved yet</h2>
             <p style={{ color: 'color-mix(in srgb, var(--color-text) 65%, transparent)', marginBottom: 28 }}>
-              Tap the ♥ on any product to save it here.
+              Tap the heart on any product to save it here.
             </p>
             <Link href="/" className="btn btn-primary btn-large">Browse Collection</Link>
           </div>

@@ -1,5 +1,7 @@
 'use client';
 
+import { IconStar, IconStarHalf } from './icons';
+
 type StarRatingProps = {
   rating: number;       // 0 – 5
   reviewCount?: number;
@@ -13,6 +15,8 @@ export function StarRating({ rating, reviewCount, size = 'sm' }: StarRatingProps
     return 'empty';
   });
 
+  const px = size === 'md' ? 16 : 13;
+
   return (
     <div className="star-rating" aria-label={`Rating: ${rating} out of 5`}>
       <div className="stars" aria-hidden="true">
@@ -20,9 +24,14 @@ export function StarRating({ rating, reviewCount, size = 'sm' }: StarRatingProps
           <span
             key={i}
             className={`star ${type === 'filled' ? 'filled' : type === 'half' ? 'half' : ''}`}
-            style={{ fontSize: size === 'md' ? 16 : 13 }}
           >
-            {type === 'filled' ? '★' : type === 'half' ? '★' : '☆'}
+            {type === 'filled' ? (
+              <IconStar size={px} fill="currentColor" />
+            ) : type === 'half' ? (
+              <IconStarHalf size={px} />
+            ) : (
+              <IconStar size={px} />
+            )}
           </span>
         ))}
       </div>

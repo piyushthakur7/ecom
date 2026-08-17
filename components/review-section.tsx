@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { insforge } from '@/lib/insforge-client';
+import { IconPencil, IconCheckCircle, IconMessage, IconStar, IconCheck } from '@/components/icons';
 
 /* ── Types ─────────────────────────────────────────────────────────────── */
 export type Review = {
@@ -61,7 +62,7 @@ function StarSelector({ value, onChange }: { value: number; onChange: (v: number
           aria-label={`${star} star${star > 1 ? 's' : ''}`}
           aria-pressed={value === star}
         >
-          ★
+          <IconStar size={26} fill={star <= (hover || value) ? 'currentColor' : 'none'} />
         </button>
       ))}
       {value > 0 && (
@@ -84,7 +85,7 @@ function RatingSummary({ reviews }: { reviews: Review[] }) {
         <span className="review-big-num">{mean.toFixed(1)}</span>
         <div className="review-big-stars">
           {[1, 2, 3, 4, 5].map((s) => (
-            <span key={s} className={s <= Math.round(mean) ? 'star-filled' : 'star-empty'}>★</span>
+            <span key={s} className={s <= Math.round(mean) ? 'star-filled' : 'star-empty'}><IconStar size={18} fill={s <= Math.round(mean) ? 'currentColor' : 'none'} /></span>
           ))}
         </div>
         <span className="review-total">{total} review{total !== 1 ? 's' : ''}</span>
@@ -96,7 +97,7 @@ function RatingSummary({ reviews }: { reviews: Review[] }) {
           const pct = total ? (c / total) * 100 : 0;
           return (
             <div key={star} className="review-bar-row">
-              <span className="review-bar-label">{star}★</span>
+              <span className="review-bar-label">{star}<IconStar size={10} fill="currentColor" /></span>
               <div className="review-bar-track">
                 <div className="review-bar-fill" style={{ width: `${pct}%` }} />
               </div>
@@ -121,14 +122,14 @@ function ReviewCard({ review }: { review: Review }) {
           <div className="review-author">
             {review.name}
             {review.verified && (
-              <span className="review-verified">✔ Verified Purchase</span>
+              <span className="review-verified"><IconCheck size={12} /> Verified Purchase</span>
             )}
           </div>
           <div className="review-date">{formatDate(review.date)}</div>
         </div>
         <div className="review-card-stars">
           {[1, 2, 3, 4, 5].map((s) => (
-            <span key={s} className={s <= review.rating ? 'star-filled' : 'star-empty'} style={{ fontSize: 14 }}>★</span>
+            <span key={s} className={s <= review.rating ? 'star-filled' : 'star-empty'}><IconStar size={14} fill={s <= review.rating ? 'currentColor' : 'none'} /></span>
           ))}
         </div>
       </div>
@@ -237,7 +238,7 @@ export function ReviewSection({ productId }: { productId: string }) {
             className="btn btn-secondary"
             onClick={() => setShowForm(true)}
           >
-            ✏️ Write a Review
+            <IconPencil size={15} /> Write a Review
           </button>
         )}
       </div>
@@ -245,7 +246,7 @@ export function ReviewSection({ productId }: { productId: string }) {
       {/* Success toast */}
       {submitted && (
         <div className="review-toast" role="alert">
-          ✅ Thank you! Your review has been posted.
+          <IconCheckCircle size={16} /> Thank you! Your review has been posted.
         </div>
       )}
 
@@ -332,7 +333,7 @@ export function ReviewSection({ productId }: { productId: string }) {
       {/* Reviews list */}
       {reviews.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '40px 0', color: 'color-mix(in srgb, var(--color-text) 55%, transparent)' }}>
-          <div style={{ fontSize: 40, marginBottom: 12 }}>💬</div>
+          <div style={{ marginBottom: 12 }}><IconMessage size={40} /></div>
           <p style={{ marginBottom: 16 }}>No reviews yet. Be the first to share your thoughts!</p>
           {!showForm && (
             <button type="button" className="btn btn-secondary" onClick={() => setShowForm(true)}>

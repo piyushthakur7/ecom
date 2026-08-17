@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, type ReactNode } from 'react';
 import { notFound } from 'next/navigation';
+import { IconFlame, IconZap, IconTrophy, IconSparkles } from '@/components/icons';
 import Link from 'next/link';
 import { useCart } from '@/components/cart-context';
 import { StarRating } from '@/components/star-rating';
@@ -16,11 +17,11 @@ const badgeClass: Record<string, string> = {
   'Best Seller':      'badge-bestseller',
   'New Arrival':      'badge-new',
 };
-const badgeEmoji: Record<string, string> = {
-  'Highly Purchased': '🔥',
-  'Trending':         '⚡',
-  'Best Seller':      '🏆',
-  'New Arrival':      '✨',
+const badgeIcon: Record<string, ReactNode> = {
+  'Highly Purchased': <IconFlame size={12} />,
+  'Trending':         <IconZap size={12} />,
+  'Best Seller':      <IconTrophy size={12} />,
+  'New Arrival':      <IconSparkles size={12} />,
 };
 
 export default function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -130,7 +131,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
 
                   {p.badge && (
                     <span className={`product-badge ${badgeClass[p.badge] ?? ''}`}>
-                      {badgeEmoji[p.badge]} {p.badge}
+                      {badgeIcon[p.badge]} {p.badge}
                     </span>
                   )}
 

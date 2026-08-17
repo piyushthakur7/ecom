@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, type ReactNode } from 'react';
 import { notFound } from 'next/navigation';
+import { IconFlame, IconZap, IconTrophy, IconSparkles, IconPalette, IconCheck } from '@/components/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/components/cart-context';
@@ -21,11 +22,11 @@ const badgeClass: Record<string, string> = {
   'Best Seller':      'badge-bestseller',
   'New Arrival':      'badge-new',
 };
-const badgeEmoji: Record<string, string> = {
-  'Highly Purchased': '🔥',
-  'Trending':         '⚡',
-  'Best Seller':      '🏆',
-  'New Arrival':      '✨',
+const badgeIcon: Record<string, ReactNode> = {
+  'Highly Purchased': <IconFlame size={12} />,
+  'Trending':         <IconZap size={12} />,
+  'Best Seller':      <IconTrophy size={12} />,
+  'New Arrival':      <IconSparkles size={12} />,
 };
 
 export default function ProductPage({ params }: { params: Promise<{ id: string }> }) {
@@ -146,7 +147,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
           <div className="product-info">
             {p.badge && (
               <span className={`product-badge ${badgeClass[p.badge] ?? ''}`} style={{ alignSelf: 'flex-start' }}>
-                {badgeEmoji[p.badge] ?? ''} {p.badge}
+                {badgeIcon[p.badge] ?? ''} {p.badge}
               </span>
             )}
 
@@ -185,9 +186,9 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
                         type="button"
                         className={`size-btn ${selectedColor === c ? 'selected' : ''}`}
                         onClick={() => setSelectedColor(c)}
-                        style={{ borderRadius: 20, padding: '6px 16px', minWidth: 'auto' }}
+                        style={{ borderRadius: 20, padding: '6px 16px', minWidth: 'auto', display: 'inline-flex', alignItems: 'center', gap: 6 }}
                       >
-                        🎨 {c}
+                        <IconPalette size={14} /> {c}
                       </button>
                     ))}
                   </div>
@@ -222,7 +223,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
             {/* CTAs */}
             <div className="product-cta">
               <button type="button" className="btn btn-primary btn-add-cart" onClick={handleAddToCart} style={{ justifyContent: 'center', borderRadius: 'var(--radius-md)' }}>
-                {added ? '✓ Added to Cart!' : 'Add to Cart'}
+                {added ? <><IconCheck size={16} /> Added to Cart!</> : 'Add to Cart'}
               </button>
               <button type="button" className="btn btn-buy-now" onClick={handleBuyNow} style={{ justifyContent: 'center' }}>
                 Buy Now
@@ -293,7 +294,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
       {/* Mobile Sticky CTA */}
       <div className="mobile-sticky-cta">
         <button type="button" className="btn btn-secondary" onClick={handleAddToCart} style={{ flex: 1, justifyContent: 'center', height: 44 }}>
-          {added ? '✓ Added' : 'Add to Cart'}
+          {added ? <><IconCheck size={15} /> Added</> : 'Add to Cart'}
         </button>
         <button type="button" className="btn btn-primary" onClick={handleBuyNow} style={{ flex: 1, justifyContent: 'center', height: 44 }}>
           Buy Now

@@ -11,6 +11,7 @@ import { useToast } from '@/components/toast';
 import { updateProfile, updateAddresses } from '@/lib/services/auth.service';
 import { getUserOrders } from '@/lib/services/orders.service';
 import type { SavedAddress, DBOrder } from '@/lib/types';
+import { IconUser, IconMapPin, IconPackage, IconHeart, IconSettings, IconPhone } from '@/components/icons';
 
 const STATES = [
   'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat',
@@ -141,7 +142,7 @@ function ProfileContent() {
       <main>
         <div className="section" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>👤</div>
+            <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'center' }}><IconUser size={48} /></div>
             <h1 style={{ fontSize: 24, fontFamily: 'var(--font-heading)', fontWeight: 800, marginBottom: 10 }}>Sign in to view your profile</h1>
             <p style={{ color: '#888', marginBottom: 24 }}>Access your orders, wishlist, and saved addresses.</p>
             <button type="button" className="btn btn-primary btn-large" onClick={() => setAuthOpen(true)}>Sign in with Google</button>
@@ -168,11 +169,11 @@ function ProfileContent() {
   const avatarInitial = (profile?.full_name ?? user?.email ?? '?')[0].toUpperCase();
   const avatarUrl = profile?.avatar_url ?? user?.profile?.avatar_url;
 
-  const tabs: { id: Tab; label: string; icon: string }[] = [
-    { id: 'profile', label: 'Profile', icon: '👤' },
-    { id: 'addresses', label: 'Addresses', icon: '📍' },
-    { id: 'orders', label: 'My Orders', icon: '📦' },
-    { id: 'wishlist', label: 'Wishlist', icon: '❤️' },
+  const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
+    { id: 'profile', label: 'Profile', icon: <IconUser size={15} /> },
+    { id: 'addresses', label: 'Addresses', icon: <IconMapPin size={15} /> },
+    { id: 'orders', label: 'My Orders', icon: <IconPackage size={15} /> },
+    { id: 'wishlist', label: 'Wishlist', icon: <IconHeart size={15} /> },
   ];
 
   return (
@@ -202,7 +203,7 @@ function ProfileContent() {
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             {profile?.role === 'admin' && (
-              <Link href="/admin" className="btn btn-ghost" style={{ fontSize: 13 }}>⚙️ Admin Dashboard</Link>
+              <Link href="/admin" className="btn btn-ghost" style={{ fontSize: 13, display: 'inline-flex', alignItems: 'center', gap: 7 }}><IconSettings size={15} /> Admin Dashboard</Link>
             )}
             <button type="button" className="btn btn-ghost" onClick={signOut} style={{ fontSize: 13, color: '#dc2626' }}>Sign Out</button>
           </div>
@@ -224,7 +225,7 @@ function ProfileContent() {
                 transition: 'all 0.2s',
               }}
             >
-              {t.icon} {t.label}
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>{t.icon} {t.label}</span>
             </button>
           ))}
         </div>
@@ -271,7 +272,7 @@ function ProfileContent() {
 
             {addresses.length === 0 && !showAddressForm && (
               <div style={{ textAlign: 'center', padding: '48px 0', color: '#888' }}>
-                <div style={{ fontSize: 32, marginBottom: 12 }}>📍</div>
+                <div style={{ marginBottom: 12, display: 'flex', justifyContent: 'center' }}><IconMapPin size={32} /></div>
                 <p>No saved addresses yet. Add one to speed up checkout!</p>
               </div>
             )}
@@ -288,7 +289,7 @@ function ProfileContent() {
                       <div style={{ color: '#666', fontSize: 14, marginTop: 4 }}>{addr.street}</div>
                       <div style={{ color: '#666', fontSize: 14 }}>{addr.city}, {addr.state} — {addr.pincode}</div>
                       {addr.landmark && <div style={{ color: '#888', fontSize: 13 }}>Near: {addr.landmark}</div>}
-                      <div style={{ color: '#888', fontSize: 13, marginTop: 2 }}>📞 {addr.phone}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#888', fontSize: 13, marginTop: 2 }}><IconPhone size={13} />{addr.phone}</div>
                     </div>
                     <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
                       <button type="button" className="btn btn-ghost" onClick={() => { setEditingAddr(addr); setAddrForm({ name: addr.name, phone: addr.phone, street: addr.street, city: addr.city, state: addr.state, pincode: addr.pincode, landmark: addr.landmark ?? '', isDefault: addr.isDefault }); setShowAddressForm(true); }} style={{ fontSize: 12, padding: '6px 12px' }}>Edit</button>
@@ -366,7 +367,7 @@ function ProfileContent() {
               </div>
             ) : orders.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '64px 0', color: '#888' }}>
-                <div style={{ fontSize: 40, marginBottom: 12 }}>📦</div>
+                <div style={{ marginBottom: 12, display: 'flex', justifyContent: 'center' }}><IconPackage size={40} /></div>
                 <p style={{ marginBottom: 20 }}>You haven&apos;t placed any orders yet.</p>
                 <Link href="/" className="btn btn-primary">Start Shopping</Link>
               </div>
@@ -401,8 +402,8 @@ function ProfileContent() {
                           <span>₹{Number(order.total + order.shipping).toLocaleString('en-IN')}</span>
                         </div>
                         {order.shipping_address && (
-                          <div style={{ marginTop: 10, fontSize: 13, color: '#888' }}>
-                            📍 {order.shipping_address.street}, {order.shipping_address.city}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 10, fontSize: 13, color: '#888' }}>
+                            <IconMapPin size={13} />{order.shipping_address.street}, {order.shipping_address.city}
                           </div>
                         )}
                       </div>
@@ -417,7 +418,7 @@ function ProfileContent() {
         {/* ── Wishlist Tab ──────────────────────────────────────────────── */}
         {tab === 'wishlist' && (
           <div style={{ textAlign: 'center', padding: '48px 0' }}>
-            <div style={{ fontSize: 32, marginBottom: 12 }}>❤️</div>
+            <div style={{ marginBottom: 12, display: 'flex', justifyContent: 'center' }}><IconHeart size={32} /></div>
             <p style={{ marginBottom: 20, color: '#666' }}>View and manage your saved items in your wishlist.</p>
             <Link href="/favourites" className="btn btn-primary">Go to Wishlist →</Link>
           </div>

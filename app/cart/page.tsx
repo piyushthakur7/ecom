@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/components/cart-context';
 import { Footer } from '@/components/footer';
+import { IconShoppingBag, IconTruck, IconCheckCircle, IconLock, IconPackage, IconRotateLeft } from '@/components/icons';
 
 export default function CartPage() {
   const { items, count, total, removeFromCart, updateQty, clearCart } = useCart();
@@ -18,7 +19,7 @@ export default function CartPage() {
       <main>
         <div className="section" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className="cart-empty">
-            <div className="cart-empty-icon">🛍️</div>
+            <div className="cart-empty-icon"><IconShoppingBag size={56} /></div>
             <h1 style={{ fontSize: 26, marginBottom: 10 }}>Your cart is empty</h1>
             <p style={{ color: 'color-mix(in srgb, var(--color-text) 65%, transparent)', marginBottom: 28 }}>
               Looks like you haven&apos;t added anything yet.
@@ -133,7 +134,7 @@ export default function CartPage() {
                   gap: 8,
                 }}
               >
-                <span>🚚</span>
+                <IconTruck size={16} />
                 <span>Add <strong>₹{(999 - total).toFixed(0)}</strong> more for free shipping!</span>
               </div>
             )}
@@ -151,7 +152,7 @@ export default function CartPage() {
                   gap: 8,
                 }}
               >
-                <span>✅</span>
+                <IconCheckCircle size={16} />
                 <span><strong>Free shipping</strong> applied!</span>
               </div>
             )}
@@ -194,8 +195,12 @@ export default function CartPage() {
 
             {/* Trust */}
             <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {['🔒 Secure payment', '📦 Ships in 24–48h', '↩️ 7-day easy returns'].map((t) => (
-                <span key={t} style={{ fontSize: 12, color: 'color-mix(in srgb, var(--color-text) 60%, transparent)' }}>{t}</span>
+              {[
+                { icon: <IconLock size={14} />, label: 'Secure payment' },
+                { icon: <IconPackage size={14} />, label: 'Ships in 24–48h' },
+                { icon: <IconRotateLeft size={14} />, label: '7-day easy returns' },
+              ].map((t) => (
+                <span key={t.label} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'color-mix(in srgb, var(--color-text) 60%, transparent)' }}>{t.icon}{t.label}</span>
               ))}
             </div>
           </div>

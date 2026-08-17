@@ -9,6 +9,7 @@ import { useCart } from './cart-context';
 import { useFavourites } from './favourites-context';
 import { useAuth } from './auth-context';
 import { AuthModal } from './auth-modal';
+import { IconTag, IconChevronDown, IconHeart, IconUser, IconPackage, IconSettings, IconLogIn, IconLogOut } from './icons';
 import { getCategories, getProducts } from '@/lib/services/products.service';
 import type { DBCategory, DBProduct } from '@/lib/types';
 
@@ -227,17 +228,17 @@ export function Nav() {
                   <div style={{ fontWeight: 600, fontSize: 14 }}>{profile?.full_name ?? 'My Account'}</div>
                   <div style={{ fontSize: 12, color: '#888', marginTop: 2 }}>{user?.email}</div>
                 </div>
-                <Link href="/profile" onClick={() => setProfileMenuOpen(false)} style={{ display: 'block', padding: '11px 16px', fontSize: 14, color: 'inherit', textDecoration: 'none' }}>👤 My Profile</Link>
-                <Link href="/profile?tab=orders" onClick={() => setProfileMenuOpen(false)} style={{ display: 'block', padding: '11px 16px', fontSize: 14, color: 'inherit', textDecoration: 'none' }}>📦 My Orders</Link>
+                <Link href="/profile" onClick={() => setProfileMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 16px', fontSize: 14, color: 'inherit', textDecoration: 'none' }}><IconUser size={15} /> My Profile</Link>
+                <Link href="/profile?tab=orders" onClick={() => setProfileMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 16px', fontSize: 14, color: 'inherit', textDecoration: 'none' }}><IconPackage size={15} /> My Orders</Link>
                 {isAdmin && (
-                  <Link href="/admin" onClick={() => setProfileMenuOpen(false)} style={{ display: 'block', padding: '11px 16px', fontSize: 14, color: 'var(--color-accent)', textDecoration: 'none', fontWeight: 600 }}>⚙️ Admin Dashboard</Link>
+                  <Link href="/admin" onClick={() => setProfileMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 16px', fontSize: 14, color: 'var(--color-accent)', textDecoration: 'none', fontWeight: 600 }}><IconSettings size={15} /> Admin Dashboard</Link>
                 )}
                 <button
                   type="button"
                   onClick={() => { setProfileMenuOpen(false); signOut(); }}
-                  style={{ display: 'block', width: '100%', textAlign: 'left', padding: '11px 16px', fontSize: 14, background: 'none', border: 'none', cursor: 'pointer', color: '#dc2626', borderTop: '1px solid #f0f0f0' }}
+                  style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', textAlign: 'left', padding: '11px 16px', fontSize: 14, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-neutral-700)', borderTop: '1px solid var(--color-divider)' }}
                 >
-                  🚪 Sign Out
+                  <IconLogOut size={16} /> Sign Out
                 </button>
               </div>
             )}
@@ -291,7 +292,7 @@ export function Nav() {
 
         {/* User Card in Drawer */}
         {user && (
-          <div style={{ margin: '0 16px 12px', padding: '12px 14px', background: '#f5f5f5', borderRadius: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ margin: '0 16px 12px', padding: '12px 14px', background: 'var(--color-surface)', borderRadius: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
             {avatarUrl ? (
               <Image src={avatarUrl} alt="Avatar" width={38} height={38} unoptimized style={{ borderRadius: '50%', objectFit: 'cover' }} />
             ) : (
@@ -301,7 +302,7 @@ export function Nav() {
             )}
             <div style={{ overflow: 'hidden' }}>
               <div style={{ fontWeight: 700, fontSize: 14, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{profile?.full_name || 'My Account'}</div>
-              <div style={{ fontSize: 12, color: '#666', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{user.email}</div>
+              <div style={{ fontSize: 12, color: 'var(--color-neutral-700)', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{user.email}</div>
             </div>
           </div>
         )}
@@ -338,68 +339,61 @@ export function Nav() {
 
         {/* Drawer nav links */}
         <nav className="nav-drawer-links">
-          {/* Categories Accordion Dropdown Tag */}
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {/* Categories accordion */}
+          <div className="nav-drawer-accordion">
             <button
               type="button"
+              className="nav-drawer-row"
+              aria-expanded={categoriesDropdownOpen}
               onClick={() => setCategoriesDropdownOpen((v) => !v)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                width: '100%',
-                background: 'none',
-                border: 'none',
-                padding: '12px 0',
-                fontSize: 16,
-                fontWeight: 700,
-                color: 'inherit',
-                cursor: 'pointer',
-                textAlign: 'left',
-              }}
             >
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                🏷️ Categories ({navLinks.length})
+              <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <IconTag />
+                Categories ({navLinks.length})
               </span>
-              <span style={{ fontSize: 13, color: '#888', transition: 'transform 0.2s', transform: categoriesDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
-                ▼
-              </span>
+              <IconChevronDown className="nav-drawer-chevron" size={16} />
             </button>
 
             {categoriesDropdownOpen && (
-              <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                paddingLeft: 12,
-                marginLeft: 4,
-                borderLeft: '2px solid var(--color-accent-100, #fff0ed)',
-                marginBottom: 8,
-              }}>
+              <div className="nav-drawer-sublinks">
                 {navLinks.map((link) => (
-                  <Link key={link.label} href={link.href} onClick={closeDrawer} style={{ padding: '8px 0', fontSize: 14, color: '#444', textDecoration: 'none', fontWeight: 500 }}>
+                  <Link key={link.label} href={link.href} onClick={closeDrawer}>
                     {link.label}
                   </Link>
                 ))}
-                <Link href="/category/dresses" onClick={closeDrawer} style={{ padding: '8px 0', fontSize: 14, color: 'var(--color-accent)', fontWeight: 600, textDecoration: 'none' }}>
-                  🔥 Sale Collection
+                <Link href="/category/dresses" onClick={closeDrawer} className="nav-sale-mobile">
+                  Sale Collection
                 </Link>
               </div>
             )}
           </div>
-          <Link href="/favourites" onClick={closeDrawer} style={{ color: '#e91e63' }}>
-            ♥ Favourites{favCount > 0 ? ` (${favCount})` : ''}
+
+          <Link href="/favourites" onClick={closeDrawer}>
+            <IconHeart />
+            Favourites{favCount > 0 ? ` (${favCount})` : ''}
           </Link>
+
           {user ? (
             <>
-              <Link href="/profile" onClick={closeDrawer}>👤 My Profile</Link>
-              {isAdmin && <Link href="/admin" onClick={closeDrawer} style={{ color: 'var(--color-accent)' }}>⚙️ Admin</Link>}
-              <button type="button" onClick={() => { closeDrawer(); signOut(); }} style={{ background: 'none', border: 'none', textAlign: 'left', padding: 0, fontSize: 'inherit', cursor: 'pointer', color: '#dc2626' }}>
-                🚪 Sign Out
+              <Link href="/profile" onClick={closeDrawer}>
+                <IconUser />
+                My Profile
+              </Link>
+              {isAdmin && (
+                <Link href="/admin" onClick={closeDrawer} className="nav-sale-mobile">
+                  <IconSettings />
+                  Admin
+                </Link>
+              )}
+              <button type="button" className="nav-drawer-row nav-drawer-signout" onClick={() => { closeDrawer(); signOut(); }}>
+                <IconLogOut />
+                Sign Out
               </button>
             </>
           ) : (
-            <button type="button" onClick={() => { closeDrawer(); setAuthOpen(true); }} style={{ background: 'none', border: 'none', textAlign: 'left', padding: 0, fontSize: 'inherit', cursor: 'pointer' }}>
-              👤 Sign In
+            <button type="button" className="nav-drawer-row" onClick={() => { closeDrawer(); setAuthOpen(true); }}>
+              <IconLogIn />
+              Sign In
             </button>
           )}
         </nav>
