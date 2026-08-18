@@ -3498,3 +3498,34 @@ figure { margin: 0; }
   margin: 4px 0 0;
 }
 
+/* --------------------------------------------------------------------------
+   VIDEO REELS GRID
+   One row at every width. Wide screens split it into equal columns; below
+   that the row scrolls sideways, because four vertical reels squeezed onto a
+   phone would be too narrow to read.
+   -------------------------------------------------------------------------- */
+.video-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: clamp(14px, 2vw, 24px);
+  align-items: stretch;
+}
+
+@media (max-width: 1024px) {
+  .video-grid {
+    grid-auto-columns: minmax(240px, 1fr);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    padding-bottom: 8px;
+    scrollbar-width: none;
+  }
+  .video-grid::-webkit-scrollbar { display: none; }
+  .video-grid > * { scroll-snap-align: start; }
+}
+
+@media (max-width: 560px) {
+  .video-grid { grid-auto-columns: minmax(200px, 72vw); }
+}
+

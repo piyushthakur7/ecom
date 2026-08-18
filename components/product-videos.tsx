@@ -62,14 +62,7 @@ export function VideoSection() {
         </p>
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: 24,
-          alignItems: 'stretch',
-        }}
-      >
+      <div className="video-grid">
         {sampleVideos.map((video) => (
           <div
             key={video.id}
