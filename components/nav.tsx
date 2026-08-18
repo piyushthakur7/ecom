@@ -129,7 +129,7 @@ export function Nav() {
         {/* Desktop links */}
         <ul className="nav-links">
           <li><Link href="/">Home</Link></li>
-          <li><Link href="/#featured">Shop</Link></li>
+          <li><Link href="/shop">Shop</Link></li>
 
           <li className="nav-dropdown" ref={catMenuRef}>
             <button
@@ -376,7 +376,7 @@ export function Nav() {
             <IconHome />
             Home
           </Link>
-          <Link href="/#featured" onClick={closeDrawer}>
+          <Link href="/shop" onClick={closeDrawer}>
             <IconShoppingBag />
             Shop
           </Link>

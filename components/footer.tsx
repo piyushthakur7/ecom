@@ -19,10 +19,11 @@ const columns = [
     heading: 'Help',
     links: [
       { label: 'Track order',      href: '/track-order' },
-      { label: 'Shipping policy',  href: '#' },
-      { label: 'Returns & refunds',href: '#' },
-      { label: 'Size guide',       href: '#' },
+      { label: 'Shipping policy',  href: '/shipping-policy' },
+      { label: 'Returns & refunds',href: '/returns-refunds' },
+      { label: 'Size guide',       href: '/size-guide' },
       { label: 'Privacy policy',   href: '/privacy-policy' },
+      { label: 'Terms & conditions', href: '/terms' },
     ],
   },
 ];

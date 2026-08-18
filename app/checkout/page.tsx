@@ -9,7 +9,7 @@ import { useAuth } from '@/components/auth-context';
 import { AuthModal } from '@/components/auth-modal';
 import { Footer } from '@/components/footer';
 import { useToast } from '@/components/toast';
-import { createOrder, getUserOrders } from '@/lib/services/orders.service';
+import { getUserOrders } from '@/lib/services/orders.service';
 import { updateAddresses, updateProfile } from '@/lib/services/auth.service';
 import { loadRazorpayScript } from '@/lib/razorpay';
 import { validateCoupon, COUPON_STORAGE_KEY, type Coupon } from '@/lib/coupons';
@@ -322,11 +322,23 @@ export default function CheckoutPage() {
       isDefault: false,
     };
 
-    // The subtotal that is actually charged, and a record of why it differs.
-    const payableSubtotal = Math.max(0, total - discount);
-    const orderMeta = appliedCoupon
-      ? { ...shippingAddress, couponCode: appliedCoupon.code, couponDiscount: discount }
-      : shippingAddress;
+    // The server re-prices from the products table, so it only needs to know
+    // *what* was ordered — never what the browser thinks it costs.
+    const orderItems = items.map((i) => ({
+      id: i.id,
+      quantity: i.quantity,
+      size: i.size,
+      color: i.color,
+    }));
+    const orderPayload = {
+      userId: user ? user.id : null,
+      customerName: `${form.firstName} ${form.lastName}`,
+      customerEmail: form.email,
+      customerPhone: form.phone,
+      shippingAddress,
+      items: orderItems,
+      couponCode: appliedCoupon?.code ?? null,
+    };
 
     // Auto-save address & user details to profile
     if (user) {
@@ -370,7 +382,11 @@ export default function CheckoutPage() {
         const createRes = await fetch('/api/razorpay/create-order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ amount: grandTotal }),
+          body: JSON.stringify({
+            items: orderItems,
+            couponCode: appliedCoupon?.code ?? null,
+            userId: user ? user.id : null,
+          }),
         });
 
         const orderData = await createRes.json();
@@ -400,16 +416,7 @@ export default function CheckoutPage() {
                   razorpay_order_id: response.razorpay_order_id,
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_signature: response.razorpay_signature,
-                  orderDetails: {
-                    userId: user ? user.id : null,
-                    customerName: `${form.firstName} ${form.lastName}`,
-                    customerEmail: form.email,
-                    customerPhone: form.phone,
-                    shippingAddress: orderMeta,
-                    items,
-                    total: payableSubtotal,
-                    shipping,
-                  },
+                  orderDetails: orderPayload,
                 }),
               });
 
@@ -459,16 +466,7 @@ export default function CheckoutPage() {
             JSON.stringify({
               razorpay_order_id: orderData.orderId,
               savedAt: Date.now(),
-              orderDetails: {
-                userId: user ? user.id : null,
-                customerName: `${form.firstName} ${form.lastName}`,
-                customerEmail: form.email,
-                customerPhone: form.phone,
-                shippingAddress: orderMeta,
-                items,
-                total: payableSubtotal,
-                shipping,
-              },
+              orderDetails: orderPayload,
             })
           );
         } catch {
@@ -486,27 +484,27 @@ export default function CheckoutPage() {
     }
 
     // ── Payment Route B: Cash on Delivery (COD) ─────────────────────────
-    const result = await createOrder({
-      userId: user ? user.id : null,
-      customerName: `${form.firstName} ${form.lastName}`,
-      customerEmail: form.email,
-      customerPhone: form.phone,
-      shippingAddress: orderMeta,
-      paymentMethod: 'cod',
-      items,
-      total: payableSubtotal,
-      shipping,
-    });
+    // Goes through the server so COD is priced exactly like a card payment.
+    try {
+      const res = await fetch('/api/orders/cod', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderPayload),
+      });
+      const data = await res.json();
 
-    if (result) {
-      try { localStorage.removeItem(COUPON_STORAGE_KEY); } catch { /* ignore */ }
-      clearCart();
-      setOrderNumber(result.orderNumber);
-      setPaymentId('');
-      setSuccess(true);
-      toast('COD Order placed successfully!');
-    } else {
-      toast('Failed to place order. Please try again.', 'error');
+      if (res.ok && data.success) {
+        try { localStorage.removeItem(COUPON_STORAGE_KEY); } catch { /* ignore */ }
+        clearCart();
+        setOrderNumber(data.orderNumber);
+        setPaymentId('');
+        setSuccess(true);
+        toast('COD Order placed successfully!');
+      } else {
+        toast(data.error || 'Failed to place order. Please try again.', 'error');
+      }
+    } catch {
+      toast('Failed to place order. Please check your connection.', 'error');
     }
     setPlacing(false);
   }

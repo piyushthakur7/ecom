@@ -96,7 +96,7 @@ export function FirstOrderPopup() {
           {copied ? <><IconCheck size={16} /> Code copied</> : 'Claim my 15% off'}
         </button>
 
-        <Link href="/#featured" className="promo-skip" onClick={dismiss}>
+        <Link href="/shop" className="promo-skip" onClick={dismiss}>
           Just browsing
         </Link>
       </div>

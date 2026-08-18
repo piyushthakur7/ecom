@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createOrder } from '@/lib/services/orders.service';
+import { fulfilOrder } from '@/lib/services/order-fulfilment';
 
 /**
  * Recovery endpoint for interrupted mobile payments.
@@ -21,7 +21,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing recovery parameters' }, { status: 400 });
     }
 
-    const keyId = process.env.RAZORPAY_KEY_ID;
+    // create-order reads NEXT_PUBLIC_RAZORPAY_KEY_ID; accept either name.
+    const keyId = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
     if (!keyId || !keySecret) {
       return NextResponse.json({ error: 'Razorpay API credentials not configured' }, { status: 500 });
@@ -47,30 +48,27 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, paid: false });
     }
 
-    const created = await createOrder({
-      userId: orderDetails.userId,
+    const result = await fulfilOrder({
+      userId: orderDetails.userId ?? null,
       customerName: orderDetails.customerName,
       customerEmail: orderDetails.customerEmail,
       customerPhone: orderDetails.customerPhone,
-      shippingAddress: {
-        ...orderDetails.shippingAddress,
-        paymentId: paid.id,
-        razorpayOrderId: razorpay_order_id,
-      },
+      shippingAddress: orderDetails.shippingAddress,
+      items: orderDetails.items ?? [],
+      couponCode: orderDetails.couponCode ?? null,
       paymentMethod: `razorpay (Paid - ${paid.id})`,
-      items: orderDetails.items,
-      total: orderDetails.total,
-      shipping: orderDetails.shipping,
+      paymentId: paid.id,
+      razorpayOrderId: razorpay_order_id,
     });
 
-    if (!created) {
-      return NextResponse.json({ error: 'Failed to save recovered order' }, { status: 500 });
+    if (!result.ok) {
+      return NextResponse.json({ error: result.reason }, { status: 500 });
     }
 
     return NextResponse.json({
       success: true,
       paid: true,
-      orderNumber: created.orderNumber,
+      orderNumber: result.orderNumber,
       paymentId: paid.id,
     });
   } catch (error: unknown) {

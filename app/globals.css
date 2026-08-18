@@ -3529,3 +3529,88 @@ figure { margin: 0; }
   .video-grid { grid-auto-columns: minmax(200px, 72vw); }
 }
 
+/* --------------------------------------------------------------------------
+   SHOP PAGE  filter chips + sort
+   -------------------------------------------------------------------------- */
+.shop-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.shop-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.shop-chip {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border: 1.5px solid var(--color-divider);
+  border-radius: var(--radius-full);
+  background: none;
+  color: var(--color-text);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+.shop-chip:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.shop-chip.active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-bg);
+}
+
+.shop-sort {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.shop-sort select { min-width: 170px; cursor: pointer; }
+
+@media (max-width: 640px) {
+  .shop-toolbar { align-items: stretch; }
+  .shop-filters { overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; padding-bottom: 4px; }
+  .shop-filters::-webkit-scrollbar { display: none; }
+  .shop-sort { width: 100%; }
+  .shop-sort select { flex: 1; min-width: 0; }
+}
+
+/* Size guide tables */
+.table-scroll {
+  overflow-x: auto;
+  margin: 0 0 20px;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+}
+.size-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  min-width: 380px;
+}
+.size-table th,
+.size-table td {
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--color-divider);
+}
+.size-table th {
+  background: var(--color-neutral-100);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.size-table tbody tr:last-child td { border-bottom: none; }
+.size-table td:first-child { font-weight: 700; }
+

@@ -47,7 +47,7 @@ export function Testimonials() {
               Be the first to share how your Saanshika piece fit and felt. Open any
               product and tap &ldquo;Write a Review&rdquo;.
             </p>
-            <Link href="/#featured" className="btn btn-secondary">Browse products</Link>
+            <Link href="/shop" className="btn btn-secondary">Browse products</Link>
           </div>
         ) : (
         <div className="testimonials-grid">
