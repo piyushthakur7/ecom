@@ -9,15 +9,16 @@ import { useAuth } from '@/components/auth-context';
 import { AuthModal } from '@/components/auth-modal';
 import { Footer } from '@/components/footer';
 import { useToast } from '@/components/toast';
-import { createOrder } from '@/lib/services/orders.service';
+import { createOrder, getUserOrders } from '@/lib/services/orders.service';
 import { updateAddresses, updateProfile } from '@/lib/services/auth.service';
 import { loadRazorpayScript } from '@/lib/razorpay';
+import { validateCoupon, COUPON_STORAGE_KEY, type Coupon } from '@/lib/coupons';
 
 /** Where an in-flight Razorpay payment is parked so it survives a tab reload. */
 const PENDING_PAYMENT_KEY = 'saanshika:pending-payment';
 /** Anything older than this is stale and gets dropped rather than recovered. */
 const PENDING_PAYMENT_TTL_MS = 30 * 60 * 1000;
-import { IconCreditCard, IconPackage, IconShieldCheck, IconPhone, IconZap, IconHome } from '@/components/icons';
+import { IconCreditCard, IconPackage, IconShieldCheck, IconPhone, IconZap, IconHome, IconX } from '@/components/icons';
 import type { SavedAddress } from '@/lib/types';
 
 const STATES = [
@@ -102,7 +103,46 @@ export default function CheckoutPage() {
   const [selectedAddressId, setSelectedAddressId] = useState<string | 'new'>('new');
 
   const shipping = total >= 999 ? 0 : 99;
-  const grandTotal = total + shipping;
+  // ── Coupon ────────────────────────────────────────────────────────────
+  const [couponInput, setCouponInput] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
+  const [discount, setDiscount] = useState(0);
+  const [couponError, setCouponError] = useState('');
+  const [isFirstOrder, setIsFirstOrder] = useState(true);
+
+  const grandTotal = Math.max(0, total - discount) + shipping;
+
+  // Is this a first order? Signed-out shoppers are treated as first-time.
+  useEffect(() => {
+    let cancelled = false;
+    if (!user) { setIsFirstOrder(true); return; }
+    getUserOrders(user.id).then((orders) => {
+      if (!cancelled) setIsFirstOrder(orders.length === 0);
+    });
+    return () => { cancelled = true; };
+  }, [user]);
+
+  // Auto-apply the code claimed from the welcome popup, and keep the discount
+  // in step with the cart as items are added or removed.
+  useEffect(() => {
+    let claimed = '';
+    try { claimed = localStorage.getItem(COUPON_STORAGE_KEY) ?? ''; } catch { /* ignore */ }
+    const code = appliedCoupon?.code ?? claimed;
+    if (!code) return;
+
+    const result = validateCoupon(code, total, isFirstOrder);
+    if (result.ok) {
+      setAppliedCoupon(result.coupon);
+      setDiscount(result.discount);
+      setCouponError('');
+    } else {
+      setAppliedCoupon(null);
+      setDiscount(0);
+      // Only surface the reason once the shopper has actually applied it.
+      if (appliedCoupon) setCouponError(result.reason);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [total, isFirstOrder, appliedCoupon?.code]);
 
   // Recover a payment that completed while the tab was in the background.
   // Runs before the empty-cart redirect so a reloaded tab lands on the receipt
@@ -145,6 +185,7 @@ export default function CheckoutPage() {
 
         if (res.ok && data.success && data.paid) {
           localStorage.removeItem(PENDING_PAYMENT_KEY);
+          localStorage.removeItem(COUPON_STORAGE_KEY);
           clearCart();
           setOrderNumber(data.orderNumber);
           setPaymentId(data.paymentId);
@@ -234,6 +275,29 @@ export default function CheckoutPage() {
     return Object.keys(e).length === 0;
   }
 
+  function applyCoupon() {
+    const result = validateCoupon(couponInput, total, isFirstOrder);
+    if (result.ok) {
+      setAppliedCoupon(result.coupon);
+      setDiscount(result.discount);
+      setCouponError('');
+      setCouponInput('');
+      try { localStorage.setItem(COUPON_STORAGE_KEY, result.coupon.code); } catch { /* ignore */ }
+      toast(`${result.coupon.code} applied - you saved ₹${result.discount.toLocaleString('en-IN')}`);
+    } else {
+      setAppliedCoupon(null);
+      setDiscount(0);
+      setCouponError(result.reason);
+    }
+  }
+
+  function removeCoupon() {
+    setAppliedCoupon(null);
+    setDiscount(0);
+    setCouponError('');
+    try { localStorage.removeItem(COUPON_STORAGE_KEY); } catch { /* ignore */ }
+  }
+
   async function handlePlaceOrder(e: React.FormEvent) {
     e.preventDefault();
     if (!validate()) return;
@@ -257,6 +321,12 @@ export default function CheckoutPage() {
       landmark: form.landmark || undefined,
       isDefault: false,
     };
+
+    // The subtotal that is actually charged, and a record of why it differs.
+    const payableSubtotal = Math.max(0, total - discount);
+    const orderMeta = appliedCoupon
+      ? { ...shippingAddress, couponCode: appliedCoupon.code, couponDiscount: discount }
+      : shippingAddress;
 
     // Auto-save address & user details to profile
     if (user) {
@@ -335,9 +405,9 @@ export default function CheckoutPage() {
                     customerName: `${form.firstName} ${form.lastName}`,
                     customerEmail: form.email,
                     customerPhone: form.phone,
-                    shippingAddress,
+                    shippingAddress: orderMeta,
                     items,
-                    total,
+                    total: payableSubtotal,
                     shipping,
                   },
                 }),
@@ -347,6 +417,7 @@ export default function CheckoutPage() {
 
               if (verifyRes.ok && verifyData.success) {
                 localStorage.removeItem(PENDING_PAYMENT_KEY);
+                localStorage.removeItem(COUPON_STORAGE_KEY);
                 clearCart();
                 setOrderNumber(verifyData.orderNumber);
                 setPaymentId(verifyData.paymentId);
@@ -393,9 +464,9 @@ export default function CheckoutPage() {
                 customerName: `${form.firstName} ${form.lastName}`,
                 customerEmail: form.email,
                 customerPhone: form.phone,
-                shippingAddress,
+                shippingAddress: orderMeta,
                 items,
-                total,
+                total: payableSubtotal,
                 shipping,
               },
             })
@@ -420,14 +491,15 @@ export default function CheckoutPage() {
       customerName: `${form.firstName} ${form.lastName}`,
       customerEmail: form.email,
       customerPhone: form.phone,
-      shippingAddress,
+      shippingAddress: orderMeta,
       paymentMethod: 'cod',
       items,
-      total,
+      total: payableSubtotal,
       shipping,
     });
 
     if (result) {
+      try { localStorage.removeItem(COUPON_STORAGE_KEY); } catch { /* ignore */ }
       clearCart();
       setOrderNumber(result.orderNumber);
       setPaymentId('');
@@ -652,6 +724,39 @@ export default function CheckoutPage() {
                 ))}
                 <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 6 }}>
                   <div className="cart-summary-row"><span>Subtotal</span><span>₹{total.toLocaleString('en-IN')}</span></div>
+
+                  {/* Coupon */}
+                  {appliedCoupon ? (
+                    <div className="coupon-applied">
+                      <span className="coupon-applied-code">{appliedCoupon.code}</span>
+                      <span className="coupon-applied-label">{appliedCoupon.label}</span>
+                      <button type="button" onClick={removeCoupon} className="coupon-remove" aria-label="Remove coupon">
+                        <IconX size={14} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="coupon-row">
+                      <input
+                        className="input"
+                        placeholder="Coupon code"
+                        value={couponInput}
+                        onChange={(e) => { setCouponInput(e.target.value); setCouponError(''); }}
+                        onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); applyCoupon(); } }}
+                        aria-label="Coupon code"
+                      />
+                      <button type="button" className="btn btn-secondary" onClick={applyCoupon} disabled={!couponInput.trim()}>
+                        Apply
+                      </button>
+                    </div>
+                  )}
+                  {couponError && <p className="coupon-error">{couponError}</p>}
+
+                  {discount > 0 && (
+                    <div className="cart-summary-row">
+                      <span>Discount ({appliedCoupon?.percentOff}%)</span>
+                      <span style={{ color: 'var(--color-success-dark, #2e7d32)' }}>-₹{discount.toLocaleString('en-IN')}</span>
+                    </div>
+                  )}
                   <div className="cart-summary-row"><span>Shipping</span><span style={{ color: shipping === 0 ? '#2e7d32' : 'inherit' }}>{shipping === 0 ? 'FREE' : `₹${shipping}`}</span></div>
                   <div className="cart-summary-row cart-summary-total"><span>Total</span><span>₹{grandTotal.toLocaleString('en-IN')}</span></div>
                 </div>

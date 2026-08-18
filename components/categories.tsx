@@ -26,7 +26,7 @@ export function Categories() {
           <div className="categories-scroll">
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                <div style={{ width: 96, height: 96, borderRadius: '50%', background: '#e5e5e5', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                <div className="category-circle" style={{ background: 'var(--color-neutral-200)', border: 'none', animation: 'pulse 1.5s ease-in-out infinite' }} />
                 <div style={{ width: 60, height: 12, borderRadius: 4, background: '#e5e5e5' }} />
               </div>
             ))}
@@ -58,7 +58,7 @@ export function Categories() {
                   src={cat.src || '/images/hero/banner-1.jpg'}
                   alt={cat.alt || cat.name}
                   fill
-                  sizes="(max-width: 480px) 76px, (max-width: 900px) 96px, 128px"
+                  sizes="(max-width: 480px) 108px, (max-width: 900px) 128px, 152px"
                   style={{ objectFit: 'cover' }}
                 />
               </div>
