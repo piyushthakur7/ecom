@@ -6,6 +6,7 @@ import { Features } from '@/components/features';
 import { Testimonials } from '@/components/testimonials';
 import { Newsletter } from '@/components/newsletter';
 import { Footer } from '@/components/footer';
+import { FirstOrderPopup } from '@/components/first-order-popup';
 import { siteConfig } from '@/lib/site';
 
 export default function HomePage() {
@@ -30,6 +31,10 @@ export default function HomePage() {
       <Newsletter />
       
       <Footer />
+
+      {/* Welcome offer runs on the homepage only, so it can never
+          interrupt someone in the middle of cart or checkout. */}
+      <FirstOrderPopup />
     </main>
   );
 }

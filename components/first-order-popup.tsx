@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from './auth-context';
 import { getUserOrders } from '@/lib/services/orders.service';
 import { COUPONS, COUPON_STORAGE_KEY, POPUP_SEEN_KEY } from '@/lib/coupons';
@@ -91,28 +92,45 @@ export function FirstOrderPopup() {
           <IconX size={18} />
         </button>
 
-        <span className="promo-kicker">
-          <IconSparkles size={14} /> Welcome offer
-        </span>
+        {/* Photo half - makes it read as an ad rather than a system dialog */}
+        <div className="promo-media">
+          <Image
+            src="/images/hero/banner-1.jpg"
+            alt=""
+            fill
+            sizes="(max-width: 700px) 100vw, 300px"
+            style={{ objectFit: 'cover' }}
+            priority={false}
+          />
+          <span className="promo-media-badge">15%<small>OFF</small></span>
+        </div>
 
-        <h2 id="promo-title" className="promo-title">
-          15% off your<br />first order
-        </h2>
+        {/* Copy half */}
+        <div className="promo-content">
+          <span className="promo-kicker">
+            <IconSparkles size={14} /> Welcome offer
+          </span>
 
-        <p className="promo-body">
-          Use the code below at checkout on orders over
-          ₹{FIRST_ORDER_COUPON.minSubtotal.toLocaleString('en-IN')}.
-        </p>
+          <h2 id="promo-title" className="promo-title">
+            15% off your<br />first order
+          </h2>
 
-        <div className="promo-code">{FIRST_ORDER_COUPON.code}</div>
+          <p className="promo-body">
+            New here? Take 15% off on orders over
+            ₹{FIRST_ORDER_COUPON.minSubtotal.toLocaleString('en-IN')} — kurtis,
+            suits, sarees, everything.
+          </p>
 
-        <button type="button" className="btn btn-primary btn-block btn-large" onClick={claim}>
-          {copied ? <><IconCheck size={16} /> Code copied</> : 'Claim my 15% off'}
-        </button>
+          <div className="promo-code">{FIRST_ORDER_COUPON.code}</div>
 
-        <Link href="/shop" className="promo-skip" onClick={dismiss}>
-          Just browsing
-        </Link>
+          <button type="button" className="btn btn-primary btn-block btn-large" onClick={claim}>
+            {copied ? <><IconCheck size={16} /> Code copied</> : 'Claim my 15% off'}
+          </button>
+
+          <Link href="/shop" className="promo-skip" onClick={dismiss}>
+            Just browsing
+          </Link>
+        </div>
       </div>
     </div>
   );

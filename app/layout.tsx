@@ -7,7 +7,6 @@ import { FavouritesProvider } from '@/components/favourites-context';
 import { ToastProvider } from '@/components/toast';
 import { Marquee } from '@/components/marquee';
 import { Nav } from '@/components/nav';
-import { FirstOrderPopup } from '@/components/first-order-popup';
 import './globals.css';
 
 const archivo = Archivo({
@@ -42,7 +41,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Marquee />
                 <Nav />
                 {children}
-                <FirstOrderPopup />
               </FavouritesProvider>
             </CartProvider>
           </AuthProvider>
