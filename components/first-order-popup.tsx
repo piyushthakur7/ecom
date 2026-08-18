@@ -19,31 +19,41 @@ export function FirstOrderPopup() {
     if (isLoading) return;
 
     let cancelled = false;
-    let timer: ReturnType<typeof setTimeout>;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+
+    // ?offer=preview shows it unconditionally, so the shop owner can check the
+    // popup without wiping storage or making a throwaway account. Read off the
+    // URL rather than useSearchParams(), which would force every page that
+    // renders this layout to become dynamic.
+    const preview =
+      typeof window !== 'undefined' &&
+      new URLSearchParams(window.location.search).get('offer') === 'preview';
 
     async function maybeShow() {
-      // Already seen or already dismissed - never nag twice.
-      try {
-        if (localStorage.getItem(POPUP_SEEN_KEY)) return;
-      } catch {
-        return; // storage blocked: skip rather than show on every page view
-      }
+      if (!preview) {
+        // Already seen or already dismissed - never nag twice.
+        try {
+          if (localStorage.getItem(POPUP_SEEN_KEY)) return;
+        } catch {
+          return; // storage blocked: skip rather than show on every page view
+        }
 
-      // Signed-in shoppers who have ordered before are not first-order users.
-      if (user) {
-        const orders = await getUserOrders(user.id);
-        if (orders.length > 0) {
-          try { localStorage.setItem(POPUP_SEEN_KEY, 'not-eligible'); } catch { /* ignore */ }
-          return;
+        // Signed-in shoppers who have ordered before are not first-order users.
+        if (user) {
+          const orders = await getUserOrders(user.id);
+          if (orders.length > 0) {
+            try { localStorage.setItem(POPUP_SEEN_KEY, 'not-eligible'); } catch { /* ignore */ }
+            return;
+          }
         }
       }
 
       if (cancelled) return;
-      timer = setTimeout(() => { if (!cancelled) setOpen(true); }, SHOW_AFTER_MS);
+      timer = setTimeout(() => { if (!cancelled) setOpen(true); }, preview ? 300 : SHOW_AFTER_MS);
     }
 
     maybeShow();
-    return () => { cancelled = true; clearTimeout(timer); };
+    return () => { cancelled = true; if (timer) clearTimeout(timer); };
   }, [user, isLoading]);
 
   // Escape to close
@@ -57,6 +67,10 @@ export function FirstOrderPopup() {
 
   function dismiss() {
     setOpen(false);
+    const preview =
+      typeof window !== 'undefined' &&
+      new URLSearchParams(window.location.search).get('offer') === 'preview';
+    if (preview) return; // previewing must not mark the offer as seen
     try { localStorage.setItem(POPUP_SEEN_KEY, String(Date.now())); } catch { /* ignore */ }
   }
 
