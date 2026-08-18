@@ -3217,3 +3217,132 @@ figure { margin: 0; }
     display: none !important;
   }
 }
+
+/* --------------------------------------------------------------------------
+   TRACK ORDER + LEGAL PAGES
+   -------------------------------------------------------------------------- */
+.track-empty,
+.track-result {
+  border: 1.5px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+  padding: clamp(20px, 3vw, 28px);
+  background: var(--color-neutral-100);
+}
+.track-empty { text-align: center; color: var(--color-neutral-600); }
+
+.track-result-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+/* Progress rail: Pending -> Processing -> Shipped -> Delivered */
+.track-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: step;
+}
+.track-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+/* connector sits behind the dots */
+.track-step::before {
+  content: "";
+  position: absolute;
+  top: 17px;
+  right: 50%;
+  left: -50%;
+  height: 2px;
+  background: var(--color-neutral-300);
+}
+.track-step:first-child::before { display: none; }
+.track-step.done::before { background: var(--color-accent); }
+.track-step-dot {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-bg);
+  border: 2px solid var(--color-neutral-300);
+  color: var(--color-neutral-500);
+}
+.track-step.done .track-step-dot {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-bg);
+}
+.track-step-label { font-size: 12px; font-weight: 700; letter-spacing: 0.02em; }
+.track-step.done .track-step-label { color: var(--color-accent); }
+
+.track-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-neutral-600);
+  margin-bottom: 6px;
+}
+.track-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 2px solid var(--color-divider);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 17px;
+}
+@media (max-width: 560px) {
+  .track-step-label { font-size: 10px; }
+  .track-step-dot { width: 30px; height: 30px; }
+  .track-step::before { top: 14px; }
+}
+
+/* Long-form legal copy */
+.legal-page { max-width: 820px; }
+.legal-page p { font-size: 15px; line-height: 1.75; margin: 0 0 16px; }
+.legal-page h2 {
+  font-size: 19px;
+  margin: 32px 0 10px;
+}
+.legal-page ul { margin: 0 0 16px; padding-left: 20px; }
+.legal-page li { font-size: 15px; line-height: 1.75; margin-bottom: 8px; }
+.legal-page a { color: var(--color-accent); }
+
+/* Testimonials empty state */
+.testimonials-empty {
+  text-align: center;
+  padding: 40px 24px;
+  border: 1.5px dashed var(--color-divider);
+  border-radius: var(--radius-lg);
+}
+.testimonials-empty-title {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 18px;
+  margin: 0 0 6px;
+}
+.testimonials-empty-body {
+  font-size: 14px;
+  color: var(--color-neutral-600);
+  max-width: 46ch;
+  margin: 0 auto 20px;
+}
+

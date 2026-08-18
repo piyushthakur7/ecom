@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { insforge } from '@/lib/insforge-client';
 import type { DBReview } from '@/lib/types';
 
@@ -28,9 +29,9 @@ export function Testimonials() {
     loadReviews();
   }, []);
 
-  if (loading || reviews.length === 0) {
-    return null;
-  }
+  // Only the loading frame is hidden. With no reviews yet the section still
+  // renders an empty state, so it never silently disappears from the page.
+  if (loading) return null;
 
   return (
     <section className="testimonials-section">
@@ -38,6 +39,17 @@ export function Testimonials() {
         <span className="section-kicker" style={{ marginBottom: 28 }}>
           What our customers say
         </span>
+
+        {reviews.length === 0 ? (
+          <div className="testimonials-empty">
+            <p className="testimonials-empty-title">No reviews yet</p>
+            <p className="testimonials-empty-body">
+              Be the first to share how your Saanshika piece fit and felt. Open any
+              product and tap &ldquo;Write a Review&rdquo;.
+            </p>
+            <Link href="/#featured" className="btn btn-secondary">Browse products</Link>
+          </div>
+        ) : (
         <div className="testimonials-grid">
           {reviews.map((t) => (
             <figure key={t.id} className="testimonial-card">
@@ -53,6 +65,7 @@ export function Testimonials() {
             </figure>
           ))}
         </div>
+        )}
       </div>
     </section>
   );

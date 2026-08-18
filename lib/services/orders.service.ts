@@ -116,3 +116,23 @@ export async function getAllOrders(): Promise<DBOrder[]> {
     return [];
   }
 }
+
+// ─── Look up a single order by its order number (public order tracking) ─────
+export async function getOrderByNumber(orderNumber: string): Promise<DBOrder | null> {
+  try {
+    const { data, error } = await insforge.database
+      .from('orders')
+      .select('*')
+      .eq('order_number', orderNumber.trim().toUpperCase())
+      .limit(1);
+    if (error || !data || (data as unknown[]).length === 0) return null;
+    const r = (data as unknown[])[0] as Record<string, unknown>;
+    return {
+      ...r,
+      items: Array.isArray(r.items) ? r.items : [],
+      shipping_address: r.shipping_address ?? {},
+    } as DBOrder;
+  } catch {
+    return null;
+  }
+}

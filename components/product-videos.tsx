@@ -39,6 +39,14 @@ const sampleVideos: VideoItem[] = [
     productLink: '/category/lehengas',
     tag: 'Bestseller',
   },
+  {
+    id: 'v4',
+    title: 'Everyday Cotton Kurti & Block Print Drape',
+    category: 'Kurti Collection',
+    videoUrl: CLOUDINARY_REEL_URL,
+    productLink: '/category/kurti',
+    tag: 'Everyday Wear',
+  },
 ];
 
 export function VideoSection() {

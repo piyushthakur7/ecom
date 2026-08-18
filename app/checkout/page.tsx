@@ -12,6 +12,11 @@ import { useToast } from '@/components/toast';
 import { createOrder } from '@/lib/services/orders.service';
 import { updateAddresses, updateProfile } from '@/lib/services/auth.service';
 import { loadRazorpayScript } from '@/lib/razorpay';
+
+/** Where an in-flight Razorpay payment is parked so it survives a tab reload. */
+const PENDING_PAYMENT_KEY = 'saanshika:pending-payment';
+/** Anything older than this is stale and gets dropped rather than recovered. */
+const PENDING_PAYMENT_TTL_MS = 30 * 60 * 1000;
 import { IconCreditCard, IconPackage, IconShieldCheck, IconPhone, IconZap, IconHome } from '@/components/icons';
 import type { SavedAddress } from '@/lib/types';
 
@@ -99,10 +104,76 @@ export default function CheckoutPage() {
   const shipping = total >= 999 ? 0 : 99;
   const grandTotal = total + shipping;
 
+  // Recover a payment that completed while the tab was in the background.
+  // Runs before the empty-cart redirect so a reloaded tab lands on the receipt
+  // rather than being bounced to /cart.
+  const [recovering, setRecovering] = useState(true);
+  useEffect(() => {
+    let cancelled = false;
+
+    async function recoverPendingPayment() {
+      let raw: string | null = null;
+      try {
+        raw = localStorage.getItem(PENDING_PAYMENT_KEY);
+      } catch {
+        /* storage unavailable */
+      }
+      if (!raw) { setRecovering(false); return; }
+
+      let pending: { razorpay_order_id: string; savedAt: number; orderDetails: unknown } | null = null;
+      try {
+        pending = JSON.parse(raw);
+      } catch {
+        localStorage.removeItem(PENDING_PAYMENT_KEY);
+      }
+
+      if (!pending?.razorpay_order_id || Date.now() - pending.savedAt > PENDING_PAYMENT_TTL_MS) {
+        localStorage.removeItem(PENDING_PAYMENT_KEY);
+        setRecovering(false);
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/razorpay/recover', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(pending),
+        });
+        const data = await res.json();
+
+        if (cancelled) return;
+
+        if (res.ok && data.success && data.paid) {
+          localStorage.removeItem(PENDING_PAYMENT_KEY);
+          clearCart();
+          setOrderNumber(data.orderNumber);
+          setPaymentId(data.paymentId);
+          setSuccess(true);
+          toast('Payment confirmed - your order is placed.');
+        } else if (res.ok && data.paid === false) {
+          // Payment never went through; drop it and let them try again.
+          localStorage.removeItem(PENDING_PAYMENT_KEY);
+          toast('Your last payment did not complete. Your cart is still here.', 'info');
+        }
+      } catch {
+        /* offline - leave the record so the next load can retry */
+      } finally {
+        if (!cancelled) setRecovering(false);
+      }
+    }
+
+    recoverPendingPayment();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Redirect to cart if empty
   useEffect(() => {
+    // Wait for the recovery check - a reloaded tab has an empty cart for a
+    // moment, and bouncing to /cart would hide a payment that did succeed.
+    if (recovering) return;
     if (!authLoading && count === 0 && !success) router.replace('/cart');
-  }, [count, success, router, authLoading]);
+  }, [count, success, router, authLoading, recovering]);
 
   // Pre-fill form from profile on load
   useEffect(() => {
@@ -145,7 +216,7 @@ export default function CheckoutPage() {
     }));
   }, [selectedAddressId, profile]);
 
-  if (authLoading || (count === 0 && !success)) return null;
+  if (authLoading || recovering || (count === 0 && !success)) return null;
 
   const set = (k: keyof FormState, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -275,6 +346,7 @@ export default function CheckoutPage() {
               const verifyData = await verifyRes.json();
 
               if (verifyRes.ok && verifyData.success) {
+                localStorage.removeItem(PENDING_PAYMENT_KEY);
                 clearCart();
                 setOrderNumber(verifyData.orderNumber);
                 setPaymentId(verifyData.paymentId);
@@ -300,11 +372,37 @@ export default function CheckoutPage() {
           },
           modal: {
             ondismiss: function () {
+              localStorage.removeItem(PENDING_PAYMENT_KEY);
               setPlacing(false);
               toast('Payment window closed.', 'info');
             },
           },
         };
+
+        // Persist the pending payment before handing off. On mobile the browser
+        // tab can be evicted while the UPI/bank app is in front, which would
+        // otherwise lose the order even though the money went through.
+        try {
+          localStorage.setItem(
+            PENDING_PAYMENT_KEY,
+            JSON.stringify({
+              razorpay_order_id: orderData.orderId,
+              savedAt: Date.now(),
+              orderDetails: {
+                userId: user ? user.id : null,
+                customerName: `${form.firstName} ${form.lastName}`,
+                customerEmail: form.email,
+                customerPhone: form.phone,
+                shippingAddress,
+                items,
+                total,
+                shipping,
+              },
+            })
+          );
+        } catch {
+          /* private mode / storage full - payment still works, recovery won't */
+        }
 
         const rzp = new RazorpayWindow(options);
         rzp.open();
