@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from './auth-context';
 import { getUserOrders } from '@/lib/services/orders.service';
@@ -86,52 +85,46 @@ export function FirstOrderPopup() {
   if (!open) return null;
 
   return (
-    <div className="promo-overlay" role="dialog" aria-modal="true" aria-labelledby="promo-title" onClick={dismiss}>
-      <div className="promo-card" onClick={(e) => e.stopPropagation()}>
-        <button type="button" className="promo-close" onClick={dismiss} aria-label="Close offer">
-          <IconX size={18} />
-        </button>
+    // Corner card, not a modal: no scrim, so the page stays usable behind it.
+    <aside
+      className="promo-toast"
+      role="complementary"
+      aria-labelledby="promo-title"
+    >
+      <button type="button" className="promo-close" onClick={dismiss} aria-label="Close offer">
+        <IconX size={16} />
+      </button>
 
-        {/* Photo half - makes it read as an ad rather than a system dialog */}
-        <div className="promo-media">
-          <Image
-            src="/images/hero/banner-1.jpg"
-            alt=""
-            fill
-            sizes="(max-width: 700px) 100vw, 300px"
-            style={{ objectFit: 'cover' }}
-            priority={false}
-          />
-          <span className="promo-media-badge">15%<small>OFF</small></span>
-        </div>
-
-        {/* Copy half */}
-        <div className="promo-content">
-          <span className="promo-kicker">
-            <IconSparkles size={14} /> Welcome offer
-          </span>
-
-          <h2 id="promo-title" className="promo-title">
-            15% off your<br />first order
-          </h2>
-
-          <p className="promo-body">
-            New here? Take 15% off on orders over
-            ₹{FIRST_ORDER_COUPON.minSubtotal.toLocaleString('en-IN')} — kurtis,
-            suits, sarees, everything.
-          </p>
-
-          <div className="promo-code">{FIRST_ORDER_COUPON.code}</div>
-
-          <button type="button" className="btn btn-primary btn-block btn-large" onClick={claim}>
-            {copied ? <><IconCheck size={16} /> Code copied</> : 'Claim my 15% off'}
-          </button>
-
-          <Link href="/shop" className="promo-skip" onClick={dismiss}>
-            Just browsing
-          </Link>
-        </div>
+      <div className="promo-media">
+        <Image
+          src="/images/hero/banner-1.jpg"
+          alt=""
+          fill
+          sizes="360px"
+          style={{ objectFit: 'cover' }}
+        />
+        <span className="promo-media-badge">15%<small>OFF</small></span>
       </div>
-    </div>
+
+      <div className="promo-content">
+        <span className="promo-kicker">
+          <IconSparkles size={13} /> Welcome offer
+        </span>
+
+        <h2 id="promo-title" className="promo-title">
+          15% off your first order
+        </h2>
+
+        <p className="promo-body">
+          On orders over ₹{FIRST_ORDER_COUPON.minSubtotal.toLocaleString('en-IN')}.
+        </p>
+
+        <div className="promo-code">{FIRST_ORDER_COUPON.code}</div>
+
+        <button type="button" className="btn btn-primary btn-block" onClick={claim}>
+          {copied ? <><IconCheck size={15} /> Code copied</> : 'Claim my 15% off'}
+        </button>
+      </div>
+    </aside>
   );
 }
