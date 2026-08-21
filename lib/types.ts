@@ -123,6 +123,12 @@ export type DBOrder = {
   shipping_address: SavedAddress;
   items: OrderLineItem[];
   created_at: string;
+  // ── Shiprocket (see scratch/shiprocket.sql) ──
+  /** Shiprocket's own order id, for looking the order up in their dashboard. */
+  shiprocket_order_id?: string | null;
+  shiprocket_shipment_id?: string | null;
+  /** Their status, or `FAILED: <reason>` when the push did not go through. */
+  shiprocket_status?: string | null;
 };
 
 // ─── Reviews ───────────────────────────────────────────────────────────────

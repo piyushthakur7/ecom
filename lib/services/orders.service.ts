@@ -61,6 +61,34 @@ export async function createOrder(input: CreateOrderInput): Promise<{ orderId: s
   }
 }
 
+// ─── Record the Shiprocket result against an order ──────────────────────────
+/**
+ * Best-effort: the order is already saved and the customer already has their
+ * confirmation, so a failure here is logged and dropped rather than surfaced.
+ * Also used to store the *reason* a push failed, which is why it accepts a
+ * status with no ids.
+ */
+export async function updateOrderShipping(
+  orderNumber: string,
+  fields: { shiprocketOrderId?: string; shipmentId?: string; status: string }
+): Promise<void> {
+  try {
+    const { error } = await insforge.database
+      .from('orders')
+      .update({
+        ...(fields.shiprocketOrderId ? { shiprocket_order_id: fields.shiprocketOrderId } : {}),
+        ...(fields.shipmentId ? { shiprocket_shipment_id: fields.shipmentId } : {}),
+        shiprocket_status: fields.status.slice(0, 300),
+      })
+      .eq('order_number', orderNumber);
+
+    // Most likely cause: scratch/shiprocket.sql has not been run yet.
+    if (error) console.error('Could not record Shiprocket ids:', error.message);
+  } catch (err) {
+    console.error('Recording Shiprocket ids threw:', err);
+  }
+}
+
 // ─── Fetch user's orders ────────────────────────────────────────────────────
 export async function getUserOrders(userId: string): Promise<DBOrder[]> {
   try {

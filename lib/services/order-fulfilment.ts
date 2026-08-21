@@ -1,6 +1,7 @@
-import { createOrder } from '@/lib/services/orders.service';
+import { createOrder, updateOrderShipping } from '@/lib/services/orders.service';
 import { decrementStock } from '@/lib/services/products.service';
 import { sendOrderConfirmation } from '@/lib/services/email.service';
+import { createShipment, isShiprocketConfigured } from '@/lib/services/shiprocket';
 import { priceOrder, type RequestedItem } from '@/lib/services/pricing';
 import { getUserOrders } from '@/lib/services/orders.service';
 import type { SavedAddress } from '@/lib/types';
@@ -74,8 +75,48 @@ export async function fulfilOrder(input: FulfilInput): Promise<FulfilResult> {
 
   if (!created) return { ok: false, reason: 'Failed to save order to database' };
 
-  // Neither of these may block the confirmation the customer is waiting on.
+  // None of what follows may block the confirmation the customer is waiting on.
   await decrementStock(priced.lines.map((l) => ({ id: l.id, quantity: l.quantity })));
+
+  // Hand the parcel to Shiprocket. A failure here must not fail the order —
+  // the money is taken and the row is written, so the shipment is a back-office
+  // problem. We record the reason on the order so it is visible in /admin
+  // rather than only in a server log nobody reads.
+  if (isShiprocketConfigured()) {
+    const isCod = input.paymentMethod.toLowerCase().startsWith('cod');
+    const shipment = await createShipment({
+      orderNumber: created.orderNumber,
+      customerName: input.customerName,
+      customerEmail: input.customerEmail,
+      customerPhone: input.customerPhone,
+      shippingAddress: input.shippingAddress,
+      lines: priced.lines.map((l) => ({
+        id: l.id,
+        name: l.name,
+        price: l.price,
+        quantity: l.quantity,
+        size: l.size,
+        color: l.color,
+      })),
+      // Undiscounted, to match the line selling prices — Shiprocket subtracts
+      // `discount` itself when working out what a COD courier collects.
+      subTotal: priced.subtotal,
+      discount: priced.discount,
+      shipping: priced.shipping,
+      isCod,
+    });
+
+    await updateOrderShipping(
+      created.orderNumber,
+      shipment.ok
+        ? {
+            shiprocketOrderId: shipment.shiprocketOrderId,
+            shipmentId: shipment.shipmentId,
+            status: shipment.status,
+          }
+        : { status: `FAILED: ${shipment.reason}` }
+    );
+  }
 
   await sendOrderConfirmation({
     to: input.customerEmail,
