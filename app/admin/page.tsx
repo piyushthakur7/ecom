@@ -917,6 +917,45 @@ function OrderDetailsModal({
           </div>
         </div>
 
+        {/* Shiprocket */}
+        {(() => {
+          const status = order.shiprocket_status ?? '';
+          const failed = status.startsWith('FAILED');
+          // Nothing recorded at all: an order placed before Shiprocket was
+          // wired up, or the migration in scratch/shiprocket.sql has not run.
+          if (!status && !order.shiprocket_shipment_id) return null;
+
+          return (
+            <div style={{ padding: '14px 16px', border: `1px solid ${failed ? '#fecaca' : '#e5e7eb'}`, borderRadius: 10, background: failed ? '#fef2f2' : '#fff' }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10, color: '#1a1a1a', display: 'flex', alignItems: 'center', gap: 7 }}>
+                <IconPackage size={15} /> Shiprocket
+              </div>
+              {failed ? (
+                <div style={{ fontSize: 13, color: '#b91c1c' }}>
+                  <strong>Shipment not created.</strong>
+                  <div style={{ marginTop: 4, wordBreak: 'break-word' }}>{status.replace(/^FAILED:\s*/, '')}</div>
+                  <div style={{ marginTop: 6, color: '#7f1d1d' }}>Create this shipment by hand in the Shiprocket dashboard.</div>
+                </div>
+              ) : (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 12, fontSize: 13 }}>
+                  <div>
+                    <span style={{ color: '#888', display: 'block', fontSize: 12 }}>Shipment ID</span>
+                    <span style={{ fontWeight: 600 }}>{order.shiprocket_shipment_id || '—'}</span>
+                  </div>
+                  <div>
+                    <span style={{ color: '#888', display: 'block', fontSize: 12 }}>Order ID</span>
+                    <span style={{ fontWeight: 600 }}>{order.shiprocket_order_id || '—'}</span>
+                  </div>
+                  <div>
+                    <span style={{ color: '#888', display: 'block', fontSize: 12 }}>Status</span>
+                    <span style={{ fontWeight: 600 }}>{status || '—'}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })()}
+
         {/* Product Items Table */}
         <div>
           <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10, color: '#1a1a1a', display: 'flex', alignItems: 'center', gap: 7 }}>

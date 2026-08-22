@@ -42,6 +42,23 @@ type FormState = {
   payment: 'razorpay' | 'cod';
 };
 
+/** Checked top-to-bottom, so we can jump to the *first* problem on the page. */
+const FIELD_ORDER = [
+  'firstName', 'phone', 'email', 'address', 'city', 'state', 'pincode',
+] as const;
+
+type ValidationResult =
+  | { ok: true; phone: string; pincode: string; email: string }
+  | { ok: false; firstError: string };
+
+/** Strip formatting and the country code off a phone number. */
+function normalisePhone(raw: string): string {
+  const digits = String(raw ?? '').replace(/\D/g, '');
+  if (digits.length === 12 && digits.startsWith('91')) return digits.slice(2);
+  if (digits.length === 11 && digits.startsWith('0')) return digits.slice(1);
+  return digits;
+}
+
 const emptyForm: FormState = {
   firstName: '',
   lastName: '',
@@ -304,18 +321,47 @@ export default function CheckoutPage() {
 
   const set = (k: keyof FormState, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
-  function validate() {
+  /** Scroll a failed field into view and put the cursor in it. */
+  function revealField(key: string) {
+    const el = document.getElementById(`field-${key}`);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    (el as HTMLInputElement | HTMLSelectElement).focus({ preventScroll: true });
+  }
+
+  /**
+   * Validate, and say *which* field failed.
+   *
+   * This used to return a bare `false`, which made the Pay button look dead:
+   * the caller returned silently while the only feedback rendered offscreen,
+   * next to a field the customer had already scrolled past.
+   */
+  function validate(): ValidationResult {
     const e: Record<string, string> = {};
+
+    // A prefilled '+91 98765 43210' is the same number the customer meant.
+    const phone = normalisePhone(form.phone);
+    const pincode = form.pincode.replace(/\D/g, '');
+    const email = form.email.trim();
+
     if (!form.firstName.trim()) e.firstName = 'Required';
-    if (!form.lastName.trim()) e.lastName = 'Required';
-    if (!/^\d{10}$/.test(form.phone)) e.phone = 'Enter a valid 10-digit number';
-    if (!form.email.includes('@')) e.email = 'Enter a valid email';
+    // Last name stays optional: plenty of customers go by a single name, and
+    // requiring it silently blocked every profile with a one-word full_name.
+    if (!/^\d{10}$/.test(phone)) e.phone = 'Enter a valid 10-digit number';
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) e.email = 'Enter a valid email';
     if (!form.address.trim()) e.address = 'Required';
     if (!form.city.trim()) e.city = 'Required';
-    if (!form.state) e.state = 'Required';
-    if (!/^\d{6}$/.test(form.pincode)) e.pincode = 'Enter a valid 6-digit pincode';
+    if (!form.state) e.state = 'Select your state';
+    if (!/^\d{6}$/.test(pincode)) e.pincode = 'Enter a valid 6-digit pincode';
+
     setErrors(e);
-    return Object.keys(e).length === 0;
+
+    const firstError = FIELD_ORDER.find((k) => e[k]);
+    if (firstError) return { ok: false, firstError };
+
+    // Show the customer the same cleaned-up values we are about to send.
+    setForm((f) => ({ ...f, phone, pincode, email }));
+    return { ok: true, phone, pincode, email };
   }
 
   function applyCoupon() {
@@ -343,7 +389,13 @@ export default function CheckoutPage() {
 
   async function handlePlaceOrder(e: React.FormEvent) {
     e.preventDefault();
-    if (!validate()) return;
+
+    const checked = validate();
+    if (!checked.ok) {
+      toast('Please complete the highlighted delivery details.', 'error');
+      revealField(checked.firstError);
+      return;
+    }
 
     // Gate: must be logged in
     if (!user) {
@@ -353,14 +405,17 @@ export default function CheckoutPage() {
 
     setPlacing(true);
 
+    // Trimmed: the last name is optional, which would leave a trailing space.
+    const customerName = `${form.firstName} ${form.lastName}`.trim();
+
     const shippingAddress: SavedAddress = {
       id: selectedAddressId !== 'new' ? selectedAddressId : `addr-${Date.now()}`,
-      name: `${form.firstName} ${form.lastName}`,
-      phone: form.phone,
+      name: customerName,
+      phone: checked.phone,
       street: form.address,
       city: form.city,
       state: form.state,
-      pincode: form.pincode,
+      pincode: checked.pincode,
       landmark: form.landmark || undefined,
       isDefault: false,
     };
@@ -375,9 +430,9 @@ export default function CheckoutPage() {
     }));
     const orderPayload = {
       userId: user ? user.id : null,
-      customerName: `${form.firstName} ${form.lastName}`,
-      customerEmail: form.email,
-      customerPhone: form.phone,
+      customerName,
+      customerEmail: checked.email,
+      customerPhone: checked.phone,
       shippingAddress,
       items: orderItems,
       couponCode: appliedCoupon?.code ?? null,
@@ -402,8 +457,8 @@ export default function CheckoutPage() {
         }
         if (!profile?.phone || !profile?.full_name) {
           await updateProfile(user.id, {
-            full_name: profile?.full_name || `${form.firstName} ${form.lastName}`,
-            phone: profile?.phone || form.phone,
+            full_name: profile?.full_name || customerName,
+            phone: profile?.phone || checked.phone,
           });
         }
       } catch (err) {
@@ -484,9 +539,9 @@ export default function CheckoutPage() {
             }
           },
           prefill: {
-            name: `${form.firstName} ${form.lastName}`,
-            email: form.email,
-            contact: form.phone,
+            name: customerName,
+            email: checked.email,
+            contact: checked.phone,
           },
           theme: {
             color: '#6b1d2f', // Deep Crimson Maroon theme!
@@ -653,18 +708,18 @@ export default function CheckoutPage() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   <div className="form-row">
                     <Field label="First name" error={errors.firstName}>
-                      <input className="form-input" placeholder="Gurleen" value={form.firstName} onChange={(e) => set('firstName', e.target.value)} />
+                      <input className="form-input" id="field-firstName" placeholder="Gurleen" value={form.firstName} onChange={(e) => set('firstName', e.target.value)} />
                     </Field>
-                    <Field label="Last name" error={errors.lastName}>
+                    <Field label="Last name (optional)" error={errors.lastName}>
                       <input className="form-input" placeholder="Kaur" value={form.lastName} onChange={(e) => set('lastName', e.target.value)} />
                     </Field>
                   </div>
                   <div className="form-row">
                     <Field label="Phone number" error={errors.phone}>
-                      <input className="form-input" type="tel" placeholder="98XXXXXXXX" maxLength={10} value={form.phone} onChange={(e) => set('phone', e.target.value)} />
+                      <input className="form-input" id="field-phone" type="tel" placeholder="98XXXXXXXX" maxLength={16} value={form.phone} onChange={(e) => set('phone', e.target.value)} />
                     </Field>
                     <Field label="Email address" error={errors.email}>
-                      <input className="form-input" type="email" placeholder="you@example.com" value={form.email} onChange={(e) => set('email', e.target.value)} />
+                      <input className="form-input" id="field-email" type="email" placeholder="you@example.com" value={form.email} onChange={(e) => set('email', e.target.value)} />
                     </Field>
                   </div>
                 </div>
@@ -678,24 +733,24 @@ export default function CheckoutPage() {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   <Field label="Street / House no." error={errors.address}>
-                    <input className="form-input" placeholder="249, Block-D, Thakur ji Estate" value={form.address} onChange={(e) => set('address', e.target.value)} />
+                    <input className="form-input" id="field-address" placeholder="249, Block-D, Thakur ji Estate" value={form.address} onChange={(e) => set('address', e.target.value)} />
                   </Field>
                   <Field label="Landmark (optional)" error={errors.landmark}>
                     <input className="form-input" placeholder="Near main market" value={form.landmark} onChange={(e) => set('landmark', e.target.value)} />
                   </Field>
                   <div className="form-row">
                     <Field label="City" error={errors.city}>
-                      <input className="form-input" placeholder="Amritsar" value={form.city} onChange={(e) => set('city', e.target.value)} />
+                      <input className="form-input" id="field-city" placeholder="Amritsar" value={form.city} onChange={(e) => set('city', e.target.value)} />
                     </Field>
                     <Field label="State" error={errors.state}>
-                      <select className="form-input" value={form.state} onChange={(e) => set('state', e.target.value)}>
+                      <select id="field-state" className="form-input" value={form.state} onChange={(e) => set('state', e.target.value)}>
                         <option value="">Select state</option>
                         {STATES.map((s) => <option key={s} value={s}>{s}</option>)}
                       </select>
                     </Field>
                   </div>
                   <Field label="Pincode" error={errors.pincode}>
-                    <input className="form-input" placeholder="143001" maxLength={6} value={form.pincode} onChange={(e) => set('pincode', e.target.value)} />
+                    <input className="form-input" id="field-pincode" placeholder="143001" maxLength={6} value={form.pincode} onChange={(e) => set('pincode', e.target.value)} />
                   </Field>
                   {pincodeChecking && (
                     <div style={{ fontSize: 12, color: '#71717a', marginTop: -4 }}>Checking courier serviceability…</div>

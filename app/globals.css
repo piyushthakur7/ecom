@@ -3646,4 +3646,27 @@ figure { margin: 0; }
 }
 .size-table tbody tr:last-child td { border-bottom: none; }
 .size-table td:first-child { font-weight: 700; }
+
+/* Social row in the footer brand column */
+.footer-social {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+.footer-social a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: var(--color-accent-2);
+  border: 1px solid color-mix(in srgb, var(--color-accent-2) 45%, transparent);
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+.footer-social a:hover {
+  background: var(--color-accent-2);
+  border-color: var(--color-accent-2);
+  color: var(--color-accent-900);
+}
 
