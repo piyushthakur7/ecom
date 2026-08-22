@@ -774,6 +774,42 @@ function OrderDetailsModal({
 }) {
   const sc = statusColors[order.status] ?? statusColors.Pending;
   const grandTotal = Number(order.total) + Number(order.shipping);
+  const [syncingShiprocket, setSyncingShiprocket] = useState(false);
+
+  async function handlePushShiprocket() {
+    setSyncingShiprocket(true);
+    try {
+      const res = await fetch('/api/shiprocket/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId: order.order_number,
+          customerName: order.customer_name,
+          customerEmail: order.customer_email,
+          customerPhone: order.customer_phone,
+          address: order.shipping_address?.street || 'Address not provided',
+          city: order.shipping_address?.city || 'Amritsar',
+          state: order.shipping_address?.state || 'Punjab',
+          pincode: order.shipping_address?.pincode || '143001',
+          paymentMethod: order.payment_method || 'Prepaid',
+          items: order.items,
+          totalAmount: grandTotal,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        alert(`Order ${order.order_number} successfully pushed to Shiprocket! Shipment ID: ${data.shipmentId || data.shiprocketOrderId}`);
+        onStatusChange(order.id, 'Shipped');
+      } else {
+        alert(`Shiprocket Sync: ${data.message || 'Check environment configuration'}`);
+      }
+    } catch {
+      alert('Error connecting to Shiprocket service');
+    } finally {
+      setSyncingShiprocket(false);
+    }
+  }
 
   return (
     <Modal title={`Order Details — ${order.order_number}`} onClose={onClose}>
@@ -787,6 +823,27 @@ function OrderDetailsModal({
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <button
+              type="button"
+              onClick={handlePushShiprocket}
+              disabled={syncingShiprocket}
+              style={{
+                background: '#6b1d2f',
+                color: '#fff',
+                border: 'none',
+                padding: '6px 12px',
+                borderRadius: 6,
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 5,
+                opacity: syncingShiprocket ? 0.7 : 1,
+              }}
+            >
+              🚀 {syncingShiprocket ? 'Pushing…' : 'Push to Shiprocket'}
+            </button>
             <span style={{ fontSize: 12, background: sc.bg, color: sc.text, padding: '4px 12px', borderRadius: 20, fontWeight: 700 }}>
               {order.status}
             </span>

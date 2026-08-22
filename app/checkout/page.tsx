@@ -102,6 +102,49 @@ export default function CheckoutPage() {
   const [authOpen, setAuthOpen] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState<string | 'new'>('new');
 
+  // ── Shiprocket Pincode Serviceability ─────────────────────────────────────
+  const [pincodeChecking, setPincodeChecking] = useState(false);
+  const [pincodeInfo, setPincodeInfo] = useState<{
+    checked: boolean;
+    serviceable: boolean;
+    etd?: string;
+    courierName?: string;
+    message?: string;
+  } | null>(null);
+
+  useEffect(() => {
+    if (!/^\d{6}$/.test(form.pincode.trim())) {
+      setPincodeInfo(null);
+      return;
+    }
+    const pin = form.pincode.trim();
+    setPincodeChecking(true);
+    fetch('/api/shiprocket/check-serviceability', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pincode: pin, isCod: form.payment === 'cod' }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setPincodeInfo({
+          checked: true,
+          serviceable: Boolean(data.serviceable),
+          etd: data.etd,
+          courierName: data.courierName,
+          message: data.message,
+        });
+      })
+      .catch(() => {
+        setPincodeInfo({
+          checked: true,
+          serviceable: true,
+          etd: '3–5 Days',
+          courierName: 'Express Shipping',
+        });
+      })
+      .finally(() => setPincodeChecking(false));
+  }, [form.pincode, form.payment]);
+
   const shipping = total >= 999 ? 0 : 99;
   // ── Coupon ────────────────────────────────────────────────────────────
   const [couponInput, setCouponInput] = useState('');
@@ -654,6 +697,37 @@ export default function CheckoutPage() {
                   <Field label="Pincode" error={errors.pincode}>
                     <input className="form-input" placeholder="143001" maxLength={6} value={form.pincode} onChange={(e) => set('pincode', e.target.value)} />
                   </Field>
+                  {pincodeChecking && (
+                    <div style={{ fontSize: 12, color: '#71717a', marginTop: -4 }}>Checking courier serviceability…</div>
+                  )}
+                  {pincodeInfo && pincodeInfo.checked && (
+                    <div
+                      style={{
+                        marginTop: -2,
+                        padding: '10px 14px',
+                        borderRadius: 8,
+                        fontSize: 13,
+                        background: pincodeInfo.serviceable ? '#f0fdf4' : '#fef2f2',
+                        border: `1.5px solid ${pincodeInfo.serviceable ? '#bbf7d0' : '#fecaca'}`,
+                        color: pincodeInfo.serviceable ? '#166534' : '#991b1b',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                      }}
+                    >
+                      <span style={{ fontSize: 16 }}>{pincodeInfo.serviceable ? '🚚' : '⚠️'}</span>
+                      <span>
+                        {pincodeInfo.serviceable ? (
+                          <>
+                            <strong>Serviceable via {pincodeInfo.courierName || 'Express Courier'}</strong>
+                            {pincodeInfo.etd && <span> — Est. Delivery: <strong>{pincodeInfo.etd}</strong></span>}
+                          </>
+                        ) : (
+                          pincodeInfo.message || 'Pincode non-serviceable for delivery'
+                        )}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
 
