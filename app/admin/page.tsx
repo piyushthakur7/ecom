@@ -285,20 +285,20 @@ export default function AdminDashboard() {
   return (
     <main style={{ minHeight: '100vh', background: '#f8f9fa' }}>
       {/* Admin header */}
-      <div style={{ background: '#1a1a1a', color: '#fff', padding: '14px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div className="admin-topbar" style={{ background: '#1a1a1a', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <Link href="/" style={{ color: '#fff', textDecoration: 'none', fontSize: 18, fontWeight: 800 }}>Saanshika</Link>
           <span style={{ color: '#888', fontSize: 13 }}>/ Admin Dashboard</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 13, color: '#aaa' }}>{user.email}</span>
+          <span className="admin-topbar-email">{user.email}</span>
           <Link href="/" style={{ color: '#fff', textDecoration: 'none', fontSize: 13 }}>← View Store</Link>
         </div>
       </div>
 
-      <div style={{ display: 'flex', minHeight: 'calc(100vh - 56px)' }}>
-        {/* Sidebar */}
-        <div style={{ width: 220, background: '#fff', borderRight: '1px solid #e5e7eb', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 4, padding: '20px 12px' }}>
+      <div className="admin-shell">
+        {/* Sidebar — becomes a horizontal scrolling tab strip at <=900px */}
+        <div className="admin-nav">
           {tabs.map((t) => (
             <button
               key={t.id}
@@ -319,7 +319,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Main content */}
-        <div style={{ flex: 1, padding: '28px 32px', overflowY: 'auto' }}>
+        <div className="admin-main" style={{ overflowY: 'auto' }}>
 
           {/* ── Overview ─────────────────────────────────────────────── */}
           {activeTab === 'overview' && (
@@ -344,8 +344,8 @@ export default function AdminDashboard() {
 
               {/* Recent orders */}
               <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: 18, marginBottom: 14 }}>Recent Orders</h2>
-              <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 14, overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+              <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 14, overflow: 'auto' }} className="admin-table-wrap">
+                <table style={{ width: '100%', minWidth: 640, borderCollapse: 'collapse', fontSize: 14 }}>
                   <thead>
                     <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
                       {['Order #', 'Customer', 'Amount', 'Status', 'Date'].map((h) => (
@@ -413,8 +413,8 @@ export default function AdminDashboard() {
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                 {heroSlides.map((slide, idx) => (
-                  <div key={slide.id} style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 14, overflow: 'hidden', display: 'flex', alignItems: 'center', gap: 0 }}>
-                    <div style={{ width: 180, height: 90, flexShrink: 0, overflow: 'hidden' }}>
+                  <div key={slide.id} className="admin-hero-row" style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 14, overflow: 'hidden', display: 'flex', alignItems: 'center', gap: 0 }}>
+                    <div className="admin-hero-thumb" style={{ width: 180, height: 90, flexShrink: 0, overflow: 'hidden' }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={slide.src} alt={slide.alt} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
@@ -438,8 +438,8 @@ export default function AdminDashboard() {
                 <h1 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: 22 }}>Products ({products.length})</h1>
                 <button type="button" className="btn btn-primary" onClick={openAddProduct}>+ Add Product</button>
               </div>
-              <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 14, overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+              <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 14, overflow: 'auto' }} className="admin-table-wrap">
+                <table style={{ width: '100%', minWidth: 640, borderCollapse: 'collapse', fontSize: 14 }}>
                   <thead>
                     <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
                       {['Image', 'Product', 'Category', 'Price', 'Stock', 'Actions'].map((h) => (
@@ -484,8 +484,8 @@ export default function AdminDashboard() {
           {activeTab === 'orders' && (
             <div>
               <h1 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: 22, marginBottom: 20 }}>Orders ({orders.length})</h1>
-              <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 14, overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+              <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 14, overflow: 'auto' }} className="admin-table-wrap">
+                <table style={{ width: '100%', minWidth: 640, borderCollapse: 'collapse', fontSize: 14 }}>
                   <thead>
                     <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
                       {['Order #', 'Customer', 'Total', 'Status', 'Date', 'Update Status', 'Details'].map((h) => (
@@ -545,8 +545,8 @@ export default function AdminDashboard() {
           {activeTab === 'users' && (
             <div>
               <h1 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: 22, marginBottom: 20 }}>Users ({users.length})</h1>
-              <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 14, overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+              <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 14, overflow: 'auto' }} className="admin-table-wrap">
+                <table style={{ width: '100%', minWidth: 640, borderCollapse: 'collapse', fontSize: 14 }}>
                   <thead>
                     <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
                       {['Name', 'Email', 'Phone', 'Role', 'Joined'].map((h) => (
@@ -961,8 +961,8 @@ function OrderDetailsModal({
           <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10, color: '#1a1a1a', display: 'flex', alignItems: 'center', gap: 7 }}>
             <IconShirt size={15} /> Ordered Products ({order.items.length})
           </div>
-          <div style={{ border: '1px solid #e5e7eb', borderRadius: 10, overflow: 'hidden' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+          <div style={{ border: '1px solid #e5e7eb', borderRadius: 10, overflow: 'auto' }} className="admin-table-wrap">
+            <table style={{ width: '100%', minWidth: 520, borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
                   <th style={{ padding: '10px 12px', textAlign: 'left' }}>Item</th>

@@ -73,6 +73,7 @@ export function AuthModal({ isOpen, onClose, onSuccess, message }: Props) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="auth-modal-title"
+        className="auth-modal-card"
         style={{
           position: 'fixed',
           top: '50%', left: '50%',
@@ -82,6 +83,7 @@ export function AuthModal({ isOpen, onClose, onSuccess, message }: Props) {
           borderRadius: 18,
           padding: '36px 32px',
           width: '92vw', maxWidth: 420,
+          maxHeight: 'calc(100dvh - 32px)', overflowY: 'auto',
           boxShadow: '0 20px 60px rgba(0,0,0,0.20)',
           animation: 'toastIn 0.25s ease',
         }}
