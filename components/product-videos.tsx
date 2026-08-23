@@ -12,14 +12,12 @@ type VideoItem = {
   tag: string;
 };
 
-const CLOUDINARY_REEL_URL = 'https://res.cloudinary.com/plv8a0nv/video/upload/v1786540008/U_won_t_believe_such_a_beautiful_dress_exist_fashion_dress_runway_shortvideos_viralvideo_-_evuki_designer_1080p_h264.mp4';
-
 const sampleVideos: VideoItem[] = [
   {
     id: 'v1',
     title: 'Designer Runway & Festive Dress Showcase',
     category: 'Couture & Dresses',
-    videoUrl: CLOUDINARY_REEL_URL,
+    videoUrl: '/videos/reel-1.mp4',
     productLink: '/category/dresses',
     tag: 'Trending Reel',
   },
@@ -27,7 +25,7 @@ const sampleVideos: VideoItem[] = [
     id: 'v2',
     title: 'Chanderi & Silk Festive Suit Lookbook',
     category: 'Festive Suits',
-    videoUrl: CLOUDINARY_REEL_URL,
+    videoUrl: '/videos/reel-2.mp4',
     productLink: '/category/suits',
     tag: 'New Arrival',
   },
@@ -35,7 +33,7 @@ const sampleVideos: VideoItem[] = [
     id: 'v3',
     title: 'Handcrafted Designer Lehenga & Fit Detail',
     category: 'Lehenga Collection',
-    videoUrl: CLOUDINARY_REEL_URL,
+    videoUrl: '/videos/reel-3.mp4',
     productLink: '/category/lehengas',
     tag: 'Bestseller',
   },
@@ -43,7 +41,7 @@ const sampleVideos: VideoItem[] = [
     id: 'v4',
     title: 'Everyday Cotton Kurti & Block Print Drape',
     category: 'Kurti Collection',
-    videoUrl: CLOUDINARY_REEL_URL,
+    videoUrl: '/videos/reel-4.mp4',
     productLink: '/category/kurti',
     tag: 'Everyday Wear',
   },
