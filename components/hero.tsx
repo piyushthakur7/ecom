@@ -113,7 +113,7 @@ export function Hero() {
         {/* Action Buttons */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
           <Link
-            href="/category/suits"
+            href="/shop"
             className="btn btn-primary btn-large"
             style={{
               borderRadius: 'var(--radius-md, 8px)',
