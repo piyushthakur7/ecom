@@ -3759,3 +3759,12 @@ figure { margin: 0; }
 @media (max-width: 640px) {
   .product-tab { padding: 11px 14px; font-size: 13px; }
 }
+
+/* ─── Nav: align mobile/desktop toggle with the .nav-links breakpoint ─────────
+   .nav-links hide at <=900px, but the global .show-mobile/.hide-mobile
+   utilities switch at 768/769px. That left 769-900px (tablet portrait) with
+   neither the desktop links nor the drawer button. Scope the nav to 900px. */
+@media (max-width: 900px) {
+  .nav .show-mobile { display: flex !important; }
+  .nav .hide-mobile { display: none !important; }
+}
