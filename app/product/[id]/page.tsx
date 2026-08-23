@@ -11,7 +11,7 @@ import { ProductGallery } from '@/components/product-gallery';
 import { StarRating } from '@/components/star-rating';
 import { Footer } from '@/components/footer';
 import { Newsletter } from '@/components/newsletter';
-import { ReviewSection } from '@/components/review-section';
+import { ProductTabs } from '@/components/product-tabs';
 import { useToast } from '@/components/toast';
 import { getProductById, getProductsByCategory } from '@/lib/services/products.service';
 import type { DBProduct } from '@/lib/types';
@@ -246,16 +246,14 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
               </span>
             </div>
 
-            <hr className="product-divider" />
-            <p className="product-desc">{p.description}</p>
           </div>
         </div>
       </div>
 
-      {/* Reviews */}
+      {/* Description / details / policies / reviews */}
       <hr className="rule" />
       <div className="section">
-        <ReviewSection productId={p.id} />
+        <ProductTabs product={p} />
       </div>
 
       {/* Related products */}

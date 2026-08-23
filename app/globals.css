@@ -3670,3 +3670,92 @@ figure { margin: 0; }
   color: var(--color-accent-900);
 }
 
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PRODUCT DETAIL TABS
+   ═══════════════════════════════════════════════════════════════════════════ */
+.product-tablist {
+  display: flex;
+  gap: 8px;
+  border-bottom: 2px solid var(--color-divider);
+  margin-bottom: 28px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.product-tablist::-webkit-scrollbar { display: none; }
+
+.product-tab {
+  padding: 12px 20px;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.product-tab:hover { color: var(--color-text); }
+
+.product-tab.active {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+}
+
+.product-tab:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+  border-radius: 4px 4px 0 0;
+}
+
+.product-tabpanel { outline: none; }
+.product-tabpanel:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+  border-radius: var(--radius-sm, 6px);
+}
+
+/* Spec table inside the Product Details tab */
+.product-spec-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0 40px;
+  margin: 0;
+  max-width: 900px;
+}
+.product-spec-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-divider);
+  font-size: 14px;
+}
+.product-spec-row dt {
+  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  text-transform: capitalize;
+}
+.product-spec-row dd { margin: 0; font-weight: 600; text-align: right; }
+
+/* Shipping & returns copy */
+.product-policy h3 {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+.product-policy h3 + p { margin: 0 0 24px; }
+.product-policy p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: color-mix(in srgb, var(--color-text) 80%, transparent);
+}
+.product-policy > :last-child { margin-bottom: 0; }
+
+@media (max-width: 640px) {
+  .product-tab { padding: 11px 14px; font-size: 13px; }
+}

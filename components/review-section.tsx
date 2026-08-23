@@ -140,7 +140,11 @@ function ReviewCard({ review }: { review: Review }) {
 }
 
 /* ── Main Component ─────────────────────────────────────────────────────── */
-export function ReviewSection({ productId }: { productId: string }) {
+/**
+ * `embedded` = rendered inside the product tab panel, where the surrounding
+ * tab already says "Reviews" - so the kicker/title would be a duplicate.
+ */
+export function ReviewSection({ productId, embedded = false }: { productId: string; embedded?: boolean }) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [form, setForm] = useState({ name: '', title: '', comment: '', rating: 0 });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -229,8 +233,12 @@ export function ReviewSection({ productId }: { productId: string }) {
       {/* Section header */}
       <div className="review-section-header">
         <div>
-          <span className="section-kicker">Customer feedback</span>
-          <h2 className="section-title" style={{ margin: 0 }}>Ratings &amp; Reviews</h2>
+          {!embedded && (
+            <>
+              <span className="section-kicker">Customer feedback</span>
+              <h2 className="section-title" style={{ margin: 0 }}>Ratings &amp; Reviews</h2>
+            </>
+          )}
         </div>
         {!showForm && (
           <button
