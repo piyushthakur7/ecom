@@ -1,54 +1,69 @@
 import { NextResponse } from 'next/server';
-import { createShiprocketOrder } from '@/lib/shiprocket';
+import { createShipment, isShiprocketConfigured, shipmentInputFromOrder } from '@/lib/services/shiprocket';
+import { getOrderByNumber, updateOrderShipping } from '@/lib/services/orders.service';
 
+/**
+ * Manually push an existing order to Shiprocket, from /admin.
+ *
+ * Takes only the order number: everything Shiprocket needs is rebuilt from the
+ * stored row, so a manual push and the automatic one in order-fulfilment
+ * declare the same weight and the same COD collectible. The browser is not
+ * trusted to supply prices.
+ */
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const {
-      orderId,
-      customerName,
-      customerEmail,
-      customerPhone,
-      address,
-      city,
-      state,
-      pincode,
-      paymentMethod,
-      items,
-      totalAmount,
-    } = body;
+    const body = await req.json().catch(() => ({}));
+    // `orderId` is the legacy field name the admin UI used to send.
+    const orderNumber = String(body.orderNumber ?? body.orderId ?? '').trim();
 
-    if (!orderId || !customerName || !pincode || !items || !totalAmount) {
-      return NextResponse.json(
-        { success: false, message: 'Missing required shipment parameters.' },
-        { status: 400 }
-      );
+    if (!orderNumber) {
+      return NextResponse.json({ ok: false, reason: 'orderNumber is required.' }, { status: 400 });
     }
 
-    const result = await createShiprocketOrder({
-      orderId,
-      customerName,
-      customerEmail: customerEmail || 'customer@saanshika.com',
-      customerPhone: customerPhone || '9800000000',
-      address,
-      city,
-      state,
-      pincode,
-      paymentMethod: paymentMethod || 'Prepaid',
-      items: Array.isArray(items)
-        ? items.map((i: { name: string; quantity?: number; units?: number; price: number }) => ({
-            name: i.name,
-            units: i.quantity || i.units || 1,
-            selling_price: i.price,
-          }))
-        : [],
-      totalAmount,
-    });
+    if (!isShiprocketConfigured()) {
+      return NextResponse.json({
+        ok: false,
+        reason: 'Shiprocket credentials are not configured (SHIPROCKET_EMAIL / SHIPROCKET_PASSWORD).',
+      });
+    }
+
+    const order = await getOrderByNumber(orderNumber);
+    if (!order) {
+      return NextResponse.json({ ok: false, reason: `Order ${orderNumber} not found.` }, { status: 404 });
+    }
+
+    // Shiprocket rejects a repeated order_id, and a second shipment would be a
+    // second parcel to pay for. Report the existing one instead.
+    if (order.shiprocket_shipment_id) {
+      return NextResponse.json({
+        ok: true,
+        alreadyPushed: true,
+        shipmentId: order.shiprocket_shipment_id,
+        shiprocketOrderId: order.shiprocket_order_id ?? '',
+        status: order.shiprocket_status ?? 'NEW',
+      });
+    }
+
+    const result = await createShipment(shipmentInputFromOrder(order));
+
+    // Record the outcome either way — the old handler returned the ids to the
+    // browser and never wrote them down, so /admin forgot the push had
+    // happened the moment the alert was dismissed.
+    await updateOrderShipping(
+      order.order_number,
+      result.ok
+        ? {
+            shiprocketOrderId: result.shiprocketOrderId,
+            shipmentId: result.shipmentId,
+            status: result.status,
+          }
+        : { status: `FAILED: ${result.reason}` }
+    );
 
     return NextResponse.json(result);
   } catch (err) {
-    const msg = err instanceof Error ? err.message : 'Error syncing order to Shiprocket';
-    console.error('API Create Shiprocket Order Error:', err);
-    return NextResponse.json({ success: false, message: msg }, { status: 500 });
+    const reason = err instanceof Error ? err.message : 'Error syncing order to Shiprocket';
+    console.error('Shiprocket manual push failed:', err);
+    return NextResponse.json({ ok: false, reason }, { status: 500 });
   }
 }

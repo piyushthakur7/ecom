@@ -116,6 +116,14 @@ export async function fulfilOrder(input: FulfilInput): Promise<FulfilResult> {
           }
         : { status: `FAILED: ${shipment.reason}` }
     );
+  } else {
+    // Say so on the order rather than skipping in silence. Without this the
+    // row is indistinguishable from one that was never meant to ship, and
+    // /admin shows nothing at all — which is how a misconfigured deploy can
+    // quietly stop pushing every order to Shiprocket without anyone noticing.
+    await updateOrderShipping(created.orderNumber, {
+      status: 'NOT PUSHED: Shiprocket credentials not configured',
+    });
   }
 
   await sendOrderConfirmation({

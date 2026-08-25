@@ -1,4 +1,4 @@
-import type { SavedAddress } from '@/lib/types';
+import type { DBOrder, SavedAddress } from '@/lib/types';
 
 /**
  * Shiprocket shipment creation.
@@ -226,4 +226,227 @@ export async function createShipment(input: ShiprocketOrderInput): Promise<Shipr
     console.error('Shiprocket order create threw:', err);
     return { ok: false, reason: err instanceof Error ? err.message : 'Shiprocket request failed' };
   }
+}
+
+// ─── Serviceability ─────────────────────────────────────────────────────────
+
+/**
+ * Three states, deliberately. The old client collapsed "we could not ask" into
+ * "yes, serviceable, 3–5 days", which put a delivery promise in front of the
+ * customer that nobody had checked — including for pincodes couriers do not
+ * reach. `unknown` lets checkout stay open for business without inventing a
+ * courier or an ETA.
+ */
+export type ServiceabilityStatus = 'serviceable' | 'not-serviceable' | 'unknown';
+
+export type ServiceabilityResult = {
+  status: ServiceabilityStatus;
+  etd?: string;
+  courierName?: string;
+  /** Cheapest few couriers, for showing the shopper their options. */
+  couriers?: Array<{ courierName: string; rate: number; etd: string; rating: number }>;
+  message?: string;
+};
+
+type CourierCompany = {
+  courier_name?: string;
+  rate?: number;
+  etd?: string;
+  rating?: number;
+};
+
+/**
+ * Ask Shiprocket which couriers cover a pincode from our pickup point.
+ *
+ * `weight` matters: couriers drop out of the list above their carriage limit,
+ * so we quote the same flat parcel weight the shipment will actually declare.
+ */
+export async function checkServiceability(
+  deliveryPincode: string,
+  isCod = false,
+  weightKg = numEnv('SHIPROCKET_DEFAULT_WEIGHT_KG', 0.5)
+): Promise<ServiceabilityResult> {
+  if (!isShiprocketConfigured()) {
+    return { status: 'unknown', message: 'Shiprocket credentials not configured' };
+  }
+
+  const token = await getToken();
+  if (!token) {
+    return { status: 'unknown', message: 'Could not authenticate with Shiprocket' };
+  }
+
+  const params = new URLSearchParams({
+    pickup_postcode: env('SHIPROCKET_PICKUP_PINCODE', '143001'),
+    delivery_postcode: deliveryPincode,
+    weight: String(weightKg),
+    cod: isCod ? '1' : '0',
+  });
+
+  try {
+    const res = await fetch(`${API}/courier/serviceability/?${params.toString()}`, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: 'no-store',
+    });
+
+    if (!res.ok) {
+      // A stale token reads as 401; drop it so the next check logs in again.
+      if (res.status === 401) cached = null;
+      // 404 here is Shiprocket's way of saying "no courier serves this route",
+      // not a transport failure, so it is a real answer rather than `unknown`.
+      if (res.status === 404) {
+        return {
+          status: 'not-serviceable',
+          message: `Pincode ${deliveryPincode} is not currently serviceable.`,
+        };
+      }
+      console.error('Shiprocket serviceability failed:', res.status);
+      return { status: 'unknown', message: `Shiprocket returned ${res.status}` };
+    }
+
+    const body = (await res.json().catch(() => null)) as
+      | { data?: { available_courier_companies?: CourierCompany[] } }
+      | null;
+
+    const couriers = body?.data?.available_courier_companies ?? [];
+    if (couriers.length === 0) {
+      return {
+        status: 'not-serviceable',
+        message: `Pincode ${deliveryPincode} is not currently serviceable${isCod ? ' for cash on delivery' : ''}.`,
+      };
+    }
+
+    // Cheapest first — that is the courier we would realistically assign.
+    const sorted = [...couriers].sort((a, b) => (Number(a.rate) || 0) - (Number(b.rate) || 0));
+    const top = sorted[0];
+
+    return {
+      status: 'serviceable',
+      etd: top.etd || undefined,
+      courierName: top.courier_name || undefined,
+      couriers: sorted.slice(0, 4).map((c) => ({
+        courierName: c.courier_name ?? 'Courier',
+        rate: Number(c.rate) || 0,
+        etd: c.etd ?? '',
+        rating: Number(c.rating) || 0,
+      })),
+    };
+  } catch (err) {
+    console.error('Shiprocket serviceability threw:', err);
+    return { status: 'unknown', message: 'Could not reach Shiprocket' };
+  }
+}
+
+// ─── Tracking ───────────────────────────────────────────────────────────────
+
+export type TrackingResult =
+  | {
+      ok: true;
+      awbCode: string;
+      courierName: string;
+      currentStatus: string;
+      trackingUrl: string;
+      timeline: Array<{ date: string; activity: string; location: string }>;
+    }
+  | { ok: false; reason: string };
+
+type TrackActivity = { date?: string; activity?: string; location?: string };
+
+/**
+ * Track by *our* order number, which is what Shiprocket stored as `order_id`
+ * when we created the shipment.
+ */
+export async function trackShipment(orderNumber: string): Promise<TrackingResult> {
+  if (!isShiprocketConfigured()) {
+    return { ok: false, reason: 'Shiprocket credentials not configured' };
+  }
+
+  const token = await getToken();
+  if (!token) return { ok: false, reason: 'Could not authenticate with Shiprocket' };
+
+  try {
+    const res = await fetch(
+      `${API}/courier/track/by/order_id?order_id=${encodeURIComponent(orderNumber)}`,
+      { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' }
+    );
+
+    if (!res.ok) {
+      if (res.status === 401) cached = null;
+      return { ok: false, reason: `Shiprocket returned ${res.status}` };
+    }
+
+    const body = (await res.json().catch(() => null)) as Record<string, unknown> | null;
+
+    // Shiprocket keys the response by the order number, but has been seen to
+    // return a bare `tracking_data` too. Accept either shape.
+    const keyed = body?.[orderNumber] as { tracking_data?: Record<string, unknown> } | undefined;
+    const track = (keyed?.tracking_data ?? body?.tracking_data) as Record<string, unknown> | undefined;
+
+    if (!track) return { ok: false, reason: 'Shipment tracking has not started yet' };
+
+    const activities = Array.isArray(track.shipment_track_activities)
+      ? (track.shipment_track_activities as TrackActivity[]).map((a) => ({
+          date: a.date ?? '',
+          activity: a.activity ?? '',
+          location: a.location ?? '',
+        }))
+      : [];
+
+    const awb = String(track.awb_code ?? '');
+
+    return {
+      ok: true,
+      awbCode: awb,
+      courierName: String(track.courier_name ?? ''),
+      currentStatus: String(track.current_status ?? 'In Transit'),
+      trackingUrl: String(track.track_url || (awb ? `https://shiprocket.co/tracking/${awb}` : '')),
+      timeline: activities,
+    };
+  } catch (err) {
+    console.error('Shiprocket tracking threw:', err);
+    return { ok: false, reason: 'Could not reach Shiprocket' };
+  }
+}
+
+// ─── Rebuilding a shipment from a stored order ──────────────────────────────
+
+/**
+ * Derive the shipment payload from an order row.
+ *
+ * The admin "push to Shiprocket" button used to post a hand-assembled body
+ * from the browser with a flat 0.8 kg weight and the *grand* total as
+ * `sub_total`. That declared the wrong weight and, on COD, told the courier to
+ * collect a figure the coupon had already been taken off — then Shiprocket
+ * subtracted the discount a second time. Rebuilding from the row here means a
+ * manual push and an automatic one produce byte-for-byte the same parcel.
+ */
+export function shipmentInputFromOrder(order: DBOrder): ShiprocketOrderInput {
+  const lines: ShiprocketLine[] = (order.items ?? []).map((i) => ({
+    id: i.id,
+    name: i.name,
+    price: Number(i.price) || 0,
+    quantity: Math.max(1, Number(i.quantity) || 1),
+    size: i.size,
+    color: i.color,
+  }));
+
+  // `orders.total` is already net of the coupon, so the pre-discount subtotal
+  // has to come back from the lines themselves.
+  const subTotal = lines.reduce((sum, l) => sum + l.price * l.quantity, 0);
+
+  // Recorded alongside the address at checkout; absent on uncouponed orders.
+  const addr = (order.shipping_address ?? {}) as SavedAddress & { couponDiscount?: number };
+  const discount = Math.max(0, Number(addr.couponDiscount) || 0);
+
+  return {
+    orderNumber: order.order_number,
+    customerName: order.customer_name,
+    customerEmail: order.customer_email,
+    customerPhone: order.customer_phone,
+    shippingAddress: order.shipping_address,
+    lines,
+    subTotal,
+    discount,
+    shipping: Number(order.shipping) || 0,
+    isCod: String(order.payment_method ?? '').toLowerCase().startsWith('cod'),
+  };
 }

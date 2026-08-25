@@ -122,8 +122,9 @@ export default function CheckoutPage() {
   // ── Shiprocket Pincode Serviceability ─────────────────────────────────────
   const [pincodeChecking, setPincodeChecking] = useState(false);
   const [pincodeInfo, setPincodeInfo] = useState<{
-    checked: boolean;
-    serviceable: boolean;
+    // 'unknown' means we could not reach Shiprocket. We say that plainly
+    // instead of inventing a courier and an ETA nobody has checked.
+    status: 'serviceable' | 'not-serviceable' | 'unknown';
     etd?: string;
     courierName?: string;
     message?: string;
@@ -144,20 +145,14 @@ export default function CheckoutPage() {
       .then((res) => res.json())
       .then((data) => {
         setPincodeInfo({
-          checked: true,
-          serviceable: Boolean(data.serviceable),
+          status: data.status === 'serviceable' || data.status === 'not-serviceable' ? data.status : 'unknown',
           etd: data.etd,
           courierName: data.courierName,
           message: data.message,
         });
       })
       .catch(() => {
-        setPincodeInfo({
-          checked: true,
-          serviceable: true,
-          etd: '3–5 Days',
-          courierName: 'Express Shipping',
-        });
+        setPincodeInfo({ status: 'unknown' });
       })
       .finally(() => setPincodeChecking(false));
   }, [form.pincode, form.payment]);
@@ -755,34 +750,43 @@ export default function CheckoutPage() {
                   {pincodeChecking && (
                     <div style={{ fontSize: 12, color: '#71717a', marginTop: -4 }}>Checking courier serviceability…</div>
                   )}
-                  {pincodeInfo && pincodeInfo.checked && (
-                    <div
-                      style={{
-                        marginTop: -2,
-                        padding: '10px 14px',
-                        borderRadius: 8,
-                        fontSize: 13,
-                        background: pincodeInfo.serviceable ? '#f0fdf4' : '#fef2f2',
-                        border: `1.5px solid ${pincodeInfo.serviceable ? '#bbf7d0' : '#fecaca'}`,
-                        color: pincodeInfo.serviceable ? '#166534' : '#991b1b',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 8,
-                      }}
-                    >
-                      <span style={{ fontSize: 16 }}>{pincodeInfo.serviceable ? '🚚' : '⚠️'}</span>
-                      <span>
-                        {pincodeInfo.serviceable ? (
-                          <>
-                            <strong>Serviceable via {pincodeInfo.courierName || 'Express Courier'}</strong>
-                            {pincodeInfo.etd && <span> — Est. Delivery: <strong>{pincodeInfo.etd}</strong></span>}
-                          </>
-                        ) : (
-                          pincodeInfo.message || 'Pincode non-serviceable for delivery'
-                        )}
-                      </span>
-                    </div>
-                  )}
+                  {pincodeInfo && (() => {
+                    const tone = {
+                      serviceable: { bg: '#f0fdf4', border: '#bbf7d0', text: '#166534', icon: '🚚' },
+                      'not-serviceable': { bg: '#fef2f2', border: '#fecaca', text: '#991b1b', icon: '⚠️' },
+                      unknown: { bg: '#f8fafc', border: '#e2e8f0', text: '#475569', icon: 'ℹ️' },
+                    }[pincodeInfo.status];
+                    return (
+                      <div
+                        style={{
+                          marginTop: -2,
+                          padding: '10px 14px',
+                          borderRadius: 8,
+                          fontSize: 13,
+                          background: tone.bg,
+                          border: `1.5px solid ${tone.border}`,
+                          color: tone.text,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                        }}
+                      >
+                        <span style={{ fontSize: 16 }}>{tone.icon}</span>
+                        <span>
+                          {pincodeInfo.status === 'serviceable' ? (
+                            <>
+                              <strong>Serviceable{pincodeInfo.courierName ? ` via ${pincodeInfo.courierName}` : ''}</strong>
+                              {pincodeInfo.etd && <span> — Est. Delivery: <strong>{pincodeInfo.etd}</strong></span>}
+                            </>
+                          ) : pincodeInfo.status === 'not-serviceable' ? (
+                            pincodeInfo.message || 'Pincode non-serviceable for delivery'
+                          ) : (
+                            'We ship across India. Delivery estimate will be confirmed once your order is dispatched.'
+                          )}
+                        </span>
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
 

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { checkShiprocketServiceability } from '@/lib/shiprocket';
+import { checkServiceability } from '@/lib/services/shiprocket';
 
 export async function POST(req: Request) {
   try {
@@ -7,18 +7,17 @@ export async function POST(req: Request) {
 
     if (!pincode || typeof pincode !== 'string' || !/^\d{6}$/.test(pincode.trim())) {
       return NextResponse.json(
-        { serviceable: false, message: 'Please enter a valid 6-digit Pincode' },
+        { status: 'not-serviceable', message: 'Please enter a valid 6-digit Pincode' },
         { status: 400 }
       );
     }
 
-    const result = await checkShiprocketServiceability(pincode.trim(), Boolean(isCod));
+    const result = await checkServiceability(pincode.trim(), Boolean(isCod));
     return NextResponse.json(result);
   } catch (err) {
-    console.error('API Check Serviceability Error:', err);
-    return NextResponse.json(
-      { serviceable: true, etd: '3–5 Days', courierName: 'Standard Express Courier' },
-      { status: 500 }
-    );
+    console.error('Serviceability check failed:', err);
+    // 200 with `unknown`: the check is advisory and must never block checkout,
+    // but it also must not claim a delivery estimate we never obtained.
+    return NextResponse.json({ status: 'unknown', message: 'Could not check serviceability' });
   }
 }

@@ -779,30 +779,25 @@ function OrderDetailsModal({
   async function handlePushShiprocket() {
     setSyncingShiprocket(true);
     try {
+      // Only the order number: the server rebuilds the parcel from the stored
+      // row so a manual push declares the same weight and COD collectible as
+      // the automatic one. Sending prices from here let them drift.
       const res = await fetch('/api/shiprocket/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          orderId: order.order_number,
-          customerName: order.customer_name,
-          customerEmail: order.customer_email,
-          customerPhone: order.customer_phone,
-          address: order.shipping_address?.street || 'Address not provided',
-          city: order.shipping_address?.city || 'Amritsar',
-          state: order.shipping_address?.state || 'Punjab',
-          pincode: order.shipping_address?.pincode || '143001',
-          paymentMethod: order.payment_method || 'Prepaid',
-          items: order.items,
-          totalAmount: grandTotal,
-        }),
+        body: JSON.stringify({ orderNumber: order.order_number }),
       });
 
       const data = await res.json();
-      if (data.success) {
-        alert(`Order ${order.order_number} successfully pushed to Shiprocket! Shipment ID: ${data.shipmentId || data.shiprocketOrderId}`);
+      if (data.ok) {
+        alert(
+          data.alreadyPushed
+            ? `Order ${order.order_number} was already pushed to Shiprocket. Shipment ID: ${data.shipmentId}`
+            : `Order ${order.order_number} pushed to Shiprocket. Shipment ID: ${data.shipmentId || data.shiprocketOrderId}`
+        );
         onStatusChange(order.id, 'Shipped');
       } else {
-        alert(`Shiprocket Sync: ${data.message || 'Check environment configuration'}`);
+        alert(`Shiprocket sync failed: ${data.reason || 'Check environment configuration'}`);
       }
     } catch {
       alert('Error connecting to Shiprocket service');

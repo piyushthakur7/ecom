@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { trackShiprocketOrder } from '@/lib/shiprocket';
+import { trackShipment } from '@/lib/services/shiprocket';
 
 export async function GET(req: Request) {
   try {
@@ -8,18 +8,14 @@ export async function GET(req: Request) {
 
     if (!orderNumber) {
       return NextResponse.json(
-        { success: false, message: 'Order number query parameter is required.' },
+        { ok: false, reason: 'Order number query parameter is required.' },
         { status: 400 }
       );
     }
 
-    const result = await trackShiprocketOrder(orderNumber);
-    return NextResponse.json(result);
+    return NextResponse.json(await trackShipment(orderNumber.trim()));
   } catch (err) {
-    console.error('API Shiprocket Track Error:', err);
-    return NextResponse.json(
-      { success: false, message: 'Could not fetch live tracking information.' },
-      { status: 500 }
-    );
+    console.error('Shiprocket tracking failed:', err);
+    return NextResponse.json({ ok: false, reason: 'Could not fetch tracking information.' });
   }
 }
