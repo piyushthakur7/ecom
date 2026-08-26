@@ -82,8 +82,21 @@ export async function updateOrderShipping(
       })
       .eq('order_number', orderNumber);
 
-    // Most likely cause: scratch/shiprocket.sql has not been run yet.
-    if (error) console.error('Could not record Shiprocket ids:', error.message);
+    if (error) {
+      // By far the most common cause, and the one that looks like nothing is
+      // wrong: the columns were never added, so every push silently forgets
+      // its shipment id and /admin shows no Shiprocket panel at all. Say what
+      // to do about it rather than logging a bare PostgREST message.
+      if (/column .* does not exist/i.test(error.message)) {
+        console.error(
+          `Shiprocket ids for ${orderNumber} were discarded: the orders table has no ` +
+            'shiprocket_* columns. Apply scratch/shiprocket.sql to the InsForge project ' +
+            '(insforge sql --file scratch/shiprocket.sql, or paste it into the SQL editor).'
+        );
+      } else {
+        console.error('Could not record Shiprocket ids:', error.message);
+      }
+    }
   } catch (err) {
     console.error('Recording Shiprocket ids threw:', err);
   }

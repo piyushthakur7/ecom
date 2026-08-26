@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createShipment, isShiprocketConfigured, shipmentInputFromOrder } from '@/lib/services/shiprocket';
 import { getOrderByNumber, updateOrderShipping } from '@/lib/services/orders.service';
+import { requireAdmin } from '@/lib/server/require-admin';
 
 /**
  * Manually push an existing order to Shiprocket, from /admin.
@@ -9,9 +10,18 @@ import { getOrderByNumber, updateOrderShipping } from '@/lib/services/orders.ser
  * stored row, so a manual push and the automatic one in order-fulfilment
  * declare the same weight and the same COD collectible. The browser is not
  * trusted to supply prices.
+ *
+ * Admin-only. The /admin page's own guard is a client-side redirect, which
+ * hides the dashboard but leaves this route open to anyone who can guess an
+ * order number — and a push here books a real parcel with a real courier.
  */
 export async function POST(req: Request) {
   try {
+    const auth = await requireAdmin(req);
+    if (!auth.ok) {
+      return NextResponse.json({ ok: false, reason: auth.reason }, { status: auth.status });
+    }
+
     const body = await req.json().catch(() => ({}));
     // `orderId` is the legacy field name the admin UI used to send.
     const orderNumber = String(body.orderNumber ?? body.orderId ?? '').trim();

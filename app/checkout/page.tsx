@@ -622,7 +622,20 @@ export default function CheckoutPage() {
               )}
             </p>
             <p style={{ fontSize: 14, color: 'color-mix(in srgb, var(--color-text) 65%, transparent)', marginBottom: 32 }}>
-              <IconPackage size={14} style={{ verticalAlign: -2, marginRight: 4, display: 'inline-block' }} />We will send confirmation & tracking updates to <strong>{form.email}</strong>. Expected delivery: 3–5 business days.
+              <IconPackage size={14} style={{ verticalAlign: -2, marginRight: 4, display: 'inline-block' }} />
+              We will send confirmation &amp; tracking updates to <strong>{form.email}</strong>.{' '}
+              {/* The delivery date is the courier's own estimate for this
+                  pincode, captured by the serviceability check above. When we
+                  never got one we say nothing rather than repeating a flat
+                  "3-5 business days" that no courier ever quoted. */}
+              {pincodeInfo?.status === 'serviceable' && pincodeInfo.etd ? (
+                <>
+                  Estimated delivery by <strong>{pincodeInfo.etd}</strong>
+                  {pincodeInfo.courierName ? ` via ${pincodeInfo.courierName}` : ''}.
+                </>
+              ) : (
+                <>We&apos;ll share the delivery estimate as soon as your parcel is assigned a courier.</>
+              )}
             </p>
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
               <Link href="/profile?tab=orders" className="btn btn-primary btn-large">View My Orders</Link>

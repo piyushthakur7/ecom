@@ -9,6 +9,22 @@ import { IconPackage, IconTruck, IconCheckCircle, IconClock, IconX, IconMapPin }
 
 const STEPS = ['Pending', 'Processing', 'Shipped', 'Delivered'] as const;
 
+/**
+ * Live courier movements, straight from Shiprocket.
+ *
+ * The four steps above are *our* fulfilment status, updated by hand in /admin.
+ * They tell a shopper we have accepted the order, not where the parcel is. The
+ * courier knows that, so once a shipment exists we show its real scan history
+ * alongside — and fall back silently to our own steps when it does not.
+ */
+type Tracking = {
+  awbCode: string;
+  courierName: string;
+  currentStatus: string;
+  trackingUrl: string;
+  timeline: Array<{ date: string; activity: string; location: string }>;
+};
+
 const STEP_ICON = {
   Pending: <IconClock size={16} />,
   Processing: <IconPackage size={16} />,
@@ -21,16 +37,37 @@ export default function TrackOrderPage() {
   const [order, setOrder] = useState<DBOrder | null>(null);
   const [searched, setSearched] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [tracking, setTracking] = useState<Tracking | null>(null);
+  const [trackingLoading, setTrackingLoading] = useState(false);
 
   async function handleTrack(e: React.FormEvent) {
     e.preventDefault();
     if (!orderNumber.trim()) return;
     setLoading(true);
     setSearched(false);
+    setTracking(null);
     const found = await getOrderByNumber(orderNumber);
     setOrder(found);
     setSearched(true);
     setLoading(false);
+
+    // Courier data is a second, slower hop. The order card renders as soon as
+    // the row is in, so a slow or silent Shiprocket never holds up the answer
+    // the shopper actually came for.
+    if (found) {
+      setTrackingLoading(true);
+      try {
+        const res = await fetch(
+          `/api/shiprocket/track?orderNumber=${encodeURIComponent(found.order_number)}`
+        );
+        const data = await res.json();
+        if (data?.ok) setTracking(data as Tracking);
+      } catch {
+        /* Tracking is additive — the fulfilment steps below still stand. */
+      } finally {
+        setTrackingLoading(false);
+      }
+    }
   }
 
   const status = order?.status ?? 'Pending';
@@ -103,6 +140,60 @@ export default function TrackOrderPage() {
                   </li>
                 ))}
               </ol>
+            )}
+
+            {trackingLoading && (
+              <p className="text-muted" style={{ fontSize: 13, marginTop: 16 }}>
+                Checking with the courier…
+              </p>
+            )}
+
+            {tracking && (
+              <div className="track-courier">
+                <div className="track-courier-head">
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 7, fontWeight: 700, fontSize: 14 }}>
+                    <IconTruck size={16} /> {tracking.courierName || 'Courier'}
+                  </span>
+                  <span className="track-courier-status">{tracking.currentStatus}</span>
+                </div>
+
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 18, fontSize: 13, marginBottom: 4 }}>
+                  {tracking.awbCode && (
+                    <div>
+                      <div className="track-label">AWB number</div>
+                      <div style={{ fontWeight: 600 }}>{tracking.awbCode}</div>
+                    </div>
+                  )}
+                  {tracking.trackingUrl && (
+                    <div>
+                      <div className="track-label">On the courier&apos;s site</div>
+                      <a
+                        href={tracking.trackingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ fontWeight: 600, color: 'var(--color-accent)' }}
+                      >
+                        Open live tracking →
+                      </a>
+                    </div>
+                  )}
+                </div>
+
+                {tracking.timeline.length > 0 && (
+                  <ol className="track-timeline">
+                    {/* Newest scan first: what happened last is what the
+                        shopper opened this page to find out. */}
+                    {tracking.timeline.map((ev, i) => (
+                      <li key={i} className={`track-timeline-item ${i === 0 ? 'latest' : ''}`}>
+                        <div style={{ fontWeight: i === 0 ? 700 : 600, fontSize: 13 }}>{ev.activity}</div>
+                        <div className="text-muted" style={{ fontSize: 12, marginTop: 2 }}>
+                          {[ev.location, ev.date].filter(Boolean).join(' · ')}
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                )}
+              </div>
             )}
 
             <hr className="product-divider" style={{ margin: '20px 0' }} />

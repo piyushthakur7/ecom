@@ -1,6 +1,13 @@
 import { NextResponse } from 'next/server';
 import { checkServiceability } from '@/lib/services/shiprocket';
 
+/**
+ * Pincode serviceability for the checkout form.
+ *
+ * Deliberately public: it runs while the shopper is still typing an address,
+ * before any account is required, and returns nothing but courier names and
+ * rates for a pincode the caller already supplied.
+ */
 export async function POST(req: Request) {
   try {
     const { pincode, isCod } = await req.json();

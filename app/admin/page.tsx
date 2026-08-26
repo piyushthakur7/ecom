@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { insforge } from '@/lib/insforge-client';
+import { insforge, getAccessToken } from '@/lib/insforge-client';
 import { useAuth } from '@/components/auth-context';
 import { uploadToCloudinary } from '@/lib/cloudinary';
 import { getAllOrders, updateOrderStatus } from '@/lib/services/orders.service';
@@ -779,12 +779,24 @@ function OrderDetailsModal({
   async function handlePushShiprocket() {
     setSyncingShiprocket(true);
     try {
+      // The route re-checks that the caller is an admin, so it needs the
+      // session token — the client-side guard on this page proves nothing to
+      // the server.
+      const token = await getAccessToken();
+      if (!token) {
+        alert('Your session has expired. Please sign in again.');
+        return;
+      }
+
       // Only the order number: the server rebuilds the parcel from the stored
       // row so a manual push declares the same weight and COD collectible as
       // the automatic one. Sending prices from here let them drift.
       const res = await fetch('/api/shiprocket/create-order', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ orderNumber: order.order_number }),
       });
 
@@ -916,8 +928,30 @@ function OrderDetailsModal({
         {(() => {
           const status = order.shiprocket_status ?? '';
           const failed = status.startsWith('FAILED');
-          // Nothing recorded at all: an order placed before Shiprocket was
-          // wired up, or the migration in scratch/shiprocket.sql has not run.
+
+          // PostgREST returns a column that exists but is unset as `null`, and
+          // omits the key entirely when the column is missing. That difference
+          // is the only signal we get that scratch/shiprocket.sql was never
+          // applied — in which case every push is being written into nowhere,
+          // which otherwise looks exactly like an order that never shipped.
+          const columnsMissing = !('shiprocket_status' in order);
+          if (columnsMissing) {
+            return (
+              <div style={{ padding: '14px 16px', border: '1px solid #fed7aa', borderRadius: 10, background: '#fff7ed' }}>
+                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8, color: '#9a3412', display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <IconPackage size={15} /> Shiprocket not set up
+                </div>
+                <div style={{ fontSize: 13, color: '#9a3412', lineHeight: 1.6 }}>
+                  The <code>orders</code> table has no <code>shiprocket_*</code> columns, so shipment
+                  ids are being discarded as soon as they come back. Apply{' '}
+                  <code>scratch/shiprocket.sql</code> to the InsForge project, then reload.
+                </div>
+              </div>
+            );
+          }
+
+          // Nothing recorded, columns present: an order placed before
+          // Shiprocket was wired up.
           if (!status && !order.shiprocket_shipment_id) return null;
 
           return (

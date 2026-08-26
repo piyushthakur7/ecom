@@ -2,7 +2,11 @@ node_modules/
 .next/
 out/
 build/
+# `.env*.local` alone left a bare `.env` committable — the one file most
+# likely to hold live Shiprocket and Razorpay secrets.
+.env
 .env*.local
+!.env.example
 .vercel
 *.tsbuildinfo
 next-env.d.ts
