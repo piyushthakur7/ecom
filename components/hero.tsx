@@ -75,27 +75,9 @@ export function Hero({ initialSlides = [] }: { initialSlides?: DBHeroSlide[] }) 
   const slide = slides[current];
 
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-        background: '#fdfbf7',
-        borderBottom: '1px solid var(--color-divider)',
-        overflow: 'hidden',
-        minHeight: 'clamp(520px, 70vh, 700px)',
-      }}
-    >
+    <div className="hero-split">
       {/* ── Left Content Column (Static Text & Stats) ────────────────── */}
-      <div
-        style={{
-          padding: 'clamp(32px, 5vw, 64px) clamp(24px, 5vw, 64px)',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          gap: 'clamp(20px, 3vw, 32px)',
-          background: '#fdfbf7',
-        }}
-      >
+      <div className="hero-split-copy">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {/* Top Kicker Tag */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -178,7 +160,7 @@ export function Hero({ initialSlides = [] }: { initialSlides?: DBHeroSlide[] }) 
         <hr style={{ border: 'none', borderTop: '1px solid #e4e4e7', margin: '4px 0 0 0' }} />
 
         {/* Stats Row */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+        <div className="hero-split-stats">
           <div>
             <div style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(20px, 2.2vw, 26px)', fontWeight: 800, color: '#18181b' }}>
               160+
@@ -199,14 +181,7 @@ export function Hero({ initialSlides = [] }: { initialSlides?: DBHeroSlide[] }) 
       </div>
 
       {/* ── Right Column (Auto-sliding Image Carousel) ────────────────── */}
-      <div
-        style={{
-          position: 'relative',
-          minHeight: 400,
-          background: '#e4e4e7',
-          overflow: 'hidden',
-        }}
-      >
+      <div className="hero-split-media">
         {slide ? (
           <Link
             href={slide.link || '/'}
