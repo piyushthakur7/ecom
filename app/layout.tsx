@@ -12,8 +12,11 @@ import './globals.css';
 const archivo = Archivo({
   subsets: ['latin'],
   weight: ['400', '600', '800'],
-  display: 'swap',
+  display: 'optional',
   variable: '--font-archivo',
+  preload: true,
+  // Metric-adjusted stand-ins, so the text does not reflow when Archivo lands.
+  fallback: ['system-ui', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
 });
 
 export const metadata: Metadata = {
