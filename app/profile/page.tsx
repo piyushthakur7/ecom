@@ -139,30 +139,27 @@ function ProfileContent() {
   // Not logged in
   if (!isLoading && !user) {
     return (
-      <main>
+      <>
         <div className="section" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ textAlign: 'center' }}>
             <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'center' }}><IconUser size={48} /></div>
             <h1 style={{ fontSize: 24, fontFamily: 'var(--font-heading)', fontWeight: 800, marginBottom: 10 }}>Sign in to view your profile</h1>
-            <p style={{ color: '#888', marginBottom: 24 }}>Access your orders, wishlist, and saved addresses.</p>
+            <p style={{ color: 'var(--color-muted)', marginBottom: 24 }}>Access your orders, wishlist, and saved addresses.</p>
             <button type="button" className="btn btn-primary btn-large" onClick={() => setAuthOpen(true)}>Sign in with Google</button>
           </div>
         </div>
         <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} onSuccess={() => refreshProfile()} />
-        <Footer />
-      </main>
+      </>
     );
   }
 
   // Loading skeleton
   if (isLoading) {
     return (
-      <main>
-        <div className="section" style={{ minHeight: '60vh' }}>
-          <div style={{ height: 28, background: '#f0eeee', borderRadius: 4, width: '30%', animation: 'pulse 1.5s ease-in-out infinite', marginBottom: 24 }} />
-          <div style={{ height: 16, background: '#f0eeee', borderRadius: 4, width: '60%', animation: 'pulse 1.5s ease-in-out infinite' }} />
-        </div>
-      </main>
+      <div className="section" style={{ minHeight: '60vh' }}>
+        <div style={{ height: 28, background: '#f0eeee', borderRadius: 4, width: '30%', animation: 'pulse 1.5s ease-in-out infinite', marginBottom: 24 }} />
+        <div style={{ height: 16, background: '#f0eeee', borderRadius: 4, width: '60%', animation: 'pulse 1.5s ease-in-out infinite' }} />
+      </div>
     );
   }
 
@@ -177,8 +174,7 @@ function ProfileContent() {
   ];
 
   return (
-    <main>
-      <div className="section" style={{ paddingTop: 'clamp(24px,3vw,40px)' }}>
+    <div className="section" style={{ paddingTop: 'clamp(24px,3vw,40px)' }}>
         {/* Profile header */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 36, flexWrap: 'wrap' }}>
           <div style={{ width: 72, height: 72, borderRadius: '50%', overflow: 'hidden', border: '3px solid var(--color-accent)', flexShrink: 0 }}>
@@ -194,7 +190,7 @@ function ProfileContent() {
             <h1 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: 'clamp(20px,2.5vw,28px)', margin: 0 }}>
               {profile?.full_name ?? 'My Account'}
             </h1>
-            <div style={{ color: '#888', fontSize: 14, marginTop: 4 }}>{user?.email}</div>
+            <div style={{ color: 'var(--color-muted)', fontSize: 14, marginTop: 4 }}>{user?.email}</div>
             {profile?.role === 'admin' && (
               <span style={{ display: 'inline-block', marginTop: 6, fontSize: 12, background: 'var(--color-accent)', color: '#fff', padding: '3px 10px', borderRadius: 20, fontWeight: 600 }}>
                 Admin
@@ -271,7 +267,7 @@ function ProfileContent() {
             </div>
 
             {addresses.length === 0 && !showAddressForm && (
-              <div style={{ textAlign: 'center', padding: '48px 0', color: '#888' }}>
+              <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--color-muted)' }}>
                 <div style={{ marginBottom: 12, display: 'flex', justifyContent: 'center' }}><IconMapPin size={32} /></div>
                 <p>No saved addresses yet. Add one to speed up checkout!</p>
               </div>
@@ -288,8 +284,8 @@ function ProfileContent() {
                       </div>
                       <div style={{ color: '#666', fontSize: 14, marginTop: 4 }}>{addr.street}</div>
                       <div style={{ color: '#666', fontSize: 14 }}>{addr.city}, {addr.state} — {addr.pincode}</div>
-                      {addr.landmark && <div style={{ color: '#888', fontSize: 13 }}>Near: {addr.landmark}</div>}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#888', fontSize: 13, marginTop: 2 }}><IconPhone size={13} />{addr.phone}</div>
+                      {addr.landmark && <div style={{ color: 'var(--color-muted)', fontSize: 13 }}>Near: {addr.landmark}</div>}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--color-muted)', fontSize: 13, marginTop: 2 }}><IconPhone size={13} />{addr.phone}</div>
                     </div>
                     <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
                       <button type="button" className="btn btn-ghost" onClick={() => { setEditingAddr(addr); setAddrForm({ name: addr.name, phone: addr.phone, street: addr.street, city: addr.city, state: addr.state, pincode: addr.pincode, landmark: addr.landmark ?? '', isDefault: addr.isDefault }); setShowAddressForm(true); }} style={{ fontSize: 12, padding: '6px 12px' }}>Edit</button>
@@ -366,7 +362,7 @@ function ProfileContent() {
                 ))}
               </div>
             ) : orders.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '64px 0', color: '#888' }}>
+              <div style={{ textAlign: 'center', padding: '64px 0', color: 'var(--color-muted)' }}>
                 <div style={{ marginBottom: 12, display: 'flex', justifyContent: 'center' }}><IconPackage size={40} /></div>
                 <p style={{ marginBottom: 20 }}>You haven&apos;t placed any orders yet.</p>
                 <Link href="/" className="btn btn-primary">Start Shopping</Link>
@@ -381,7 +377,7 @@ function ProfileContent() {
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', background: '#f9fafb', flexWrap: 'wrap', gap: 10 }}>
                         <div>
                           <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: 15 }}>{order.order_number}</span>
-                          <span style={{ marginLeft: 12, fontSize: 13, color: '#888' }}>
+                          <span style={{ marginLeft: 12, fontSize: 13, color: 'var(--color-muted)' }}>
                             {new Date(order.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                           </span>
                         </div>
@@ -402,7 +398,7 @@ function ProfileContent() {
                           <span>₹{Number(order.total + order.shipping).toLocaleString('en-IN')}</span>
                         </div>
                         {order.shipping_address && (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 10, fontSize: 13, color: '#888' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 10, fontSize: 13, color: 'var(--color-muted)' }}>
                             <IconMapPin size={13} />{order.shipping_address.street}, {order.shipping_address.city}
                           </div>
                         )}
@@ -423,24 +419,30 @@ function ProfileContent() {
             <Link href="/favourites" className="btn btn-primary">Go to Wishlist →</Link>
           </div>
         )}
-      </div>
-      <Footer />
-    </main>
+    </div>
   );
 }
 
+/**
+ * `ProfileContent` reads `?tab=` through `useSearchParams`, which opts it out of
+ * the static prerender - the build emits the Suspense fallback and the real
+ * markup only appears once JS has hydrated. Keeping the shell and the footer
+ * outside that boundary means they ship in the prerendered HTML and paint with
+ * first contentful paint instead of waiting on hydration.
+ */
 export default function ProfilePage() {
   return (
-    <React.Suspense
-      fallback={
-        <main>
+    <main>
+      <React.Suspense
+        fallback={
           <div className="section" style={{ minHeight: '60vh' }}>
             <div style={{ height: 28, background: '#f0eeee', borderRadius: 4, width: '30%', animation: 'pulse 1.5s ease-in-out infinite', marginBottom: 24 }} />
           </div>
-        </main>
-      }
-    >
-      <ProfileContent />
-    </React.Suspense>
+        }
+      >
+        <ProfileContent />
+      </React.Suspense>
+      <Footer />
+    </main>
   );
 }

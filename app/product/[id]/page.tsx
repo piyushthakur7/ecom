@@ -14,6 +14,7 @@ import { Newsletter } from '@/components/newsletter';
 import { ProductTabs } from '@/components/product-tabs';
 import { useToast } from '@/components/toast';
 import { getProductById, getProductsByCategory } from '@/lib/services/products.service';
+import { cdnImage } from '@/lib/cloudinary';
 import type { DBProduct } from '@/lib/types';
 
 const badgeClass: Record<string, string> = {
@@ -271,7 +272,13 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
                     <Link href={`/product/${r.id}`} style={{ display: 'block', textDecoration: 'none' }}>
                       <div className="media-clip" style={{ width: '100%', aspectRatio: '3 / 4', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={rImg} alt={r.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <img
+                          src={cdnImage(rImg, 600)}
+                          alt={r.name}
+                          loading="lazy"
+                          decoding="async"
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
                       </div>
                     </Link>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>

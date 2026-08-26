@@ -10,8 +10,10 @@ import { useFavourites } from './favourites-context';
 import { useAuth } from './auth-context';
 import { AuthModal } from './auth-modal';
 import { IconTag, IconChevronDown, IconHeart, IconHome, IconShoppingBag, IconUser, IconPackage, IconSettings, IconLogIn, IconLogOut } from './icons';
-import { getCategories, getProducts } from '@/lib/services/products.service';
-import type { DBCategory, DBProduct } from '@/lib/types';
+import { getCategories, getCategoryList, getProducts } from '@/lib/services/products.service';
+import type { DBProduct } from '@/lib/types';
+import type { CategoryListItem } from '@/lib/services/products.service';
+import { cdnImage } from '@/lib/cloudinary';
 
 type SearchResult = {
   id: string;
@@ -64,7 +66,7 @@ export function Nav() {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [categoriesDropdownOpen, setCategoriesDropdownOpen] = useState(false);
   const [catMenuOpen, setCatMenuOpen] = useState(false);
-  const [navCategories, setNavCategories] = useState<DBCategory[]>([]);
+  const [navCategories, setNavCategories] = useState<CategoryListItem[]>([]);
   const desktopSearchRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const profileMenuRef = useRef<HTMLDivElement>(null);
@@ -75,10 +77,10 @@ export function Nav() {
 
   // Load categories from DB (with static fallback)
   useEffect(() => {
-    getCategories().then((cats) => setNavCategories(cats));
+    getCategoryList().then((cats) => setNavCategories(cats));
   }, []);
 
-  const navLinks = navCategories.map((c: DBCategory) => ({ label: c.name, href: `/category/${c.slug}` }));
+  const navLinks = navCategories.map((c) => ({ label: c.name, href: `/category/${c.slug}` }));
 
   const openSearch = useCallback(() => {
     setSearchOpen(true);
@@ -177,7 +179,7 @@ export function Nav() {
                 {results.length > 0 ? results.map((r) => (
                   <Link key={r.id} href={r.href} className="search-dropdown-item" onClick={() => { setQuery(''); setSearchOpen(false); }}>
                     <div className="search-dropdown-thumb">
-                      <Image src={r.src} alt={r.name} fill sizes="44px" style={{ objectFit: 'cover' }} />
+                      <Image src={cdnImage(r.src, 120)} alt={r.name} fill sizes="44px" style={{ objectFit: 'cover' }} />
                     </div>
                     <div className="search-dropdown-info">
                       <div className="search-dropdown-name">{r.name}</div>
@@ -259,7 +261,7 @@ export function Nav() {
               }}>
                 <div style={{ padding: '12px 16px', borderBottom: '1px solid #f0f0f0' }}>
                   <div style={{ fontWeight: 600, fontSize: 14 }}>{profile?.full_name ?? 'My Account'}</div>
-                  <div style={{ fontSize: 12, color: '#888', marginTop: 2 }}>{user?.email}</div>
+                  <div style={{ fontSize: 12, color: 'var(--color-muted)', marginTop: 2 }}>{user?.email}</div>
                 </div>
                 <Link href="/profile" onClick={() => setProfileMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 16px', fontSize: 14, color: 'inherit', textDecoration: 'none' }}><IconUser size={15} /> My Profile</Link>
                 <Link href="/profile?tab=orders" onClick={() => setProfileMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 16px', fontSize: 14, color: 'inherit', textDecoration: 'none' }}><IconPackage size={15} /> My Orders</Link>
@@ -355,7 +357,7 @@ export function Nav() {
               {drawerResults.length > 0 ? drawerResults.map((r) => (
                 <Link key={r.id} href={r.href} className="search-dropdown-item" onClick={closeDrawer}>
                   <div className="search-dropdown-thumb">
-                    <Image src={r.src} alt={r.name} fill sizes="44px" style={{ objectFit: 'cover' }} />
+                    <Image src={cdnImage(r.src, 120)} alt={r.name} fill sizes="44px" style={{ objectFit: 'cover' }} />
                   </div>
                   <div className="search-dropdown-info">
                     <div className="search-dropdown-name">{r.name}</div>

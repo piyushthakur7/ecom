@@ -10,6 +10,10 @@
   --color-accent: #6b1d2f;
   --color-accent-2: #c59b27;
   --color-divider: #e8e0d5;
+  /* Muted body text. Cleared 4.5:1 against every surface it sits on
+     (--color-bg, --color-surface, --color-neutral-100 and the plain
+     whites used in cards), which the old hardcoded #888 did not. */
+  --color-muted: #6f665c;
 
   --color-neutral-100: #faf7f2;
   --color-neutral-200: #f0e9df;
@@ -457,14 +461,14 @@ figure { margin: 0; }
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+  color: color-mix(in srgb, var(--color-text) 68%, transparent);
   margin-top: 2px;
 }
 .search-empty {
   padding: 20px;
   text-align: center;
   font-size: 14px;
-  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+  color: color-mix(in srgb, var(--color-text) 68%, transparent);
 }
 
 /* â”€â”€ Cart Badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
@@ -743,7 +747,7 @@ figure { margin: 0; }
 }
 .category-circle-count {
   font-size: 11px;
-  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+  color: color-mix(in srgb, var(--color-text) 68%, transparent);
   text-align: center;
   margin-top: 2px;
 }
@@ -793,7 +797,7 @@ figure { margin: 0; }
 .star.half   { color: var(--color-accent-2); }
 .star-count {
   font-size: 12px;
-  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  color: color-mix(in srgb, var(--color-text) 68%, transparent);
   font-feature-settings: 'tnum' 1;
 }
 
@@ -810,7 +814,7 @@ figure { margin: 0; }
   border-radius: var(--radius-full);
   white-space: nowrap;
 }
-.badge-purchased { background: #fff3e0; color: #e65100; }
+.badge-purchased { background: #fff3e0; color: #b23c00; }
 .badge-trending  { background: var(--color-accent-100); color: var(--color-accent-700); }
 .badge-bestseller{ background: #e8f5e9; color: #2e7d32; }
 .badge-new       { background: #e3f2fd; color: #1565c0; }
@@ -923,7 +927,7 @@ figure { margin: 0; }
 .price-was {
   font-size: 16px;
   text-decoration: line-through;
-  color: color-mix(in srgb, var(--color-text) 50%, transparent);
+  color: color-mix(in srgb, var(--color-text) 68%, transparent);
 }
 .price-off {
   font-size: 14px;
@@ -1025,7 +1029,7 @@ figure { margin: 0; }
   align-items: center;
   gap: 6px;
   font-size: 13px;
-  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  color: color-mix(in srgb, var(--color-text) 68%, transparent);
   margin-bottom: 16px;
   flex-wrap: wrap;
 }
@@ -1051,7 +1055,7 @@ figure { margin: 0; }
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    RESPONSIVE UTILITIES
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
-.text-muted { color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+.text-muted { color: color-mix(in srgb, var(--color-text) 68%, transparent); }
 @media (max-width: 640px) {
   .hide-mobile { display: none !important; }
 }
@@ -1107,7 +1111,7 @@ figure { margin: 0; }
 }
 .cart-item-meta {
   font-size: 12px;
-  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  color: color-mix(in srgb, var(--color-text) 68%, transparent);
   letter-spacing: 0.04em;
 }
 .cart-item-price { font-weight: 700; font-size: 16px; }
@@ -1151,7 +1155,7 @@ figure { margin: 0; }
   background: none;
   border: none;
   cursor: pointer;
-  color: color-mix(in srgb, var(--color-text) 45%, transparent);
+  color: color-mix(in srgb, var(--color-text) 68%, transparent);
   padding: 4px;
   border-radius: var(--radius-sm);
   display: flex;
@@ -1357,7 +1361,7 @@ figure { margin: 0; }
   display: flex;
   align-items: center;
   justify-content: center;
-  color: color-mix(in srgb, var(--color-text) 45%, transparent);
+  color: color-mix(in srgb, var(--color-text) 68%, transparent);
   transition: color var(--transition-fast), transform var(--transition-fast);
   padding: 0;
 }
@@ -1483,7 +1487,7 @@ figure { margin: 0; }
 .review-card-stars span { display: flex; }
 .review-total {
   font-size: 12px;
-  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  color: color-mix(in srgb, var(--color-text) 68%, transparent);
   letter-spacing: 0.04em;
 }
 
@@ -1519,7 +1523,7 @@ figure { margin: 0; }
 }
 .review-bar-count {
   font-size: 12px;
-  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+  color: color-mix(in srgb, var(--color-text) 68%, transparent);
   width: 16px;
 }
 
@@ -1655,7 +1659,7 @@ figure { margin: 0; }
 }
 .review-date {
   font-size: 12px;
-  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+  color: color-mix(in srgb, var(--color-text) 68%, transparent);
   margin-top: 2px;
 }
 .review-card-stars { display: flex; gap: 2px; margin-top: 2px; flex-shrink: 0; }
@@ -2882,7 +2886,7 @@ figure { margin: 0; }
 
 .profile-header-sub {
   font-size: 13px;
-  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  color: color-mix(in srgb, var(--color-text) 68%, transparent);
   margin: 0;
 }
 
@@ -3034,7 +3038,7 @@ figure { margin: 0; }
 
 .order-date {
   font-size: 12px;
-  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  color: color-mix(in srgb, var(--color-text) 68%, transparent);
 }
 
 .order-status-badge {
@@ -3741,7 +3745,7 @@ figure { margin: 0; }
   font-family: var(--font-heading);
   font-size: 14px;
   font-weight: 700;
-  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  color: color-mix(in srgb, var(--color-text) 68%, transparent);
   background: none;
   border: none;
   border-bottom: 3px solid transparent;
@@ -3788,7 +3792,7 @@ figure { margin: 0; }
   font-size: 14px;
 }
 .product-spec-row dt {
-  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  color: color-mix(in srgb, var(--color-text) 68%, transparent);
   text-transform: capitalize;
 }
 .product-spec-row dd { margin: 0; font-weight: 600; text-align: right; }

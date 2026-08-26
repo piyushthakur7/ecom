@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getCategories } from '@/lib/services/products.service';
 import type { DBCategory } from '@/lib/types';
+import { cdnImage } from '@/lib/cloudinary';
 
 export function Categories() {
   const [categories, setCategories] = useState<DBCategory[]>([]);
@@ -55,7 +56,7 @@ export function Categories() {
             >
               <div className="category-circle">
                 <Image
-                  src={cat.src || '/images/hero/banner-1.jpg'}
+                  src={cdnImage(cat.src || '/images/hero/banner-1.jpg', 320)}
                   alt={cat.alt || cat.name}
                   fill
                   sizes="(max-width: 480px) 108px, (max-width: 900px) 128px, 152px"

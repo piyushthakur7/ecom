@@ -8,6 +8,7 @@ import { useCart } from './cart-context';
 import { FavouriteButton } from './favourite-button';
 import { useToast } from './toast';
 import { getProducts } from '@/lib/services/products.service';
+import { cdnImage } from '@/lib/cloudinary';
 import type { DBProduct } from '@/lib/types';
 
 const badgeClass: Record<string, string> = {
@@ -71,7 +72,7 @@ export function Featured() {
       </div>
 
       <div className="product-grid">
-        {products.map((p) => {
+        {products.map((p, i) => {
           const img = Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : '';
           const priceDisplay = `₹${Number(p.price).toLocaleString('en-IN')}`;
           const wasDisplay = p.original_price ? `₹${Number(p.original_price).toLocaleString('en-IN')}` : null;
@@ -86,8 +87,10 @@ export function Featured() {
                 <div className="media-clip" style={{ width: '100%', aspectRatio: '3 / 4', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={img}
+                    src={cdnImage(img, 600)}
                     alt={p.name}
+                    loading={i < 4 ? 'eager' : 'lazy'}
+                    decoding="async"
                     style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
                   />
                   {offPct && (
@@ -127,7 +130,7 @@ export function Featured() {
                 <div style={{ display: 'flex', gap: 10, alignItems: 'baseline', fontFeatureSettings: "'tnum' 1" }}>
                   <span style={{ fontWeight: 700, fontSize: 16 }}>{priceDisplay}</span>
                   {wasDisplay && (
-                    <span style={{ fontSize: 13, textDecoration: 'line-through', color: 'color-mix(in srgb, var(--color-text) 50%, transparent)' }}>
+                    <span style={{ fontSize: 13, textDecoration: 'line-through', color: 'color-mix(in srgb, var(--color-text) 68%, transparent)' }}>
                       {wasDisplay}
                     </span>
                   )}

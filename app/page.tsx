@@ -8,11 +8,17 @@ import { Newsletter } from '@/components/newsletter';
 import { Footer } from '@/components/footer';
 import { FirstOrderPopup } from '@/components/first-order-popup';
 import { siteConfig } from '@/lib/site';
+import { getHeroSlides } from '@/lib/services/products.service';
 
-export default function HomePage() {
+/** Catalogue content changes rarely; re-fetch the hero at most every 5 minutes. */
+export const revalidate = 300;
+
+export default async function HomePage() {
+  const heroSlides = await getHeroSlides();
+
   return (
     <main>
-      <Hero />
+      <Hero initialSlides={heroSlides} />
       
       <hr className="rule" />
       <Categories />

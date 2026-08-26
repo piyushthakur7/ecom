@@ -8,6 +8,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+import { hasStoredSession } from '@/lib/insforge-client';
 import type { InsforgeUser, Profile } from '@/lib/types';
 import { getUser, signInWithGoogle, signOut as serviceSignOut, ensureProfile, getProfile } from '@/lib/services/auth.service';
 
@@ -29,12 +30,31 @@ type AuthValue = {
 const AuthContext = createContext<AuthValue | null>(null);
 
 // ─── Provider ───────────────────────────────────────────────────────────────
+/**
+ * True when this load could plausibly produce a signed-in user: either a session
+ * is already stored, or we have just returned from the OAuth redirect and the
+ * SDK still has an `insforge_code` to exchange.
+ */
+function mayHaveSession(): boolean {
+  if (typeof window === 'undefined') return false;
+  if (hasStoredSession()) return true;
+  return new URLSearchParams(window.location.search).has('insforge_code');
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<InsforgeUser | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const loadUser = useCallback(async () => {
+    // Nothing to restore: settle synchronously rather than spending a round trip
+    // (and a guaranteed 401) to be told there is no session.
+    if (!mayHaveSession()) {
+      setUser(null);
+      setProfile(null);
+      setIsLoading(false);
+      return;
+    }
     try {
       const u = await getUser();
       setUser(u);

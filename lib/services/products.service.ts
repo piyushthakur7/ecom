@@ -16,6 +16,30 @@ export async function getCategories(): Promise<DBCategory[]> {
   }
 }
 
+/** A category stripped of its cover art — all the nav and filter chips need. */
+export type CategoryListItem = Pick<DBCategory, 'id' | 'name' | 'slug'>;
+
+/**
+ * Categories without their cover image.
+ *
+ * The nav menu and the shop filter chips render nothing but a label and a link,
+ * while `categories.src` holds cover art that can be a base64 data URI — one
+ * row is ~259 KB, and `select('*')` pulled it into every single page load.
+ * Selecting only the columns we use keeps that image out of the response.
+ */
+export async function getCategoryList(): Promise<CategoryListItem[]> {
+  try {
+    const { data, error } = await insforge.database
+      .from('categories')
+      .select('id,name,slug')
+      .order('name');
+    if (error || !data) return [];
+    return data as CategoryListItem[];
+  } catch {
+    return [];
+  }
+}
+
 // ─── Hero Slides ───────────────────────────────────────────────────────────
 
 export async function getHeroSlides(): Promise<DBHeroSlide[]> {

@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/components/cart-context';
+import { cdnImage } from '@/lib/cloudinary';
 import { Footer } from '@/components/footer';
 import { IconShoppingBag, IconTruck, IconCheckCircle, IconLock, IconPackage, IconRotateLeft } from '@/components/icons';
 
@@ -61,7 +62,7 @@ export default function CartPage() {
                 {/* Thumbnail */}
                 <Link href={`/product/${item.id}`}>
                   <div className="cart-item-img">
-                    <Image src={item.image} alt={item.name} fill sizes="90px" style={{ objectFit: 'cover' }} />
+                    <Image src={cdnImage(item.image, 200)} alt={item.name} fill sizes="90px" style={{ objectFit: 'cover' }} />
                   </div>
                 </Link>
 

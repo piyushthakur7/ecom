@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import Link from 'next/link';
 
 type VideoItem = {
@@ -11,6 +11,56 @@ type VideoItem = {
   productLink: string;
   tag: string;
 };
+
+/**
+ * A muted, looping reel that only fetches once it scrolls into view.
+ *
+ * `autoPlay` makes the browser download the file immediately regardless of
+ * `preload`, and these four reels are 16 MB between them — enough to saturate
+ * the connection and hold up everything above the fold. Starting playback from
+ * an IntersectionObserver keeps the autoplay behaviour but defers the bytes to
+ * the point where someone can actually see them.
+ */
+function ReelVideo({ src }: { src: string }) {
+  const ref = useRef<HTMLVideoElement | null>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    // No observer (or reduced motion): fall back to loading it on demand.
+    if (typeof IntersectionObserver === 'undefined') {
+      el.preload = 'metadata';
+      return;
+    }
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (!el.src) el.src = src;
+          void el.play().catch(() => {/* autoplay can be refused; leave paused */});
+        } else {
+          el.pause();
+        }
+      },
+      { rootMargin: '200px' }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [src]);
+
+  return (
+    <video
+      ref={ref}
+      loop
+      muted
+      playsInline
+      preload="none"
+      aria-label="Product reel"
+      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+    />
+  );
+}
 
 const sampleVideos: VideoItem[] = [
   {
@@ -84,21 +134,8 @@ export function VideoSection() {
                 overflow: 'hidden',
               }}
             >
-              {/* Native HTML5 Cloudinary MP4 Video Player */}
-              <video
-                src={video.videoUrl}
-                autoPlay
-                loop
-                muted
-                playsInline
-                preload="metadata"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  display: 'block',
-                }}
-              />
+              {/* Native HTML5 MP4 reel — starts only once it is on screen */}
+              <ReelVideo src={video.videoUrl} />
 
               {/* Dark subtle gradient overlay */}
               <div

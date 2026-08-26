@@ -8,6 +8,7 @@ import { FavouriteButton } from '@/components/favourite-button';
 import { StarRating } from '@/components/star-rating';
 import { Footer } from '@/components/footer';
 import { IconHeart } from '@/components/icons';
+import { cdnImage } from '@/lib/cloudinary';
 
 export default function FavouritesPage() {
   const { items, count } = useFavourites();
@@ -44,7 +45,7 @@ export default function FavouritesPage() {
                     style={{ width: '100%', aspectRatio: '3 / 4', borderRadius: 'var(--radius-md)', overflow: 'hidden', position: 'relative' }}
                   >
                     <Image
-                      src={item.image}
+                      src={cdnImage(item.image, 600)}
                       alt={item.name}
                       fill
                       sizes="(max-width: 600px) 50vw, (max-width: 1280px) 33vw, 280px"

@@ -263,7 +263,7 @@ export default function AdminDashboard() {
   if (isLoading) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
-        <div style={{ fontSize: 16, color: '#888' }}>Loading…</div>
+        <div style={{ fontSize: 16, color: 'var(--color-muted)' }}>Loading…</div>
       </div>
     );
   }
@@ -337,7 +337,7 @@ export default function AdminDashboard() {
                   <div key={stat.label} style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 14, padding: '20px 24px' }}>
                     <div style={{ marginBottom: 8, color: stat.color }}>{stat.icon}</div>
                     <div style={{ fontSize: 24, fontWeight: 800, color: stat.color }}>{stat.value}</div>
-                    <div style={{ fontSize: 13, color: '#888', marginTop: 4 }}>{stat.label}</div>
+                    <div style={{ fontSize: 13, color: 'var(--color-muted)', marginTop: 4 }}>{stat.label}</div>
                   </div>
                 ))}
               </div>
@@ -362,12 +362,12 @@ export default function AdminDashboard() {
                           <td style={{ padding: '12px 16px' }}>{o.customer_name}</td>
                           <td style={{ padding: '12px 16px', fontWeight: 600 }}>₹{Number(Number(o.total) + Number(o.shipping)).toLocaleString('en-IN')}</td>
                           <td style={{ padding: '12px 16px' }}><span style={{ fontSize: 12, background: sc.bg, color: sc.text, padding: '3px 10px', borderRadius: 20, fontWeight: 600 }}>{o.status}</span></td>
-                          <td style={{ padding: '12px 16px', color: '#888' }}>{new Date(o.created_at).toLocaleDateString('en-IN')}</td>
+                          <td style={{ padding: '12px 16px', color: 'var(--color-muted)' }}>{new Date(o.created_at).toLocaleDateString('en-IN')}</td>
                         </tr>
                       );
                     })}
                     {orders.length === 0 && (
-                      <tr><td colSpan={5} style={{ padding: '24px', textAlign: 'center', color: '#888' }}>No orders yet</td></tr>
+                      <tr><td colSpan={5} style={{ padding: '24px', textAlign: 'center', color: 'var(--color-muted)' }}>No orders yet</td></tr>
                     )}
                   </tbody>
                 </table>
@@ -391,7 +391,7 @@ export default function AdminDashboard() {
                     </div>
                     <div style={{ padding: '12px 14px' }}>
                       <div style={{ fontWeight: 700, fontSize: 15 }}>{cat.name}</div>
-                      <div style={{ fontSize: 12, color: '#888', marginTop: 2 }}>{cat.slug} · {cat.count}</div>
+                      <div style={{ fontSize: 12, color: 'var(--color-muted)', marginTop: 2 }}>{cat.slug} · {cat.count}</div>
                       <div style={{ marginTop: 10, display: 'flex', gap: 8 }}>
                         <Link href={`/category/${cat.slug}`} style={{ fontSize: 12, color: '#2563eb', textDecoration: 'none' }}>View ↗</Link>
                         <button type="button" onClick={() => handleDeleteCategory(cat.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 12, color: '#dc2626', padding: 0 }}>Delete</button>
@@ -399,7 +399,7 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                 ))}
-                {!dbLoading && categories.length === 0 && <p style={{ color: '#888', gridColumn: '1/-1' }}>No categories yet.</p>}
+                {!dbLoading && categories.length === 0 && <p style={{ color: 'var(--color-muted)', gridColumn: '1/-1' }}>No categories yet.</p>}
               </div>
             </div>
           )}
@@ -421,12 +421,12 @@ export default function AdminDashboard() {
                     <div style={{ flex: 1, padding: '14px 20px' }}>
                       <div style={{ fontWeight: 600 }}>{slide.alt}</div>
                       <div style={{ fontSize: 13, color: '#2563eb', marginTop: 4 }}>→ {slide.link}</div>
-                      <div style={{ fontSize: 12, color: '#aaa', marginTop: 2 }}>Position: {idx + 1}</div>
+                      <div style={{ fontSize: 12, color: 'var(--color-muted)', marginTop: 2 }}>Position: {idx + 1}</div>
                     </div>
                     <button type="button" onClick={() => handleDeleteHero(slide.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#dc2626', padding: '14px 20px', fontSize: 13 }}>Delete</button>
                   </div>
                 ))}
-                {!dbLoading && heroSlides.length === 0 && <p style={{ color: '#888' }}>No hero banners yet.</p>}
+                {!dbLoading && heroSlides.length === 0 && <p style={{ color: 'var(--color-muted)' }}>No hero banners yet.</p>}
               </div>
             </div>
           )}
@@ -472,7 +472,7 @@ export default function AdminDashboard() {
                       );
                     })}
                     {!dbLoading && products.length === 0 && (
-                      <tr><td colSpan={6} style={{ padding: '24px', textAlign: 'center', color: '#888' }}>No products yet</td></tr>
+                      <tr><td colSpan={6} style={{ padding: '24px', textAlign: 'center', color: 'var(--color-muted)' }}>No products yet</td></tr>
                     )}
                   </tbody>
                 </table>
@@ -501,13 +501,13 @@ export default function AdminDashboard() {
                           <td style={{ padding: '12px 14px', fontWeight: 600, color: '#2563eb' }}>{o.order_number}</td>
                           <td style={{ padding: '12px 14px' }}>
                             <div style={{ fontWeight: 600 }}>{o.customer_name}</div>
-                            <div style={{ fontSize: 12, color: '#888' }}>{o.customer_email}</div>
+                            <div style={{ fontSize: 12, color: 'var(--color-muted)' }}>{o.customer_email}</div>
                           </td>
                           <td style={{ padding: '12px 14px', fontWeight: 600 }}>₹{Number(Number(o.total) + Number(o.shipping)).toLocaleString('en-IN')}</td>
                           <td style={{ padding: '12px 14px' }}>
                             <span style={{ fontSize: 12, background: sc.bg, color: sc.text, padding: '3px 10px', borderRadius: 20, fontWeight: 600 }}>{o.status}</span>
                           </td>
-                          <td style={{ padding: '12px 14px', color: '#888', whiteSpace: 'nowrap' }}>{new Date(o.created_at).toLocaleDateString('en-IN')}</td>
+                          <td style={{ padding: '12px 14px', color: 'var(--color-muted)', whiteSpace: 'nowrap' }}>{new Date(o.created_at).toLocaleDateString('en-IN')}</td>
                           <td style={{ padding: '12px 14px' }} onClick={(e) => e.stopPropagation()}>
                             <select
                               value={o.status}
@@ -533,7 +533,7 @@ export default function AdminDashboard() {
                       );
                     })}
                     {!dbLoading && orders.length === 0 && (
-                      <tr><td colSpan={7} style={{ padding: '24px', textAlign: 'center', color: '#888' }}>No orders yet</td></tr>
+                      <tr><td colSpan={7} style={{ padding: '24px', textAlign: 'center', color: 'var(--color-muted)' }}>No orders yet</td></tr>
                     )}
                   </tbody>
                 </table>
@@ -576,11 +576,11 @@ export default function AdminDashboard() {
                             {u.role}
                           </span>
                         </td>
-                        <td style={{ padding: '12px 16px', color: '#888' }}>{u.created_at ? new Date(u.created_at).toLocaleDateString('en-IN') : '—'}</td>
+                        <td style={{ padding: '12px 16px', color: 'var(--color-muted)' }}>{u.created_at ? new Date(u.created_at).toLocaleDateString('en-IN') : '—'}</td>
                       </tr>
                     ))}
                     {!dbLoading && users.length === 0 && (
-                      <tr><td colSpan={5} style={{ padding: '24px', textAlign: 'center', color: '#888' }}>No users yet</td></tr>
+                      <tr><td colSpan={5} style={{ padding: '24px', textAlign: 'center', color: 'var(--color-muted)' }}>No users yet</td></tr>
                     )}
                   </tbody>
                 </table>
@@ -753,7 +753,7 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: 18, margin: 0 }}>{title}</h2>
-          <button type="button" onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, color: '#aaa', lineHeight: 1 }}>×</button>
+          <button type="button" onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, color: 'var(--color-muted)', lineHeight: 1 }}>×</button>
         </div>
         {children}
       </div>
@@ -824,7 +824,7 @@ function OrderDetailsModal({
         {/* Status bar */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 10, flexWrap: 'wrap', gap: 10 }}>
           <div>
-            <div style={{ fontSize: 12, color: '#888' }}>Order Placed On</div>
+            <div style={{ fontSize: 12, color: 'var(--color-muted)' }}>Order Placed On</div>
             <div style={{ fontWeight: 600, fontSize: 13 }}>
               {new Date(order.created_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
             </div>
@@ -890,11 +890,11 @@ function OrderDetailsModal({
                 <div style={{ fontWeight: 600 }}>{order.shipping_address.name || order.customer_name}</div>
                 <div>{order.shipping_address.street}</div>
                 <div>{order.shipping_address.city}, {order.shipping_address.state} — <strong>{order.shipping_address.pincode}</strong></div>
-                {order.shipping_address.landmark && <div style={{ fontSize: 12, color: '#888' }}>Landmark: {order.shipping_address.landmark}</div>}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#888', marginTop: 2 }}><IconPhone size={12} />{order.shipping_address.phone || order.customer_phone}</div>
+                {order.shipping_address.landmark && <div style={{ fontSize: 12, color: 'var(--color-muted)' }}>Landmark: {order.shipping_address.landmark}</div>}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--color-muted)', marginTop: 2 }}><IconPhone size={12} />{order.shipping_address.phone || order.customer_phone}</div>
               </div>
             ) : (
-              <div style={{ fontSize: 13, color: '#888' }}>No address recorded</div>
+              <div style={{ fontSize: 13, color: 'var(--color-muted)' }}>No address recorded</div>
             )}
           </div>
         </div>
@@ -906,19 +906,19 @@ function OrderDetailsModal({
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 12, fontSize: 13 }}>
             <div>
-              <span style={{ color: '#888', display: 'block', fontSize: 12 }}>Method</span>
+              <span style={{ color: 'var(--color-muted)', display: 'block', fontSize: 12 }}>Method</span>
               <span style={{ fontWeight: 600, textTransform: 'uppercase' }}>{order.payment_method}</span>
             </div>
             <div>
-              <span style={{ color: '#888', display: 'block', fontSize: 12 }}>Subtotal</span>
+              <span style={{ color: 'var(--color-muted)', display: 'block', fontSize: 12 }}>Subtotal</span>
               <span style={{ fontWeight: 600 }}>₹{Number(order.total).toLocaleString('en-IN')}</span>
             </div>
             <div>
-              <span style={{ color: '#888', display: 'block', fontSize: 12 }}>Shipping</span>
+              <span style={{ color: 'var(--color-muted)', display: 'block', fontSize: 12 }}>Shipping</span>
               <span style={{ fontWeight: 600, color: order.shipping === 0 ? '#16a34a' : 'inherit' }}>{order.shipping === 0 ? 'FREE' : `₹${order.shipping}`}</span>
             </div>
             <div>
-              <span style={{ color: '#888', display: 'block', fontSize: 12 }}>Grand Total</span>
+              <span style={{ color: 'var(--color-muted)', display: 'block', fontSize: 12 }}>Grand Total</span>
               <span style={{ fontWeight: 800, fontSize: 16, color: 'var(--color-accent)' }}>₹{grandTotal.toLocaleString('en-IN')}</span>
             </div>
           </div>
@@ -968,15 +968,15 @@ function OrderDetailsModal({
               ) : (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 12, fontSize: 13 }}>
                   <div>
-                    <span style={{ color: '#888', display: 'block', fontSize: 12 }}>Shipment ID</span>
+                    <span style={{ color: 'var(--color-muted)', display: 'block', fontSize: 12 }}>Shipment ID</span>
                     <span style={{ fontWeight: 600 }}>{order.shiprocket_shipment_id || '—'}</span>
                   </div>
                   <div>
-                    <span style={{ color: '#888', display: 'block', fontSize: 12 }}>Order ID</span>
+                    <span style={{ color: 'var(--color-muted)', display: 'block', fontSize: 12 }}>Order ID</span>
                     <span style={{ fontWeight: 600 }}>{order.shiprocket_order_id || '—'}</span>
                   </div>
                   <div>
-                    <span style={{ color: '#888', display: 'block', fontSize: 12 }}>Status</span>
+                    <span style={{ color: 'var(--color-muted)', display: 'block', fontSize: 12 }}>Status</span>
                     <span style={{ fontWeight: 600 }}>{status || '—'}</span>
                   </div>
                 </div>

@@ -95,7 +95,7 @@ export function AuthModal({ isOpen, onClose, onSuccess, message }: Props) {
               <div style={{ fontSize: 28, fontWeight: 800, fontFamily: 'var(--font-heading)', color: 'var(--color-accent)' }}>
                 Saanshika Ethnics
               </div>
-              <div style={{ fontSize: 13, color: '#888', marginTop: 4 }}>
+              <div style={{ fontSize: 13, color: 'var(--color-muted)', marginTop: 4 }}>
                 {message ?? 'Sign in to continue shopping'}
               </div>
             </div>
@@ -128,7 +128,7 @@ export function AuthModal({ isOpen, onClose, onSuccess, message }: Props) {
               Continue with Google
             </button>
 
-            <div style={{ textAlign: 'center', marginTop: 16, fontSize: 12, color: '#aaa' }}>
+            <div style={{ textAlign: 'center', marginTop: 16, fontSize: 12, color: 'var(--color-muted)' }}>
               By continuing, you agree to our terms of service and privacy policy.
             </div>
           </>
@@ -137,7 +137,7 @@ export function AuthModal({ isOpen, onClose, onSuccess, message }: Props) {
             <div id="auth-modal-title" style={{ fontSize: 20, fontWeight: 700, fontFamily: 'var(--font-heading)', marginBottom: 6 }}>
               Almost there!
             </div>
-            <div style={{ fontSize: 14, color: '#888', marginBottom: 24 }}>
+            <div style={{ fontSize: 14, color: 'var(--color-muted)', marginBottom: 24 }}>
               Tell us your name and phone number to get started.
             </div>
 
@@ -190,7 +190,7 @@ export function AuthModal({ isOpen, onClose, onSuccess, message }: Props) {
           style={{
             position: 'absolute', top: 14, right: 14,
             background: 'none', border: 'none', cursor: 'pointer',
-            color: '#aaa', fontSize: 22, lineHeight: 1, padding: 4,
+            color: 'var(--color-muted)', fontSize: 22, lineHeight: 1, padding: 4,
           }}
         >×</button>
       </div>

@@ -4,18 +4,37 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { getHeroSlides } from '@/lib/services/products.service';
 import type { DBHeroSlide } from '@/lib/types';
+import { cdnImage } from '@/lib/cloudinary';
 
 const INTERVAL = 5000;
 
-export function Hero() {
-  const [slides, setSlides] = useState<DBHeroSlide[]>([]);
+export function Hero({ initialSlides = [] }: { initialSlides?: DBHeroSlide[] }) {
+  const [slides, setSlides] = useState<DBHeroSlide[]>(initialSlides);
   const [current, setCurrent] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [canRotate, setCanRotate] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Rendered on the server with slides in hand, the first banner ships inside
+  // the HTML and the preload scanner can start it immediately. Only fall back
+  // to fetching when the page did not supply them.
   useEffect(() => {
+    if (initialSlides.length > 0) return;
     getHeroSlides().then(setSlides);
-  }, []);
+  }, [initialSlides.length]);
+
+  // Warm the slides we are about to show. Only one slide is mounted at a time,
+  // so without this the swap starts a fresh download and the next frame cannot
+  // paint until it lands. Held until the page has loaded so these never race
+  // the first banner.
+  useEffect(() => {
+    if (!canRotate) return;
+    for (const s of slides.slice(1)) {
+      if (!s.src) continue;
+      const img = new window.Image();
+      img.src = cdnImage(s.src, 1600);
+    }
+  }, [slides, canRotate]);
 
   const goTo = (idx: number) => {
     if (isAnimating || idx === current) return;
@@ -26,9 +45,24 @@ export function Hero() {
     }, 400);
   };
 
-  // Auto-advance image slider
+  // Hold the carousel until the page has finished loading. A slide swap while
+  // the rest of the page is still arriving competes for bandwidth and repaints
+  // the biggest element on the screen, which is decorative motion winning over
+  // the content someone is waiting for.
   useEffect(() => {
-    if (slides.length <= 1) return;
+    if (document.readyState === 'complete') {
+      setCanRotate(true);
+      return;
+    }
+    const onLoad = () => setCanRotate(true);
+    window.addEventListener('load', onLoad, { once: true });
+    return () => window.removeEventListener('load', onLoad);
+  }, []);
+
+  // Auto-advance image slider, unless the visitor asked for less motion.
+  useEffect(() => {
+    if (!canRotate || slides.length <= 1) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     timerRef.current = setTimeout(() => {
       goTo((current + 1) % slides.length);
     }, INTERVAL);
@@ -36,7 +70,7 @@ export function Hero() {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [current, slides.length]);
+  }, [current, slides.length, canRotate]);
 
   const slide = slides[current];
 
@@ -182,8 +216,9 @@ export function Hero() {
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={slide.src}
+              src={cdnImage(slide.src, 1600)}
               alt={slide.alt}
+              fetchPriority="high"
               style={{
                 width: '100%',
                 height: '100%',
@@ -209,11 +244,13 @@ export function Hero() {
               left: '50%',
               transform: 'translateX(-50%)',
               display: 'flex',
-              gap: 8,
+              gap: 0,
               zIndex: 2,
             }}
             aria-label="Slide navigation"
           >
+            {/* The dot stays 8px, but the button around it is padded out to a
+                24x24 touch target - the minimum a pointer can reliably hit. */}
             {slides.map((_, i) => (
               <button
                 key={i}
@@ -221,17 +258,29 @@ export function Hero() {
                 onClick={() => goTo(i)}
                 aria-label={`Go to slide ${i + 1}`}
                 style={{
-                  width: i === current ? 28 : 8,
-                  height: 8,
-                  borderRadius: 4,
-                  background: i === current ? '#ffffff' : 'rgba(255,255,255,0.5)',
+                  width: i === current ? 44 : 24,
+                  height: 24,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: 'none',
                   border: 'none',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
                   padding: 0,
-                  boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
+                  cursor: 'pointer',
                 }}
-              />
+              >
+                <span
+                  style={{
+                    display: 'block',
+                    width: i === current ? 28 : 8,
+                    height: 8,
+                    borderRadius: 4,
+                    background: i === current ? '#ffffff' : 'rgba(255,255,255,0.5)',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
+                  }}
+                />
+              </button>
             ))}
           </div>
         )}

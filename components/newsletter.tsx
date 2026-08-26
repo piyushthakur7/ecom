@@ -100,7 +100,7 @@ export function Newsletter() {
               type="submit"
               style={{
                 background: 'var(--color-accent-2)',
-                color: '#ffffff',
+                color: 'var(--color-text)',
                 border: 'none',
                 padding: '12px 24px',
                 fontFamily: 'var(--font-heading)',
@@ -112,7 +112,7 @@ export function Newsletter() {
                 cursor: 'pointer',
                 transition: 'background 0.2s ease',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--color-accent-2-600)')}
+              onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--color-accent-2-400)')}
               onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--color-accent-2)')}
             >
               SUBSCRIBE

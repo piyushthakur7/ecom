@@ -12,6 +12,7 @@ import { useToast } from '@/components/toast';
 import { getUserOrders } from '@/lib/services/orders.service';
 import { updateAddresses, updateProfile } from '@/lib/services/auth.service';
 import { loadRazorpayScript } from '@/lib/razorpay';
+import { cdnImage } from '@/lib/cloudinary';
 import { validateCoupon, COUPON_STORAGE_KEY, type Coupon } from '@/lib/coupons';
 
 /** Where an in-flight Razorpay payment is parked so it survives a tab reload. */
@@ -695,7 +696,7 @@ export default function CheckoutPage() {
                         <div style={{ fontSize: 14 }}>
                           <div style={{ fontWeight: 600 }}>{addr.name}{addr.isDefault && <span style={{ marginLeft: 8, fontSize: 11, background: '#e8f5e9', color: '#2e7d32', padding: '2px 8px', borderRadius: 20 }}>Default</span>}</div>
                           <div style={{ color: '#666', marginTop: 2 }}>{addr.street}, {addr.city}, {addr.state} — {addr.pincode}</div>
-                          {addr.phone && <div style={{ display: 'flex', alignItems: 'center', gap: 5, color: '#888', fontSize: 12 }}><IconPhone size={12} />{addr.phone}</div>}
+                          {addr.phone && <div style={{ display: 'flex', alignItems: 'center', gap: 5, color: 'var(--color-muted)', fontSize: 12 }}><IconPhone size={12} />{addr.phone}</div>}
                         </div>
                       </label>
                     ))}
@@ -854,7 +855,7 @@ export default function CheckoutPage() {
                 {items.map((item) => (
                   <div key={`${item.id}-${item.size ?? ''}`} className="order-line-item">
                     <div className="order-line-img">
-                      <Image src={item.image} alt={item.name} fill sizes="52px" style={{ objectFit: 'cover' }} />
+                      <Image src={cdnImage(item.image, 120)} alt={item.name} fill sizes="52px" style={{ objectFit: 'cover' }} />
                     </div>
                     <div className="order-line-name">
                       {item.name}

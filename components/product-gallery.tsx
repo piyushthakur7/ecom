@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react';
 import Image from 'next/image';
+import { cdnImage } from '@/lib/cloudinary';
 
 type ProductGalleryProps = {
   images: readonly string[];
@@ -50,7 +51,7 @@ export function ProductGallery({ images, name, saleBadge }: ProductGalleryProps)
             onClick={() => setActiveIdx(i)}
             aria-label={`View image ${i + 1}`}
           >
-            <Image src={src} alt={`${name} — view ${i + 1}`} fill sizes="72px" style={{ objectFit: 'cover' }} />
+            <Image src={cdnImage(src, 150)} alt={`${name} — view ${i + 1}`} fill sizes="72px" style={{ objectFit: 'cover' }} />
           </button>
         ))}
       </div>
@@ -72,7 +73,7 @@ export function ProductGallery({ images, name, saleBadge }: ProductGalleryProps)
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           key={images[activeIdx]}
-          src={images[activeIdx]}
+          src={cdnImage(images[activeIdx], 1200)}
           alt={`${name} — main view`}
           className="gallery-main-img"
         />
