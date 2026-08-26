@@ -289,16 +289,22 @@ figure { margin: 0; }
   backdrop-filter: blur(10px);
 }
 
+/* The logo art ships on its own black plate, so the brand sits as a rounded
+   chip on the cream bar rather than as free-floating art. */
 .nav-brand {
-  font-family: var(--font-heading);
-  font-weight: var(--font-heading-weight);
-  font-size: clamp(16px, 2.2vw, 20px);
-  text-decoration: none;
-  color: var(--color-text);
+  display: flex;
+  align-items: center;
   margin-right: auto;
   flex-shrink: 0;
+  line-height: 0;
 }
-.nav-brand:hover { color: var(--color-accent); }
+.nav-logo {
+  height: clamp(30px, 4.2vw, 40px);
+  width: auto;
+  border-radius: 8px;
+  transition: opacity var(--transition-fast);
+}
+.nav-brand:hover .nav-logo { opacity: 0.85; }
 
 /* Desktop links */
 .nav-links {
@@ -683,7 +689,7 @@ figure { margin: 0; }
 }
 @media (max-width: 640px) {
   .nav { padding: 0 12px; height: 54px; --nav-height: 54px; }
-  .nav-brand { font-size: 16px; }
+  .nav-logo { height: 30px; }
   .nav-actions { gap: 4px; }
 }
 
@@ -2128,13 +2134,12 @@ figure { margin: 0; }
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
   gap: 36px clamp(24px, 3vw, 56px);
 }
-.footer-brand-title {
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 22px;
-  letter-spacing: -0.01em;
-  margin: 0 0 8px;
-  color: var(--color-accent-2);
+.footer-brand-logo {
+  display: block;
+  height: clamp(48px, 8vw, 60px);
+  width: auto;
+  border-radius: 10px;
+  margin: 0 0 14px;
 }
 .footer-brand-desc {
   font-size: 14px;
@@ -3864,7 +3869,7 @@ video, iframe { height: auto; }
 }
 @media (max-width: 400px) {
   .nav { padding: 0 10px; }
-  .nav-brand { font-size: 15px; }
+  .nav-logo { height: 26px; }
   .nav-actions { gap: 2px; }
   .nav-drawer { width: min(88vw, 320px); }
 }

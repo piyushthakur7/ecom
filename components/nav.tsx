@@ -126,7 +126,16 @@ export function Nav() {
     <>
       <nav className="nav">
         {/* Brand */}
-        <Link href="/" className="nav-brand">{siteConfig.name}</Link>
+        <Link href="/" className="nav-brand" aria-label={`${siteConfig.name} — home`}>
+          <Image
+            src="/logo-wordmark.png"
+            alt={siteConfig.name}
+            width={636}
+            height={320}
+            priority
+            className="nav-logo"
+          />
+        </Link>
 
         {/* Desktop links */}
         <ul className="nav-links">

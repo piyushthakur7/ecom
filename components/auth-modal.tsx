@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useAuth } from '@/components/auth-context';
 import { ensureProfile } from '@/lib/services/auth.service';
 
@@ -92,9 +93,13 @@ export function AuthModal({ isOpen, onClose, onSuccess, message }: Props) {
           <>
             {/* Logo / Brand */}
             <div style={{ textAlign: 'center', marginBottom: 24 }}>
-              <div style={{ fontSize: 28, fontWeight: 800, fontFamily: 'var(--font-heading)', color: 'var(--color-accent)' }}>
-                Saanshika Ethnics
-              </div>
+              <Image
+                src="/logo-wordmark.png"
+                alt="Saanshika Ethnics"
+                width={636}
+                height={320}
+                style={{ width: 208, height: 'auto', borderRadius: 10, margin: '0 auto', display: 'block' }}
+              />
               <div style={{ fontSize: 13, color: 'var(--color-muted)', marginTop: 4 }}>
                 {message ?? 'Sign in to continue shopping'}
               </div>

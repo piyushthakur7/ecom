@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { siteConfig } from '@/lib/site';
 import { IconInstagram, IconFacebook, IconWhatsApp } from './icons';
@@ -40,7 +41,13 @@ export function Footer() {
     <footer className="footer-wrap">
       <div className="footer-grid">
         <div className="footer-brand-col">
-          <p className="footer-brand-title">{siteConfig.name}</p>
+          <Image
+            src="/logo-wordmark.png"
+            alt={siteConfig.name}
+            width={636}
+            height={320}
+            className="footer-brand-logo"
+          />
           <p className="footer-brand-desc">
             Every thread, a celebration. Ethnic wear in everyday fabrics, made in Amritsar.
           </p>
