@@ -540,7 +540,7 @@ export default function CheckoutPage() {
             contact: checked.phone,
           },
           theme: {
-            color: '#6b1d2f', // Deep Crimson Maroon theme!
+            color: '#c72e29',
           },
           modal: {
             ondismiss: function () {
@@ -617,7 +617,7 @@ export default function CheckoutPage() {
             <p style={{ color: 'color-mix(in srgb, var(--color-text) 75%, transparent)', marginBottom: 8, lineHeight: 1.7 }}>
               Thank you, <strong>{form.firstName}</strong>! Your order <strong>{orderNumber}</strong> has been placed successfully.
               {paymentId && (
-                <span style={{ display: 'block', fontSize: 13, color: '#6b1d2f', fontWeight: 600, marginTop: 4 }}>
+                <span style={{ display: 'block', fontSize: 13, color: 'var(--color-accent)', fontWeight: 600, marginTop: 4 }}>
                   <IconCreditCard size={14} style={{ verticalAlign: -2, marginRight: 4, display: 'inline-block' }} />Razorpay Payment ID: {paymentId}
                 </span>
               )}

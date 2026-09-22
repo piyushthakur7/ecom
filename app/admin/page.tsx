@@ -835,7 +835,7 @@ function OrderDetailsModal({
               onClick={handlePushShiprocket}
               disabled={syncingShiprocket}
               style={{
-                background: '#6b1d2f',
+                background: 'var(--color-accent)',
                 color: '#fff',
                 border: 'none',
                 padding: '6px 12px',

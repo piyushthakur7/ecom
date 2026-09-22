@@ -9,7 +9,7 @@ export function Newsletter() {
   const [email, setEmail] = useState('');
 
   return (
-    <section style={{ background: '#591726', color: '#ffffff', borderTop: '1px solid #731e32' }}>
+    <section style={{ background: '#c72e29', color: '#fff7e9', borderTop: '1px solid #e24d3c' }}>
       <div
         style={{
           maxWidth: 1280,
@@ -35,7 +35,7 @@ export function Newsletter() {
               flexShrink: 0,
             }}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d4af37" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fce8d6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <rect width="20" height="16" x="2" y="4" rx="2" />
               <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
             </svg>
@@ -62,7 +62,7 @@ export function Newsletter() {
         </div>
 
         {subscribed ? (
-          <p style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: 16, color: '#f4d068', margin: 0 }}>
+          <p style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: 16, color: '#fce8d6', margin: 0 }}>
             <IconCheck size={16} style={{ verticalAlign: -3, marginRight: 4, display: 'inline-block' }} />You&apos;re on the list! Thank you for subscribing.
           </p>
         ) : (

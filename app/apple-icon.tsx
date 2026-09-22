@@ -18,8 +18,8 @@ export default function AppleIcon() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          background: '#6b1d2f',
-          color: '#c59b27',
+          background: '#c72e29',
+          color: '#fce8d6',
         }}
       >
         <div style={{ fontSize: 104, fontWeight: 700, lineHeight: 1 }}>S</div>
@@ -28,7 +28,7 @@ export default function AppleIcon() {
             marginTop: 10,
             fontSize: 15,
             letterSpacing: 4,
-            color: '#f0e9df',
+            color: '#fff7e9',
           }}
         >
           ETHNICS

@@ -20,8 +20,8 @@ export default function Icon() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: '#6b1d2f',
-          color: '#c59b27',
+          background: '#c72e29',
+          color: '#fce8d6',
           fontSize: 24,
           fontWeight: 700,
           // Optical centring: the cap sits slightly high in the box otherwise.
