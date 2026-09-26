@@ -113,8 +113,26 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="footer-bottom">
-        © {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
+      <div
+        className="footer-bottom"
+        style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: '8px 24px' }}
+      >
+        <span>© {new Date().getFullYear()} {siteConfig.name}. All rights reserved.</span>
+        {/* Deliberately a followed link (no nofollow/sponsored/ugc) so it passes
+            SEO credit to the developer; noreferrer is left off so their
+            analytics can see the referral. */}
+        <span>
+          Developed by{' '}
+          <a
+            href="https://www.webtotalsolution.com/"
+            target="_blank"
+            rel="noopener"
+            title="Web Total Solution: website design and development"
+            className="footer-link"
+          >
+            Web Total Solution
+          </a>
+        </span>
       </div>
     </footer>
   );
